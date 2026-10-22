@@ -51,7 +51,7 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:.82rem}
 <form id="loginForm">
 <div class="field"><label for="email">Email address</label><input id="email" type="email" placeholder="you@example.com" autocomplete="email" required></div>
 <div class="field"><label for="password">Password</label><div class="pass"><input id="password" type="password" placeholder="Enter your password" autocomplete="current-password" minlength="6" required><button class="toggle" id="togglePassword" type="button">Show</button></div></div>
-<div class="row"><a href="#" id="forgotPassword">Forgot password?</a></div>
+<div class="row"><a href="forgot-password.html" id="forgotPassword">Forgot password?</a></div>
 <button class="submit" id="loginButton" type="submit">Login securely</button>
 </form>
 <div class="sep">NEW TO PAYSAATHI?</div>
@@ -62,8 +62,6 @@ footer{text-align:center;padding:18px;color:var(--muted);font-size:.82rem}
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-// Replace these two placeholders with your Supabase Project URL and publishable key.
-// Never put a service_role/secret key in a public HTML file.
 const SUPABASE_URL = 'https://hhqcycwfvxoxjizlbivv.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_NdrUA-ubf67oW5hiS-Yw4A_-r2xbJRV';
 
@@ -99,7 +97,6 @@ form.addEventListener('submit', async (event) => {
     if(error) throw error;
     if(!data.session) throw new Error('No active session was returned. Please try again.');
     showMessage('Login successful! Opening your dashboard…','ok');
-    // Create dashboard.html in the next step. Protect private data with backend policies too.
     window.location.href='dashboard.html';
   } catch(error) {
     console.error('Login error:',error);
@@ -111,10 +108,10 @@ form.addEventListener('submit', async (event) => {
 });
 
 document.getElementById('forgotPassword').addEventListener('click', async (event) => {
+  const email=emailInput.value.trim();
+  if(!email) return; // Allow normal link navigation to forgot-password.html if email field is empty
   event.preventDefault(); message.className='message';
   if(configMissing||!supabase){showMessage('Connect your Supabase project URL and publishable key first.');return;}
-  const email=emailInput.value.trim();
-  if(!email){showMessage('Enter your email address above first, then tap Forgot password.');emailInput.focus();return;}
   try{
     const {error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+window.location.pathname.replace(/login\.html$/,'reset-password.html')});
     if(error) throw error;
