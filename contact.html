@@ -293,14 +293,15 @@ footer {
 document.getElementById('year').textContent = new Date().getFullYear();
 
 const form = document.getElementById('contactForm');
+const statusBox = document.getElementById('status'); // <--- THIS WAS MISSING!
 const sendButton = document.getElementById('sendButton');
 
-  form.addEventListener('submit', async function(event) {
-  event.preventDefault();
+form.addEventListener('submit', async function(event) {
+  event.preventDefault(); // Prevents page reload / redirect
   statusBox.className = 'status';
   statusBox.textContent = '';
 
-  // If the honeypot has a value, pretend it succeeded (tricks bots) without submitting
+  // Check honeypot field
   if (form._gotcha.value !== '') {
     form.reset();
     statusBox.className = 'status show ok';
@@ -335,6 +336,7 @@ const sendButton = document.getElementById('sendButton');
     sendButton.textContent = 'Send message securely';
   }
 });
+  
   
 </script>
 </body>
