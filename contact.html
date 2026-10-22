@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b57d0">
+<title>Contact Us | PaySaathi</title>
+<meta name="description" content="Contact PaySaathi customer support for assistance, questions and feedback.">
+<style>
+:root {
+  --blue:#0b57d0;
+  --dark:#073b91;
+  --ink:#172033;
+  --muted:#667085;
+  --line:#e2e8f0;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+  color:var(--ink);
+  background:radial-gradient(circle at 10% 10%,#e0ebff,transparent 32%),#f5f8ff;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+a { color:var(--blue); text-decoration:none; }
+a:hover { text-decoration:underline; }
+header {
+  background:#ffffffed;
+  border-bottom:1px solid var(--line);
+}
+.nav {
+  width:min(1100px,calc(100% - 32px));
+  min-height:70px;
+  margin:auto;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+}
+.brand {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:1.2rem;
+  font-weight:850;
+  color:var(--ink);
+}
+.mark {
+  display:grid;
+  place-items:center;
+  width:40px;
+  height:40px;
+  border-radius:13px;
+  color:white;
+  background:linear-gradient(145deg,#1675f5,var(--dark));
+}
+.brand-name span { color:var(--blue); }
+main {
+  flex:1;
+  width:min(1000px,calc(100% - 32px));
+  margin:0 auto;
+  padding:54px 0;
+}
+.heading { text-align:center; margin-bottom:34px; }
+.tag {
+  display:inline-block;
+  padding:7px 12px;
+  border-radius:999px;
+  background:#e6efff;
+  color:var(--blue);
+  font-size:.8rem;
+  font-weight:800;
+}
+h1 {
+  font-size:clamp(2rem,5vw,3rem);
+  letter-spacing:-1px;
+  margin:16px 0 10px;
+}
+.heading p {
+  color:var(--muted);
+  line-height:1.7;
+  max-width:600px;
+  margin:auto;
+}
+.grid {
+  display:grid;
+  grid-template-columns:.85fr 1.15fr;
+  gap:22px;
+  align-items:start;
+}
+.info,.form-card {
+  background:white;
+  border:1px solid #e6ecf5;
+  border-radius:22px;
+  padding:30px;
+  box-shadow:0 18px 55px #1c3b700d;
+}
+.info {
+  background:linear-gradient(145deg,var(--blue),var(--dark));
+  color:white;
+}
+.info h2,.form-card h2 { margin:0 0 10px; }
+.info>p { color:#dce8ff; line-height:1.7; }
+.item {
+  margin-top:25px;
+  padding-top:20px;
+  border-top:1px solid #ffffff30;
+}
+.item strong { display:block; margin-bottom:7px; }
+.item p { margin:0; color:#e0eaff; line-height:1.7; overflow-wrap:anywhere; }
+.info a { color:white; text-decoration:underline; }
+.small {
+  font-size:.83rem;
+  color:var(--muted);
+  line-height:1.6;
+}
+.form-card>p { color:var(--muted); line-height:1.6; }
+.field { margin-top:17px; }
+label {
+  display:block;
+  margin-bottom:7px;
+  font-weight:750;
+  font-size:.88rem;
+}
+input,select,textarea {
+  display:block;
+  width:100%;
+  border:1px solid #d0d8e5;
+  border-radius:11px;
+  padding:12px 13px;
+  background:white;
+  color:var(--ink);
+  font:inherit;
+  outline:none;
+}
+input,select { min-height:47px; }
+textarea { min-height:145px; resize:vertical; }
+input:focus,select:focus,textarea:focus {
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px #0b57d018;
+}
+button {
+  width:100%;
+  min-height:49px;
+  margin-top:20px;
+  border:0;
+  border-radius:12px;
+  background:var(--blue);
+  color:white;
+  font:inherit;
+  font-weight:800;
+  cursor:pointer;
+}
+button:hover { background:var(--dark); }
+button:disabled { opacity:.65; cursor:wait; }
+.status {
+  display:none;
+  margin-top:16px;
+  padding:12px;
+  border-radius:10px;
+  line-height:1.5;
+  overflow-wrap:anywhere;
+}
+.status.show { display:block; }
+.status.error { background:#fff0ef; color:#b42318; }
+.status.ok { background:#eaf8f0; color:#137a4b; }
+.trap {
+  position:absolute;
+  left:-10000px;
+  width:1px;
+  height:1px;
+  overflow:hidden;
+}
+footer {
+  padding:20px 16px;
+  text-align:center;
+  color:var(--muted);
+  font-size:.82rem;
+}
+@media(max-width:760px) {
+  main { padding:35px 0; }
+  .grid { grid-template-columns:1fr; }
+  .info,.form-card { padding:24px; }
+  .heading { margin-bottom:25px; }
+}
+</style>
+</head>
+<body>
+<header>
+  <nav class="nav">
+    <a class="brand" href="index.html" aria-label="PaySaathi home">
+      <span class="mark">P</span>
+      <span class="brand-name">Pay<span>Saathi</span></span>
+    </a>
+    <a href="index.html">← Back to home</a>
+  </nav>
+</header>
+
+<main>
+  <section class="heading">
+    <span class="tag">WE'RE HERE TO HELP</span>
+    <h1>Contact PaySaathi</h1>
+    <p>Have a question or need assistance? Send our support team a message and we'll get back to you.</p>
+  </section>
+
+  <div class="grid">
+    <aside class="info">
+      <h2>Get in touch</h2>
+      <p>We're happy to hear from you. Choose the contact method that works best for you.</p>
+
+      <div class="item">
+        <strong>✉ Support email</strong>
+        <p><a href="mailto:paysaathi.support@gmail.com">paysaathi.support@gmail.com</a></p>
+      </div>
+
+      <div class="item">
+        <strong>🕒 Support hours</strong>
+        <p>Monday–Saturday<br>10:00 AM–6:00 PM IST</p>
+        <p class="small" style="color:#e0eaff;margin-top:7px">These are planned support hours. Update them to match your actual availability.</p>
+      </div>
+
+      <div class="item">
+        <strong>🔒 Your privacy matters</strong>
+        <p>Please don't submit passwords, OTPs, bank PINs, or full payment-card details.</p>
+      </div>
+    </aside>
+
+    <section class="form-card">
+      <h2>Send us a message</h2>
+      <p>Complete the form below. Fields marked * are required.</p>
+
+      <!-- Replace YOUR_FORM_ID after setting up Formspree. -->
+      <form id="contactForm"
+        action="https://formspree.io/f/mbggrqow"
+        method="POST">
+
+        <div class="trap" aria-hidden="true">
+          <label for="website">Leave this field empty</label>
+          <input id="website" name="_gotcha" tabindex="-1" autocomplete="off">
+        </div>
+
+        <div class="field">
+          <label for="name">Full name *</label>
+          <input id="name" name="name" type="text"
+            autocomplete="name" maxlength="100" required>
+        </div>
+
+        <div class="field">
+          <label for="email">Email address *</label>
+          <input id="email" name="email" type="email"
+            autocomplete="email" maxlength="254" required>
+        </div>
+
+        <div class="field">
+          <label for="subject">What can we help with? *</label>
+          <select id="subject" name="subject" required>
+            <option value="">Choose a topic</option>
+            <option>General question</option>
+            <option>Account or login issue</option>
+            <option>Website problem</option>
+            <option>Feedback or suggestion</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="message">Your message *</label>
+          <textarea id="message" name="message"
+            minlength="10" maxlength="3000"
+            placeholder="Tell us how we can help..." required></textarea>
+        </div>
+
+        <button id="sendButton" type="submit">Send message securely</button>
+        <div id="status" class="status" role="status" aria-live="polite"></div>
+        <p class="small">Your message will be processed by our form service and delivered to our support inbox. Please avoid sending sensitive financial information.</p>
+      </form>
+    </section>
+  </div>
+</main>
+
+<footer>© <span id="year"></span> PaySaathi. All rights reserved.</footer>
+
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+const form = document.getElementById('contactForm');
+const statusBox = document.getElementById('status');
+const sendButton = document.getElementById('sendButton');
+
+form.addEventListener('submit', async function(event) {
+  event.preventDefault();
+  statusBox.className = 'status';
+  statusBox.textContent = '';
+
+  if (form.website.value) return;
+
+  if (form.action.includes('YOUR_FORM_ID')) {
+    statusBox.className = 'status show error';
+    statusBox.textContent =
+      'The contact form is not connected yet. Please email paysaathi.support@gmail.com directly.';
+    return;
+  }
+
+  sendButton.disabled = true;
+  sendButton.textContent = 'Sending...';
+
+  try {
+    const response = await fetch(form.action, {
+      method: 'POST',
+      body: new FormData(form),
+      headers: { 'Accept': 'application/json' }
+    });
+
+    if (!response.ok) {
+      throw new Error('Message could not be submitted.');
+    }
+
+    form.reset();
+    statusBox.className = 'status show ok';
+    statusBox.textContent =
+      'Thank you! Your message has been submitted. If you need urgent help, email our support address.';
+  } catch (error) {
+    statusBox.className = 'status show error';
+    statusBox.textContent =
+      'We could not confirm delivery. Please try again later or email paysaathi.support@gmail.com directly.';
+  } finally {
+    sendButton.disabled = false;
+    sendButton.textContent = 'Send message securely';
+  }
+});
+</script>
+</body>
+</html>
