@@ -5,34 +5,36 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Dashboard & Wallet | PaySaathi</title>
 <style>
-:root{--blue:#0b57d0;--dark:#073b91;--ink:#172033;--muted:#667085;--line:#e2e8f0;--green:#137a4b}
-*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,sans-serif;color:var(--ink);background:#f5f8ff;min-height:100vh;display:flex;flex-direction:column}
-header{background:#fff;border-bottom:1px solid var(--line);height:70px;display:flex;align-items:center}
-.nav{width:min(1100px,calc(100% - 32px));margin:auto;display:flex;justify-content:space-between;align-items:center}
-.brand{font-weight:850;font-size:1.2rem;color:var(--ink);text-decoration:none}
+:root{--blue:#0b57d0;--dark:#073b91;--ink:#172033;--muted:#667085;--line:#e2e8f0;--green:#137a4b;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,sans-serif;color:var(--ink);background:#f8fafc;min-height:100vh;display:flex;flex-direction:column}
+header{background:#fff;border-bottom:1px solid var(--line);height:65px;display:flex;align-items:center}
+.nav{width:min(1000px,calc(100% - 24px));margin:auto;display:flex;justify-content:space-between;align-items:center}
+.brand{font-weight:850;font-size:1.1rem;color:var(--ink);text-decoration:none}
 .brand span{color:var(--blue)}
-main{flex:1;width:min(900px,calc(100% - 32px));margin:30px auto;display:grid;gap:24px}
-.card{background:white;border:1px solid #e6ecf5;border-radius:20px;padding:28px;box-shadow:0 10px 30px #1c3b700d}
-.wallet-box{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,var(--blue),var(--dark));color:white;border-radius:16px;padding:24px}
-.balance-amount{font-size:2.2rem;font-weight:800;margin:6px 0 0}
-.btn{background:white;color:var(--blue);border:0;padding:10px 20px;border-radius:10px;font-weight:750;cursor:pointer}
+main{flex:1;width:min(1000px,calc(100% - 24px));margin:20px auto;display:grid;gap:20px}
+.card{background:white;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 4px 20px #1c3b7008}
+.wallet-box{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,var(--blue),var(--dark));color:white;border-radius:14px;padding:20px}
+.balance-amount{font-size:2rem;font-weight:800;margin:4px 0 0}
+.btn{background:white;color:var(--blue);border:0;padding:8px 16px;border-radius:8px;font-weight:750;font-size:0.85rem;cursor:pointer}
 .btn:hover{background:#f0f4ff}
-.btn-primary{background:var(--blue);color:white}
+.btn-primary{background:var(--blue);color:white;width:100%;padding:10px;border-radius:10px;margin-top:10px}
 .btn-primary:hover{background:var(--dark)}
-h2{margin-top:0;font-size:1.4rem}
-.services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:16px}
-.service-card{border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;justify-content:space-between}
-.price{font-size:1.2rem;font-weight:800;color:var(--green);margin:10px 0}
-.message{padding:12px;border-radius:10px;font-size:0.9rem;margin-bottom:16px;display:none}
+h2{margin:0 0 12px;font-size:1.2rem}
+.services-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.service-card{border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;background:#fff}
+.price{font-size:1.1rem;font-weight:800;color:var(--green);margin:8px 0}
+.message{padding:10px 14px;border-radius:8px;font-size:0.88rem;display:none}
 .message.show{display:block}
-.message.error{background:#fff0ef;color:#b42318}
-.message.ok{background:#eaf8f0;color:var(--green)}
+.message.error{background:#fff0ef;color:var(--red);border:1px solid #ffd5d2}
+.message.ok{background:#eaf8f0;color:var(--green);border:1px solid #c7ecd6}
+.tx-list{display:grid;gap:10px;max-height:220px;overflow-y:auto}
+.tx-item{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#f8fafc;border-radius:8px;border:1px solid var(--line);font-size:0.88rem}
 </style>
 </head>
 <body>
 <header><div class="nav">
 <a class="brand" href="dashboard.html">Pay<span>Saathi</span> Dashboard</a>
-<button class="btn" id="logoutBtn" style="background:#fee;color:#c00">Sign Out</button>
+<button class="btn" id="logoutBtn" style="background:#fee;color:var(--red)">Sign Out</button>
 </div></header>
 
 <main>
@@ -42,7 +44,7 @@ h2{margin-top:0;font-size:1.4rem}
 <div class="card">
   <div class="wallet-box">
     <div>
-      <span style="opacity:0.85;font-size:0.9rem;">Available Balance</span>
+      <span style="opacity:0.85;font-size:0.85rem;">Available Balance</span>
       <div class="balance-amount" id="walletBalance">₹0.00</div>
     </div>
     <button class="btn" id="topupBtn">+ Add ₹500 Top-Up</button>
@@ -52,9 +54,17 @@ h2{margin-top:0;font-size:1.4rem}
 <!-- Services Section -->
 <div class="card">
   <h2>Available Services</h2>
-  <p style="color:var(--muted);font-size:0.92rem;">Select a service to pay instantly using your wallet balance.</p>
+  <p style="color:var(--muted);font-size:0.88rem;margin-bottom:14px">Select a service to pay instantly using your wallet balance.</p>
   <div class="services-grid" id="servicesList">
     <p style="color:var(--muted)">Loading services...</p>
+  </div>
+</div>
+
+<!-- Transactions Section -->
+<div class="card">
+  <h2>Recent Transactions</h2>
+  <div class="tx-list" id="txList">
+    <p style="color:var(--muted);font-size:0.88rem">No transactions yet.</p>
   </div>
 </div>
 </main>
@@ -69,6 +79,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 const messageBox = document.getElementById('message');
 const balanceEl = document.getElementById('walletBalance');
 const servicesList = document.getElementById('servicesList');
+const txList = document.getElementById('txList');
 
 function showMsg(text, type='error') {
   messageBox.textContent = text;
@@ -84,17 +95,17 @@ async function initDashboard() {
     return;
   }
   currentUser = session.user;
+  
+  // Ensure user has a wallet row in the database
+  await supabase.from('wallets').upsert({ id: currentUser.id }, { onConflict: 'id', ignoreDuplicates: true });
+
   loadWallet();
   loadServices();
+  loadTransactions();
 }
 
 async function loadWallet() {
-  const { data } = await supabase
-    .from('wallets')
-    .select('balance')
-    .eq('id', currentUser.id)
-    .single();
-
+  const { data } = await supabase.from('wallets').select('balance').eq('id', currentUser.id).single();
   if (data) {
     balanceEl.textContent = `₹${parseFloat(data.balance).toFixed(2)}`;
   }
@@ -102,13 +113,8 @@ async function loadWallet() {
 
 async function loadServices() {
   const { data, error } = await supabase.from('services').select('*');
-  if (error) {
-    servicesList.innerHTML = '<p style="color:red">Could not load services.</p>';
-    return;
-  }
-
-  if (!data || data.length === 0) {
-    servicesList.innerHTML = '<p>No services available right now.</p>';
+  if (error || !data || data.length === 0) {
+    servicesList.innerHTML = '<p style="color:var(--muted);font-size:0.88rem">No services available.</p>';
     return;
   }
 
@@ -116,26 +122,48 @@ async function loadServices() {
     <div class="service-card">
       <div>
         <strong>${service.title}</strong>
-        <p style="color:var(--muted);font-size:0.85rem;margin:6px 0 12px">${service.description}</p>
+        <p style="color:var(--muted);font-size:0.82rem;margin:4px 0 8px">${service.description}</p>
       </div>
       <div>
         <div class="price">₹${parseFloat(service.price).toFixed(2)}</div>
-        <button class="btn btn-primary" onclick="payService(${service.id}, ${service.price}, '${service.title}')" style="width:100%">Pay Now</button>
+        <button class="btn btn-primary" onclick="payService(${service.id}, ${service.price}, '${service.title}')">Pay Now</button>
       </div>
     </div>
   `).join('');
 }
 
-// Top up wallet function
+async function loadTransactions() {
+  const { data } = await supabase.from('transactions').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(5);
+  if (!data || data.length === 0) {
+    txList.innerHTML = '<p style="color:var(--muted);font-size:0.88rem">No transactions yet.</p>';
+    return;
+  }
+
+  txList.innerHTML = data.map(tx => `
+    <div class="tx-item">
+      <div>
+        <strong>${tx.description}</strong>
+        <div style="font-size:0.75rem;color:var(--muted)">${new Date(tx.created_at).toLocaleString()}</div>
+      </div>
+      <div style="font-weight:800;color:${tx.type === 'topup' ? 'var(--green)' : 'var(--ink)'}">
+        ${tx.type === 'topup' ? '+' : '-'}₹${parseFloat(tx.amount).toFixed(2)}
+      </div>
+    </div>
+  `).join('');
+}
+
+// Top up wallet
 document.getElementById('topupBtn').addEventListener('click', async () => {
+  messageBox.className = 'message';
   const topupAmount = 500.00;
   
   const { data: wallet } = await supabase.from('wallets').select('balance').eq('id', currentUser.id).single();
-  const newBalance = parseFloat(wallet.balance) + topupAmount;
+  const currentBalance = wallet ? parseFloat(wallet.balance) : 0;
+  const newBalance = currentBalance + topupAmount;
 
   const { error } = await supabase.from('wallets').update({ balance: newBalance }).eq('id', currentUser.id);
   if (error) {
-    showMsg('Top-up failed. Try again.');
+    showMsg('Top-up failed. Please try again.');
     return;
   }
 
@@ -143,19 +171,20 @@ document.getElementById('topupBtn').addEventListener('click', async () => {
     user_id: currentUser.id,
     amount: topupAmount,
     type: 'topup',
-    description: 'Wallet Top-Up via Test Gateway'
+    description: 'Wallet Top-Up'
   });
 
   showMsg(`Successfully added ₹${topupAmount} to your wallet!`, 'ok');
   loadWallet();
+  loadTransactions();
 });
 
-// Pay for service function exposed globally
+// Pay for service
 window.payService = async function(serviceId, price, title) {
   messageBox.className = 'message';
   
   const { data: wallet } = await supabase.from('wallets').select('balance').eq('id', currentUser.id).single();
-  const currentBalance = parseFloat(wallet.balance);
+  const currentBalance = wallet ? parseFloat(wallet.balance) : 0;
 
   if (currentBalance < price) {
     showMsg(`Insufficient wallet balance! Please top-up ₹${(price - currentBalance).toFixed(2)} more.`);
@@ -174,11 +203,12 @@ window.payService = async function(serviceId, price, title) {
     user_id: currentUser.id,
     amount: price,
     type: 'payment',
-    description: `Paid for service: ${title}`
+    description: `Paid: ${title}`
   });
 
-  showMsg(`Payment successful for "${title}"! ₹${price} deducted from wallet.`, 'ok');
+  showMsg(`Payment successful for "${title}"!`, 'ok');
   loadWallet();
+  loadTransactions();
 };
 
 document.getElementById('logoutBtn').addEventListener('click', async () => {
