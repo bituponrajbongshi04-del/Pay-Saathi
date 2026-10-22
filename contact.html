@@ -290,51 +290,48 @@ footer {
 <footer>© <span id="year"></span> PaySaathi. All rights reserved.</footer>
 
 <script>
-document.getElementById('year').textContent = new Date().getFullYear();
+document.getElementById('year').textContent =
+  new Date().getFullYear();
 
 const form = document.getElementById('contactForm');
+const button = document.getElementById('sendButton');
 const statusBox = document.getElementById('status');
-const sendButton = document.getElementById('sendButton');
 
-form.addEventListener('submit', async function(event) {
+form.addEventListener('submit', async function (event) {
   event.preventDefault();
-  statusBox.className = 'status';
-  statusBox.textContent = '';
 
-  if (form.website.value) return;
+  if (!form.reportValidity()) return;
 
-  if (form.action.includes('YOUR_FORM_ID')) {
-    statusBox.className = 'status show error';
-    statusBox.textContent =
-      'The contact form is not connected yet. Please email paysaathi.support@gmail.com directly.';
-    return;
-  }
+  if (document.getElementById('website').value.trim()) return;
 
-  sendButton.disabled = true;
-  sendButton.textContent = 'Sending...';
+  button.disabled = true;
+  button.textContent = 'Sending...';
+  statusBox.className = 'status show';
+  statusBox.textContent = 'Sending your message...';
 
   try {
     const response = await fetch(form.action, {
       method: 'POST',
       body: new FormData(form),
-      headers: { 'Accept': 'application/json' }
+      headers: { Accept: 'application/json' }
     });
 
     if (!response.ok) {
-      throw new Error('Message could not be submitted.');
+      throw new Error('Form submission failed');
     }
 
-    form.reset();
     statusBox.className = 'status show ok';
     statusBox.textContent =
-      'Thank you! Your message has been submitted. If you need urgent help, email our support address.';
+      'Message submitted successfully! Thank you for contacting PaySaathi.';
+    form.reset();
+
   } catch (error) {
     statusBox.className = 'status show error';
     statusBox.textContent =
-      'We could not confirm delivery. Please try again later or email paysaathi.support@gmail.com directly.';
+      'Unable to submit your message. Please try again or email paysaathi.support@gmail.com.';
   } finally {
-    sendButton.disabled = false;
-    sendButton.textContent = 'Send message securely';
+    button.disabled = false;
+    button.textContent = 'Send message securely';
   }
 });
 </script>
