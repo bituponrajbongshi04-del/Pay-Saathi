@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b57d0">
+<title>Login | PaySaathi</title>
+<style>
+:root{--blue:#0b57d0;--dark:#073b91;--ink:#172033;--muted:#667085;--line:#e2e8f0}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:radial-gradient(circle at 10% 10%,#e0ebff,transparent 32%),#f5f8ff;display:flex;flex-direction:column}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+header{height:70px;background:#ffffffed;border-bottom:1px solid var(--line);display:flex;align-items:center}
+.nav{width:min(1100px,calc(100% - 32px));margin:auto;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.brand{display:flex;align-items:center;gap:10px;color:var(--ink);font-size:1.2rem;font-weight:850}.mark{width:40px;height:40px;display:grid;place-items:center;border-radius:13px;color:white;background:linear-gradient(145deg,#1675f5,#073b91)}.brand span:last-child span{color:var(--blue)}
+main{flex:1;display:grid;place-items:center;padding:34px 16px}.layout{width:min(940px,100%);display:grid;grid-template-columns:1fr 1fr;background:white;border:1px solid #e6ecf5;border-radius:26px;overflow:hidden;box-shadow:0 22px 70px #1c3b7014}
+.intro{padding:40px;background:linear-gradient(145deg,var(--blue),var(--dark));color:white;display:flex;flex-direction:column;justify-content:space-between;min-height:540px}
+.tag{display:inline-block;border:1px solid #ffffff40;background:#ffffff12;border-radius:999px;padding:7px 12px;font-size:.8rem;font-weight:750}
+h1{font-size:clamp(2rem,4vw,2.8rem);line-height:1.1;letter-spacing:-1px;margin:22px 0 14px}.intro p{color:#dce8ff;line-height:1.7;max-width:360px}
+.benefits{display:grid;gap:14px;margin-top:28px}.benefit{display:flex;align-items:center;gap:10px;color:#f2f6ff;font-size:.9rem}.check{width:25px;height:25px;display:grid;place-items:center;background:#ffffff1d;border-radius:8px}
+.intro-foot{color:#dce8ff;font-size:.82rem;margin-top:30px}.form-panel{padding:42px;display:flex;flex-direction:column;justify-content:center}.form-panel h2{font-size:1.8rem;letter-spacing:-.6px;margin:0 0 7px}.sub{color:var(--muted);margin:0 0 25px;font-size:.94rem}
+.field{margin-bottom:17px}label{display:block;font-size:.88rem;font-weight:750;margin-bottom:7px}input{width:100%;min-height:48px;border:1px solid #d0d8e5;border-radius:12px;padding:12px 13px;font:inherit;outline:none}input:focus{border-color:var(--blue);box-shadow:0 0 0 3px #0b57d018}
+.pass{position:relative}.pass input{padding-right:72px}.toggle{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:var(--blue);font-weight:750;padding:8px}
+.row{display:flex;justify-content:flex-end;margin:-3px 0 18px;font-size:.86rem}.submit{width:100%;min-height:49px;border:0;border-radius:12px;background:var(--blue);color:white;font:inherit;font-weight:800;cursor:pointer}.submit:hover{background:var(--dark)}.submit:disabled{opacity:.65;cursor:wait}
+.message{display:none;margin:0 0 15px;padding:11px 12px;border-radius:10px;font-size:.87rem;overflow-wrap:anywhere}.message.show{display:block}.error{background:#fff0ef;color:#b42318;border:1px solid #ffd5d2}.ok{background:#eaf8f0;color:#137a4b;border:1px solid #c7ecd6}
+.sep{display:flex;align-items:center;gap:12px;color:#98a2b3;font-size:.8rem;margin:22px 0}.sep:before,.sep:after{content:"";height:1px;flex:1;background:var(--line)}.signup{text-align:center;font-size:.9rem;color:var(--muted);margin:0}
+.note{display:flex;gap:9px;background:#f5f8ff;border:1px solid #e3ebfa;padding:12px;border-radius:12px;color:#52627a;font-size:.78rem;line-height:1.5;margin-top:22px}
+footer{text-align:center;padding:18px;color:var(--muted);font-size:.82rem}
+@media(max-width:760px){.layout{grid-template-columns:1fr;max-width:480px}.intro{min-height:auto;padding:25px 26px}.intro h1{font-size:1.9rem;margin:15px 0 10px}.intro p{font-size:.92rem;margin-bottom:0}.benefits{grid-template-columns:1fr 1fr;gap:10px;margin-top:19px}.benefit{font-size:.8rem;align-items:flex-start}.check{width:22px;height:22px;flex:none}.intro-foot{display:none}.form-panel{padding:29px 26px}.nav{height:64px}}
+@media(max-width:380px){.benefits{grid-template-columns:1fr}.form-panel{padding:25px 20px}.intro{padding:23px 20px}}
+</style>
+</head>
+<body>
+<header><div class="nav">
+<a class="brand" href="index.html" aria-label="PaySaathi home"><span class="mark">P</span><span>Pay<span>Saathi</span></span></a>
+<a href="index.html">← Back to home</a>
+</div></header>
+<main><div class="layout">
+<section class="intro">
+<div><span class="tag">Welcome back</span><h1>Your services,<br>one Saathi away.</h1>
+<p>Sign in to your PaySaathi account to continue to the services available to you.</p>
+<div class="benefits">
+<div class="benefit"><span class="check">✓</span><span>Simple account access</span></div>
+<div class="benefit"><span class="check">✓</span><span>Services in one place</span></div>
+<div class="benefit"><span class="check">✓</span><span>Account-based access</span></div>
+<div class="benefit"><span class="check">✓</span><span>Mobile-friendly design</span></div>
+</div></div><div class="intro-foot">PaySaathi · A simpler way to access services</div>
+</section>
+<section class="form-panel">
+<h2>Customer login</h2><p class="sub">Enter your email and password to sign in.</p>
+<div id="message" class="message" role="status" aria-live="polite"></div>
+<form id="loginForm">
+<div class="field"><label for="email">Email address</label><input id="email" type="email" placeholder="you@example.com" autocomplete="email" required></div>
+<div class="field"><label for="password">Password</label><div class="pass"><input id="password" type="password" placeholder="Enter your password" autocomplete="current-password" minlength="6" required><button class="toggle" id="togglePassword" type="button">Show</button></div></div>
+<div class="row"><a href="#" id="forgotPassword">Forgot password?</a></div>
+<button class="submit" id="loginButton" type="submit">Login securely</button>
+</form>
+<div class="sep">NEW TO PAYSAATHI?</div>
+<p class="signup">Don't have an account? <a href="register.html">Create account</a></p>
+<div class="note"><span>🔒</span><span>Authentication is handled by Supabase. Never share your password or verification links with anyone.</span></div>
+</section></div></main>
+<footer>© <span id="year"></span> PaySaathi. All rights reserved.</footer>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+// Replace these two placeholders with your Supabase Project URL and publishable key.
+// Never put a service_role/secret key in a public HTML file.
+const SUPABASE_URL = 'https://hhqcycwfvxoxjizlbivv.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_NdrUA-ubf67oW5hiS-Yw4A_-r2xbJRV';
+
+const message = document.getElementById('message');
+const form = document.getElementById('loginForm');
+const button = document.getElementById('loginButton');
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
+document.getElementById('year').textContent = new Date().getFullYear();
+
+const configMissing = SUPABASE_URL === 'YOUR_SUPABASE_PROJECT_URL' || SUPABASE_PUBLISHABLE_KEY === 'YOUR_SUPABASE_PUBLISHABLE_KEY';
+let supabase = null;
+if (!configMissing) {
+  try { supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY); }
+  catch (error) { console.error('Supabase setup error:', error); }
+}
+function showMessage(text, type='error') { message.textContent=text; message.className='message show '+type; }
+
+document.getElementById('togglePassword').addEventListener('click', () => {
+  const show = passwordInput.type === 'password';
+  passwordInput.type = show ? 'text' : 'password';
+  document.getElementById('togglePassword').textContent = show ? 'Hide' : 'Show';
+});
+
+form.addEventListener('submit', async (event) => {
+  event.preventDefault(); message.className='message';
+  if (configMissing || !supabase) {
+    showMessage('Supabase is not connected yet. Add your project URL and publishable key in this file, then publish it again.'); return;
+  }
+  button.disabled=true; button.textContent='Signing in…';
+  try {
+    const {data,error}=await supabase.auth.signInWithPassword({email:emailInput.value.trim(),password:passwordInput.value});
+    if(error) throw error;
+    if(!data.session) throw new Error('No active session was returned. Please try again.');
+    showMessage('Login successful! Opening your dashboard…','ok');
+    // Create dashboard.html in the next step. Protect private data with backend policies too.
+    window.location.href='dashboard.html';
+  } catch(error) {
+    console.error('Login error:',error);
+    let text=error?.message||'Unable to sign in. Please try again.';
+    if(/invalid login credentials/i.test(text)) text='Email or password is incorrect. Check your details or use Forgot password.';
+    if(/email not confirmed/i.test(text)) text='Please confirm your email first, then try signing in again.';
+    showMessage(text); button.disabled=false; button.textContent='Login securely';
+  }
+});
+
+document.getElementById('forgotPassword').addEventListener('click', async (event) => {
+  event.preventDefault(); message.className='message';
+  if(configMissing||!supabase){showMessage('Connect your Supabase project URL and publishable key first.');return;}
+  const email=emailInput.value.trim();
+  if(!email){showMessage('Enter your email address above first, then tap Forgot password.');emailInput.focus();return;}
+  try{
+    const {error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+window.location.pathname.replace(/login\.html$/,'reset-password.html')});
+    if(error) throw error;
+    showMessage('If an account exists for this email, a password reset link will be sent. Check your inbox and spam folder.','ok');
+  }catch(error){console.error('Password reset error:',error);showMessage(error?.message||'Could not request a password reset. Please try again.');}
+});
+</script>
+</body>
+</html>
