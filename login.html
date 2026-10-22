@@ -113,7 +113,7 @@ document.getElementById('forgotPassword').addEventListener('click', async (event
   event.preventDefault(); message.className='message';
   if(configMissing||!supabase){showMessage('Connect your Supabase project URL and publishable key first.');return;}
   try{
-    const {error}=await supabase.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin+window.location.pathname.replace(/login\.html$/,'reset-password.html')});
+const {error} = await supabase.auth.resetPasswordForEmail(email, {redirectTo: 'https://bituponrajbongshi04-del.github.io/Pay-Saathi/forgot-password.html'});
     if(error) throw error;
     showMessage('If an account exists for this email, a password reset link will be sent. Check your inbox and spam folder.','ok');
   }catch(error){console.error('Password reset error:',error);showMessage(error?.message||'Could not request a password reset. Please try again.');}
