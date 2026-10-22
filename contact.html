@@ -290,49 +290,22 @@ footer {
 <footer>© <span id="year"></span> PaySaathi. All rights reserved.</footer>
 
 <script>
-document.getElementById('year').textContent =
-  new Date().getFullYear();
+document.getElementById('year').textContent = new Date().getFullYear();
 
 const form = document.getElementById('contactForm');
-const button = document.getElementById('sendButton');
-const statusBox = document.getElementById('status');
+const sendButton = document.getElementById('sendButton');
 
-form.addEventListener('submit', async function (event) {
-  event.preventDefault();
-
-  if (!form.reportValidity()) return;
-
-  if (document.getElementById('website').value.trim()) return;
-
-  button.disabled = true;
-  button.textContent = 'Sending...';
-  statusBox.className = 'status show';
-  statusBox.textContent = 'Sending your message...';
-
-  try {
-    const response = await fetch(form.action, {
-      method: 'POST',
-      body: new FormData(form),
-      headers: { Accept: 'application/json' }
-    });
-
-    if (!response.ok) {
-      throw new Error('Form submission failed');
-    }
-
-    statusBox.className = 'status show ok';
-    statusBox.textContent =
-      'Message submitted successfully! Thank you for contacting PaySaathi.';
-    form.reset();
-
-  } catch (error) {
-    statusBox.className = 'status show error';
-    statusBox.textContent =
-      'Unable to submit your message. Please try again or email paysaathi.support@gmail.com.';
-  } finally {
-    button.disabled = false;
-    button.textContent = 'Send message securely';
+form.addEventListener('submit', function(event) {
+  // Optional: Check honeypot trap
+  if (form.website.value) {
+    event.preventDefault();
+    return;
   }
+  
+  // Let the form submit natively to Formspree, 
+  // just change button text to indicate action
+  sendButton.disabled = true;
+  sendButton.textContent = 'Sending...';
 });
 </script>
 </body>
