@@ -293,21 +293,13 @@ footer {
 document.getElementById('year').textContent = new Date().getFullYear();
 
 const form = document.getElementById('contactForm');
-const statusBox = document.getElementById('status'); // <--- THIS WAS MISSING!
+const statusBox = document.getElementById('status');
 const sendButton = document.getElementById('sendButton');
 
 form.addEventListener('submit', async function(event) {
-  event.preventDefault(); // Prevents page reload / redirect
+  event.preventDefault(); // Keeps the user on your page (no redirect!)
   statusBox.className = 'status';
   statusBox.textContent = '';
-
-  // Check honeypot field
-  if (form._gotcha.value !== '') {
-    form.reset();
-    statusBox.className = 'status show ok';
-    statusBox.textContent = 'Thank you! Your message has been submitted.';
-    return;
-  }
 
   sendButton.disabled = true;
   sendButton.textContent = 'Sending...';
@@ -325,19 +317,15 @@ form.addEventListener('submit', async function(event) {
 
     form.reset();
     statusBox.className = 'status show ok';
-    statusBox.textContent =
-      'Thank you! Your message has been submitted. If you need urgent help, email our support address.';
+    statusBox.textContent = 'Thank you! Your message has been submitted successfully.';
   } catch (error) {
     statusBox.className = 'status show error';
-    statusBox.textContent =
-      'We could not confirm delivery. Please try again later or email paysaathi.support@gmail.com directly.';
+    statusBox.textContent = 'We could not confirm delivery. Please email paysaathi.support@gmail.com directly.';
   } finally {
     sendButton.disabled = false;
     sendButton.textContent = 'Send message securely';
   }
 });
-  
-  
 </script>
 </body>
 </html>
