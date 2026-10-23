@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0b57d0">
 <title>Dashboard & Wallet | PaySaathi</title>
 <style>
-:root{--blue:#0b57d0;--dark:#073b91;--light:#eaf2ff;--ink:#172033;--muted:#667085;--line:#e5eaf2;--page:#f6f8fc;--green:#137a4b;--red:#b42318}
+:root{--blue:#0b57d0;--dark:#073b91;--light:#eaf2ff;--ink:#172033;--muted:#667085;--line:#e5eaf2;--page:#f6f8fc;--green:#137a4b;--red:#b42318;--bharat:#e65100}
 *{box-sizing:border-box}html{scroll-behavior:smooth}
 body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:var(--page);line-height:1.55;min-height:100vh;display:flex;flex-direction:column}
 a{text-decoration:none;color:inherit}button{font:inherit;cursor:pointer}
@@ -30,6 +30,16 @@ main{flex:1;padding:24px 0 40px}
 .section-head{margin-bottom:18px}
 .section-head h2{margin:0;font-size:1.35rem;letter-spacing:-.4px}
 .section-head p{margin:4px 0 0;color:var(--muted);font-size:.92rem}
+
+/* Bharat Connect Commission Styling */
+.bc-header{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:16px}
+.bc-badge{background:#fff3e0;color:var(--bharat);padding:6px 12px;border-radius:999px;font-weight:800;font-size:.8rem;border:1px solid #ffe0b2}
+.comm-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.comm-card{border:1px solid var(--line);border-radius:16px;padding:16px;background:#fbfcfd}
+.comm-title{font-weight:750;font-size:.95rem;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.comm-split{display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);font-size:.85rem}
+.user-share{color:var(--green);font-weight:800}
+
 .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
 .service{width:100%;text-align:left;border:1px solid var(--line);border-radius:19px;padding:20px;background:white;color:var(--ink);box-shadow:0 5px 18px #142d5a09;transition:.18s;display:flex;flex-direction:column;justify-content:space-between}
 .service:hover{transform:translateY(-3px);border-color:#a9c8ff;box-shadow:0 12px 34px #142d5a17}
@@ -41,7 +51,7 @@ main{flex:1;padding:24px 0 40px}
 .message.show{display:block}
 .message.error{background:#fff0ef;color:var(--red);border:1px solid #ffd5d2}
 .message.ok{background:#eaf8f0;color:var(--green);border:1px solid #c7ecd6}
-.tx-list{display:grid;gap:10px;max-height:240px;overflow-y:auto}
+.tx-list{display:grid;gap:10px;max-height:280px;overflow-y:auto}
 .tx-item{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#f8fafc;border-radius:12px;border:1px solid var(--line);font-size:.9rem}
 footer{border-top:1px solid var(--line);padding:20px 0;color:var(--muted);font-size:.88rem;background:white}
 @media(max-width:800px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -73,7 +83,52 @@ footer{border-top:1px solid var(--line);padding:20px 0;color:var(--muted);font-s
     </div>
   </div>
 
-  <!-- Available Services (Identical to Index Page) -->
+  <!-- Bharat Connect Commission Structure Card -->
+  <div class="card">
+    <div class="bc-header">
+      <div>
+        <h2 style="margin:0;font-size:1.25rem;">Bharat Connect Commission Rates</h2>
+        <span style="font-size:0.85rem;color:var(--muted);">Instant cashbacks applied after every completed transaction.</span>
+      </div>
+      <span class="bc-badge">80% Admin / 20% User CashBack</span>
+    </div>
+    <div class="comm-grid">
+      <div class="comm-card">
+        <div class="comm-title">📱 Mobile Recharge</div>
+        <div>Base Rate: <strong>2.0% Commission</strong></div>
+        <div class="comm-split">
+          <span>Your Share (20%):</span>
+          <span class="user-share">+0.40% CashBack</span>
+        </div>
+      </div>
+      <div class="comm-card">
+        <div class="comm-title">📺 DTH Recharge</div>
+        <div>Base Rate: <strong>2.5% Commission</strong></div>
+        <div class="comm-split">
+          <span>Your Share (20%):</span>
+          <span class="user-share">+0.50% CashBack</span>
+        </div>
+      </div>
+      <div class="comm-card">
+        <div class="comm-title">🧾 Utility Bill Payment</div>
+        <div>Flat Commission: <strong>₹5.00 / bill</strong></div>
+        <div class="comm-split">
+          <span>Your Share (20%):</span>
+          <span class="user-share">+₹1.00 CashBack</span>
+        </div>
+      </div>
+      <div class="comm-card">
+        <div class="comm-title">🏦 AEPS & Money Transfer</div>
+        <div>Flat Commission: <strong>₹10.00 / txn</strong></div>
+        <div class="comm-split">
+          <span>Your Share (20%):</span>
+          <span class="user-share">+₹2.00 CashBack</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Available Services -->
   <div class="card">
     <div class="section-head">
       <h2>Available Services</h2>
@@ -89,7 +144,7 @@ footer{border-top:1px solid var(--line);padding:20px 0;color:var(--muted);font-s
         </div>
         <div>
           <div class="price">₹199.00</div>
-          <button class="btn btn-primary" onclick="payService('Mobile Recharge', 199.00)">Pay Now</button>
+          <button class="btn btn-primary" onclick="payService('Mobile Recharge', 199.00, 0.02)">Pay Now</button>
         </div>
       </div>
       <!-- Service 2 -->
@@ -101,7 +156,7 @@ footer{border-top:1px solid var(--line);padding:20px 0;color:var(--muted);font-s
         </div>
         <div>
           <div class="price">₹299.00</div>
-          <button class="btn btn-primary" onclick="payService('DTH Recharge', 299.00)">Pay Now</button>
+          <button class="btn btn-primary" onclick="payService('DTH Recharge', 299.00, 0.025)">Pay Now</button>
         </div>
       </div>
       <!-- Service 3 -->
@@ -113,7 +168,7 @@ footer{border-top:1px solid var(--line);padding:20px 0;color:var(--muted);font-s
         </div>
         <div>
           <div class="price">₹499.00</div>
-          <button class="btn btn-primary" onclick="payService('Utility Bill Payment', 499.00)">Pay Now</button>
+          <button class="btn btn-primary" onclick="payService('Utility Bill Payment', 499.00, 5.00, true)">Pay Now</button>
         </div>
       </div>
       <!-- Service 4 -->
@@ -125,7 +180,7 @@ footer{border-top:1px solid var(--line);padding:20px 0;color:var(--muted);font-s
         </div>
         <div>
           <div class="price">₹1000.00</div>
-          <button class="btn btn-primary" onclick="payService('Money Transfer', 1000.00)">Pay Now</button>
+          <button class="btn btn-primary" onclick="payService('Money Transfer', 1000.00, 10.00, true)">Pay Now</button>
         </div>
       </div>
       <!-- Service 5 -->
@@ -137,7 +192,7 @@ footer{border-top:1px solid var(--line);padding:20px 0;color:var(--muted);font-s
         </div>
         <div>
           <div class="price">₹100.00</div>
-          <button class="btn btn-primary" onclick="payService('AEPS Services', 100.00)">Pay Now</button>
+          <button class="btn btn-primary" onclick="payService('AEPS Services', 100.00, 10.00, true)">Pay Now</button>
         </div>
       </div>
       <!-- Service 6 -->
@@ -149,7 +204,7 @@ footer{border-top:1px solid var(--line);padding:20px 0;color:var(--muted);font-s
         </div>
         <div>
           <div class="price">₹500.00</div>
-          <button class="btn btn-primary" onclick="payService('Other Digital Services', 500.00)">Pay Now</button>
+          <button class="btn btn-primary" onclick="payService('Other Digital Services', 500.00, 0.02)">Pay Now</button>
         </div>
       </div>
     </div>
@@ -158,7 +213,7 @@ footer{border-top:1px solid var(--line);padding:20px 0;color:var(--muted);font-s
   <!-- Recent Activity -->
   <div class="card">
     <div class="section-head">
-      <h2>Recent Transactions</h2>
+      <h2>Recent Transactions & Commission Earned</h2>
     </div>
     <div class="tx-list" id="txList">
       <p style="color:var(--muted);font-size:0.88rem">No transactions yet.</p>
@@ -198,7 +253,6 @@ async function initDashboard() {
   }
   currentUser = session.user;
 
-  // Auto-initialize wallet row if missing
   await supabase.from('wallets').upsert({ id: currentUser.id }, { onConflict: 'id', ignoreDuplicates: true });
 
   loadWallet();
@@ -213,7 +267,7 @@ async function loadWallet() {
 }
 
 async function loadTransactions() {
-  const { data } = await supabase.from('transactions').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(6);
+  const { data } = await supabase.from('transactions').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false }).limit(8);
   if (!data || data.length === 0) {
     txList.innerHTML = '<p style="color:var(--muted);font-size:0.88rem">No transactions yet.</p>';
     return;
@@ -225,8 +279,8 @@ async function loadTransactions() {
         <strong>${tx.description}</strong>
         <div style="font-size:0.78rem;color:var(--muted)">${new Date(tx.created_at).toLocaleString()}</div>
       </div>
-      <div style="font-weight:850;color:${tx.type === 'topup' ? 'var(--green)' : 'var(--ink)'}">
-        ${tx.type === 'topup' ? '+' : '-'}₹${parseFloat(tx.amount).toFixed(2)}
+      <div style="font-weight:850;color:${tx.type === 'topup' || tx.type === 'commission' ? 'var(--green)' : 'var(--ink)'}">
+        ${tx.type === 'topup' || tx.type === 'commission' ? '+' : '-'}₹${parseFloat(tx.amount).toFixed(2)}
       </div>
     </div>
   `).join('');
@@ -259,8 +313,8 @@ document.getElementById('topupBtn').addEventListener('click', async () => {
   loadTransactions();
 });
 
-// Pay for service
-window.payService = async function(title, price) {
+// Pay for service & calculate 80/20 Bharat Connect Commission
+window.payService = async function(title, price, commRate, isFlat = false) {
   messageBox.className = 'message';
 
   const { data: wallet } = await supabase.from('wallets').select('balance').eq('id', currentUser.id).single();
@@ -271,14 +325,22 @@ window.payService = async function(title, price) {
     return;
   }
 
-  const newBalance = currentBalance - price;
+  // Calculate 100% total commission
+  const totalCommission = isFlat ? commRate : price * commRate;
+  
+  // Split 80% Admin / 20% User
+  const userCommission = totalCommission * 0.20;
 
-  const { error: walletError } = await supabase.from('wallets').update({ balance: newBalance }).eq('id', currentUser.id);
+  // Deduct payment price and instantly add 20% Cashback back to user wallet balance
+  const finalBalance = currentBalance - price + userCommission;
+
+  const { error: walletError } = await supabase.from('wallets').update({ balance: finalBalance }).eq('id', currentUser.id);
   if (walletError) {
     showMsg('Payment processing error.');
     return;
   }
 
+  // Log Payment Transaction
   await supabase.from('transactions').insert({
     user_id: currentUser.id,
     amount: price,
@@ -286,7 +348,15 @@ window.payService = async function(title, price) {
     description: `Paid: ${title}`
   });
 
-  showMsg(`Payment successful for "${title}"!`, 'ok');
+  // Log 20% Commission CashBack Transaction
+  await supabase.from('transactions').insert({
+    user_id: currentUser.id,
+    amount: userCommission,
+    type: 'commission',
+    description: `Bharat Connect CashBack (20% Share): ${title}`
+  });
+
+  showMsg(`Payment successful for "${title}"! You earned ₹${userCommission.toFixed(2)} instant CashBack (20% share).`, 'ok');
   loadWallet();
   loadTransactions();
 };
