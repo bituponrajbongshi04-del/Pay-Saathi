@@ -404,49 +404,76 @@ document.getElementById('topupBtn').addEventListener('click', () => {
     prepareBtn.style.display = 'none';
   });
 
-  verifyBtn.addEventListener('click', async () => {
-    const amount = getValidAmount();
-    if (amount === null) return;
+  
+verifyBtn.addEventListener('click', async () => {
+  console.log('[PaySaathi] Verify button clicked');
 
-    verifyBtn.disabled = true;
-    verifyBtn.textContent = 'Verifying payment…';
-    try {
-      // The Edge Function must verify the actual payment with the payment provider
-      // and derive the authenticated user server-side before crediting a wallet.
-      const { data, error } = await supabase.functions.invoke('verify-payment', {
-        body: { amount, type: 'topup', description: 'Bharat Connect UPI Wallet Top-Up' }
-      });
-      if (error) throw error;
-      if (!data || data.error) throw new Error(data?.error || 'Payment could not be verified.');
+  const amount = getValidAmount();
+  if (amount === null) {
+    console.log('[PaySaathi] Invalid amount');
+    return;
+  }
 
-      serviceModal.classList.remove('show');
-      showMsg(`Payment verification completed for ₹${amount.toFixed(2)}.`, 'ok');
-      await Promise.all([loadWallet(), loadTransactions()]);
-    } catch (err) {
-      showMsg(err?.message || 'We could not verify the payment. If you paid, contact support before paying again.');
-    } finally {
-      verifyBtn.disabled = false;
-      verifyBtn.textContent = 'I have paid — verify payment';
+  verifyBtn.disabled = true;
+  verifyBtn.textContent = 'Checking connection...';
+
+  try {
+    if (!supabase) {
+      throw new Error('Supabase client is not initialized.');
     }
-  });
 
-  serviceModal.classList.add('show');
+    if (!currentUser) {
+      throw new Error('Please sign in again.');
+    }
+
+    const { data: sessionData, error: sessionError } =
+      await supabase.auth.getSession();
+
+    if (sessionError) throw sessionError;
+
+    if (!sessionData.session?.access_token) {
+      throw new Error('Your session expired. Sign in again.');
+    }
+
+    showMsg('Button works. Checking server connection…', 'ok');
+
+    const { data, error } = await supabase.functions.invoke(
+      'super-endpoint',
+      {
+        body: {
+          amount,
+          type: 'topup',
+          description: 'PaySaathi wallet top-up test'
+        }
+      }
+    );
+
+    console.log('[PaySaathi] Function response:', { data, error });
+
+    if (error) {
+      throw new Error(error.message || 'Edge Function request failed.');
+    }
+
+    if (data?.status === 'payment_verification_required') {
+      showMsg(
+        'Connection works, but payment verification is not configured. No money was added.'
+      );
+      return;
+    }
+
+    if (!data?.success) {
+      throw new Error(data?.error || 'Unexpected server response.');
+    }
+
+    showMsg('Server responded successfully.', 'ok');
+  } catch (err) {
+    console.error('[PaySaathi] Verification error:', err);
+    showMsg(err?.message || 'Unknown verification error.');
+  } finally {
+    verifyBtn.disabled = false;
+    verifyBtn.textContent = 'I have paid — verify payment';
+  }
 });
-
-// Execute Payment & Instant CashBack via Edge Function
-window.executeAutoPay = async function(title, price, commRate, isFlat) {
-  messageBox.className = 'message';
-
-  const { data, error } = await supabase.functions.invoke('verify-payment', {
-    body: { 
-      userId: currentUser.id, 
-      amount: price, 
-      type: 'payment',
-      description: title,
-      commRate: commRate,
-      isFlat: isFlat
-    }
-  });
 
   if (error || (data && data.error)) {
     showMsg(data?.error || 'Payment processing error.');
