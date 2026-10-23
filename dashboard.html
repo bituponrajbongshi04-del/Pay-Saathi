@@ -304,33 +304,59 @@ async function loadTransactions() {
   `).join('');
 }
 
-// Top Up
+// Top Up via Edge Function
 document.getElementById('topupBtn').addEventListener('click', async () => {
   messageBox.className = 'message';
   const topupAmount = 500.00;
 
-  const { data: wallet } = await supabase.from('wallets').select('balance').eq('id', currentUser.id).single();
-  const currentBalance = wallet ? parseFloat(wallet.balance) : 0;
-  const newBalance = currentBalance + topupAmount;
+  const { data, error } = await supabase.functions.invoke('verify-payment', {
+    body: { 
+      userId: currentUser.id, 
+      amount: topupAmount, 
+      type: 'topup',
+      description: 'Wallet Top-Up'
+    }
+  });
 
-  const { error } = await supabase.from('wallets').update({ balance: newBalance }).eq('id', currentUser.id);
-  if (error) {
+  if (error || data.error) {
     showMsg('Top-up failed. Please try again.');
     return;
   }
-
-  await supabase.from('transactions').insert({
-    user_id: currentUser.id,
-    amount: topupAmount,
-    type: 'topup',
-    description: 'Wallet Top-Up'
-  });
 
   showMsg(`Successfully added ₹${topupAmount} to your wallet!`, 'ok');
   loadWallet();
   loadTransactions();
 });
 
+// Execute Payment & Instant CashBack via Edge Function
+window.executeAutoPay = async function(title, price, commRate, isFlat) {
+  messageBox.className = 'message';
+
+  const { data, error } = await supabase.functions.invoke('verify-payment', {
+    body: { 
+      userId: currentUser.id, 
+      amount: price, 
+      type: 'payment',
+      description: title,
+      commRate: commRate,
+      isFlat: isFlat
+    }
+  });
+
+  if (error || (data && data.error)) {
+    showMsg(data?.error || 'Payment processing error.');
+    serviceModal.classList.remove('show');
+    return;
+  }
+
+  const userShare = isFlat ? (commRate * 0.20) : (price * commRate * 0.20);
+
+  serviceModal.classList.remove('show');
+  showMsg(`Payment successful for "${title}"! Earned ₹${userShare.toFixed(2)} instant CashBack!`, 'ok');
+  loadWallet();
+  loadTransactions();
+};
+  
 // Interactive Service Pages Modal
 window.openServiceModal = function(type) {
   if (type === 'mobile') {
