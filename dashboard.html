@@ -305,29 +305,64 @@ async function loadTransactions() {
 }
 
 // Top Up via Edge Function
-document.getElementById('topupBtn').addEventListener('click', async () => {
-  messageBox.className = 'message';
-  const topupAmount = 500.00;
-
-  const { data, error } = await supabase.functions.invoke('verify-payment', {
-    body: { 
-      userId: currentUser.id, 
-      amount: topupAmount, 
-      type: 'topup',
-      description: 'Wallet Top-Up'
-    }
-  });
-
-  if (error || data.error) {
-    showMsg('Top-up failed. Please try again.');
+// Free UPI QR Code & Intent Top-Up
+document.getElementById('topupBtn').addEventListener('click', () => {
+  if (!currentUser) {
+    showMsg('User session not found. Please log in again.');
     return;
   }
 
-  showMsg(`Successfully added ₹${topupAmount} to your wallet!`, 'ok');
-  loadWallet();
-  loadTransactions();
+  const topupAmount = 500.00;
+  const merchantVPA = "Mr.rajbongshi.1@superyes"; 
+  const merchantName = "PaySaathi";
+  
+  // Create UPI String
+  const upiUrl = `upi://pay?pa=${merchantVPA}&pn=${encodeURIComponent(merchantName)}&am=${topupAmount}&cu=INR&tn=PaySaathiWalletTopUp`;
+
+  // Generate QR Code image URL using public QR API
+  const qrCodeApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(upiUrl)}`;
+
+  // Display QR Code inside modal
+  modalTitle.textContent = 'Scan & Pay ₹500 (0% Fees)';
+  modalFormContent.innerHTML = `
+    <div style="text-align:center; padding: 10px 0;">
+      <p style="color:var(--muted); font-size:0.9rem; margin-bottom:14px;">Scan this QR code using any UPI app (GPay, PhonePe, Paytm)</p>
+      <div style="background:white; padding:12px; display:inline-block; border:1px solid var(--line); border-radius:16px; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
+        <img src="${qrCodeApiUrl}" alt="UPI QR Code" style="width:200px; height:200px; display:block;">
+      </div>
+      <div style="margin-top:16px;">
+        <a href="${upiUrl}" class="btn btn-auto-pay" style="background:var(--blue); display:block; text-align:center;">Open UPI App Directly</a>
+      </div>
+      <button class="btn btn-auto-pay" onclick="confirmUpiTopup(${topupAmount})" style="background:var(--green); margin-top:10px;">I Have Paid, Verify Top-Up ✓</button>
+    </div>
+  `;
+
+  serviceModal.classList.add('show');
 });
 
+// Verification function after payment is completed
+window.confirmUpiTopup = async function(amount) {
+  const { data, error } = await supabase.functions.invoke('verify-payment', {
+    body: { 
+      userId: currentUser.id, 
+      amount: amount, 
+      type: 'topup',
+      description: 'UPI QR Wallet Top-Up (Free)'
+    }
+  });
+
+  if (error || (data && data.error)) {
+    showMsg(data?.error || error?.message || 'Top-up verification failed.');
+    serviceModal.classList.remove('show');
+    return;
+  }
+
+  serviceModal.classList.remove('show');
+  showMsg(`Successfully added ₹${amount} to your wallet!`, 'ok');
+  loadWallet();
+  loadTransactions();
+};
+  
 // Execute Payment & Instant CashBack via Edge Function
 window.executeAutoPay = async function(title, price, commRate, isFlat) {
   messageBox.className = 'message';
