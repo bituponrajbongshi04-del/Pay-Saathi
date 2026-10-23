@@ -25,34 +25,45 @@ main{flex:1;padding:24px 0 40px}
 .btn-topup:hover{background:#eaf2ff}
 .btn-logout{background:#fff0ef;color:var(--red);border:1px solid #ffd5d2}
 .btn-logout:hover{background:#ffe3e1}
-.btn-primary{background:var(--blue);color:white;width:100%;margin-top:10px}
-.btn-primary:hover{background:var(--dark)}
+.btn-auto-pay{background:var(--green);color:white;width:100%;margin-top:10px;padding:12px;border-radius:12px;font-size:0.95rem}
+.btn-auto-pay:hover{background:#0e623b}
 .section-head{margin-bottom:18px}
 .section-head h2{margin:0;font-size:1.35rem;letter-spacing:-.4px}
 .section-head p{margin:4px 0 0;color:var(--muted);font-size:.92rem}
 
-/* Bharat Connect Commission Styling */
-.bc-header{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:16px}
-.bc-badge{background:#fff3e0;color:var(--bharat);padding:6px 12px;border-radius:999px;font-weight:800;font-size:.8rem;border:1px solid #ffe0b2}
-.comm-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
-.comm-card{border:1px solid var(--line);border-radius:16px;padding:16px;background:#fbfcfd}
-.comm-title{font-weight:750;font-size:.95rem;margin-bottom:6px;display:flex;align-items:center;gap:8px}
-.comm-split{display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);font-size:.85rem}
-.user-share{color:var(--green);font-weight:800}
+/* Commission Table Styling */
+.comm-table{width:100%;border-collapse:collapse;margin-top:10px}
+.comm-table th,.comm-table td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--line);font-size:0.9rem}
+.comm-table th{background:#f8fafc;color:var(--muted);font-weight:700}
+.user-share-badge{background:#eaf8f0;color:var(--green);padding:4px 10px;border-radius:999px;font-weight:800;font-size:0.8rem;display:inline-block}
 
+/* Service Grid - Entire Card Clickable */
 .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-.service{width:100%;text-align:left;border:1px solid var(--line);border-radius:19px;padding:20px;background:white;color:var(--ink);box-shadow:0 5px 18px #142d5a09;transition:.18s;display:flex;flex-direction:column;justify-content:space-between}
-.service:hover{transform:translateY(-3px);border-color:#a9c8ff;box-shadow:0 12px 34px #142d5a17}
+.service{width:100%;text-align:left;border:1px solid var(--line);border-radius:19px;padding:22px;background:white;color:var(--ink);box-shadow:0 5px 18px #142d5a09;transition:.18s;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;position:relative}
+.service:hover{transform:translateY(-4px);border-color:#a9c8ff;box-shadow:0 12px 34px #142d5a17}
 .service-icon{width:48px;height:48px;display:grid;place-items:center;border-radius:15px;background:var(--light);font-size:1.4rem;margin-bottom:12px}
 .service h3{margin:0 0 6px;font-size:1.05rem}
-.service p{color:var(--muted);margin:0 0 12px;font-size:.88rem}
-.price{font-size:1.15rem;font-weight:850;color:var(--green);margin-bottom:4px}
+.service p{color:var(--muted);margin:0 0 14px;font-size:.88rem}
+.service-footer{display:flex;justify-content:space-between;align-items:center;border-top:1px dashed var(--line);padding-top:12px;color:var(--blue);font-weight:800;font-size:0.88rem}
+
 .message{padding:12px 16px;border-radius:12px;font-size:.9rem;margin-bottom:20px;display:none}
 .message.show{display:block}
 .message.error{background:#fff0ef;color:var(--red);border:1px solid #ffd5d2}
 .message.ok{background:#eaf8f0;color:var(--green);border:1px solid #c7ecd6}
+
 .tx-list{display:grid;gap:10px;max-height:280px;overflow-y:auto}
 .tx-item{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#f8fafc;border-radius:12px;border:1px solid var(--line);font-size:.9rem}
+
+/* Modal Styling */
+.backdrop{position:fixed;inset:0;z-index:30;display:none;align-items:center;justify-content:center;padding:18px;background:#0c172d94;backdrop-filter:blur(5px)}
+.backdrop.show{display:flex}
+.modal{width:min(460px,100%);position:relative;background:white;border-radius:24px;padding:28px;box-shadow:0 25px 80px #0004}
+.close{position:absolute;right:16px;top:16px;border:0;background:#f1f4f9;color:#475467;width:36px;height:36px;border-radius:50%;font-size:1.3rem;cursor:pointer}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:0.85rem;font-weight:700;margin-bottom:6px;color:var(--ink)}
+.form-control{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font-size:0.95rem;outline:none}
+.form-control:focus{border-color:var(--blue)}
+
 footer{border-top:1px solid var(--line);padding:20px 0;color:var(--muted);font-size:.88rem;background:white}
 @media(max-width:800px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.container{width:calc(100% - 24px)}.grid{grid-template-columns:1fr}.wallet-box{flex-direction:column;align-items:flex-start;gap:16px}.btn-topup{width:100%}}
@@ -83,134 +94,125 @@ footer{border-top:1px solid var(--line);padding:20px 0;color:var(--muted);font-s
     </div>
   </div>
 
-  <!-- Bharat Connect Commission Structure Card -->
+  <!-- Commission Rates Chart -->
   <div class="card">
-    <div class="bc-header">
-      <div>
-        <h2 style="margin:0;font-size:1.25rem;">Bharat Connect Commission Rates</h2>
-        <span style="font-size:0.85rem;color:var(--muted);">Instant cashbacks applied after every completed transaction.</span>
-      </div>
-      <span class="bc-badge">80% Admin / 20% User CashBack</span>
+    <div class="section-head">
+      <h2>Service Commission Rates</h2>
+      <p>Bharat Connect 80/20 distribution: You get 20% instant cashback on every completed service.</p>
     </div>
-    <div class="comm-grid">
-      <div class="comm-card">
-        <div class="comm-title">📱 Mobile Recharge</div>
-        <div>Base Rate: <strong>2.0% Commission</strong></div>
-        <div class="comm-split">
-          <span>Your Share (20%):</span>
-          <span class="user-share">+0.40% CashBack</span>
-        </div>
-      </div>
-      <div class="comm-card">
-        <div class="comm-title">📺 DTH Recharge</div>
-        <div>Base Rate: <strong>2.5% Commission</strong></div>
-        <div class="comm-split">
-          <span>Your Share (20%):</span>
-          <span class="user-share">+0.50% CashBack</span>
-        </div>
-      </div>
-      <div class="comm-card">
-        <div class="comm-title">🧾 Utility Bill Payment</div>
-        <div>Flat Commission: <strong>₹5.00 / bill</strong></div>
-        <div class="comm-split">
-          <span>Your Share (20%):</span>
-          <span class="user-share">+₹1.00 CashBack</span>
-        </div>
-      </div>
-      <div class="comm-card">
-        <div class="comm-title">🏦 AEPS & Money Transfer</div>
-        <div>Flat Commission: <strong>₹10.00 / txn</strong></div>
-        <div class="comm-split">
-          <span>Your Share (20%):</span>
-          <span class="user-share">+₹2.00 CashBack</span>
-        </div>
-      </div>
-    </div>
+    <table class="comm-table">
+      <thead>
+        <tr>
+          <th>Service Name</th>
+          <th>Base Commission</th>
+          <th>Your Instant CashBack (20%)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>📱 Mobile Recharge</td>
+          <td>2.0%</td>
+          <td><span class="user-share-badge">+0.40% CashBack</span></td>
+        </tr>
+        <tr>
+          <td>📺 DTH Recharge</td>
+          <td>2.5%</td>
+          <td><span class="user-share-badge">+0.50% CashBack</span></td>
+        </tr>
+        <tr>
+          <td>🧾 Utility Bill Payment</td>
+          <td>₹5.00 / bill</td>
+          <td><span class="user-share-badge">+₹1.00 CashBack</span></td>
+        </tr>
+        <tr>
+          <td>💸 Money Transfer</td>
+          <td>₹10.00 / txn</td>
+          <td><span class="user-share-badge">+₹2.00 CashBack</span></td>
+        </tr>
+        <tr>
+          <td>🏦 AEPS Services</td>
+          <td>₹10.00 / txn</td>
+          <td><span class="user-share-badge">+₹2.00 CashBack</span></td>
+        </tr>
+        <tr>
+          <td>✨ Other Digital Services</td>
+          <td>2.0%</td>
+          <td><span class="user-share-badge">+0.40% CashBack</span></td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
-  <!-- Available Services -->
+  <!-- Available Services Grid -->
   <div class="card">
     <div class="section-head">
       <h2>Available Services</h2>
-      <p>Select a service to pay instantly using your wallet balance.</p>
+      <p>Tap any service card to proceed directly to recharge or bill payment.</p>
     </div>
     <div class="grid">
       <!-- Service 1 -->
-      <div class="service">
+      <div class="service" onclick="openServiceModal('mobile')">
         <div>
           <div class="service-icon">📱</div>
           <h3>Mobile Recharge</h3>
-          <p>Instant prepaid mobile recharge for supported operators.</p>
+          <p>Instant prepaid mobile recharge for all Indian operators.</p>
         </div>
-        <div>
-          <div class="price">₹199.00</div>
-          <button class="btn btn-primary" onclick="payService('Mobile Recharge', 199.00, 0.02)">Pay Now</button>
-        </div>
+        <div class="service-footer">Proceed to Recharge <span>→</span></div>
       </div>
+
       <!-- Service 2 -->
-      <div class="service">
+      <div class="service" onclick="openServiceModal('dth')">
         <div>
           <div class="service-icon">📺</div>
           <h3>DTH Recharge</h3>
-          <p>Access fast recharge options for supported DTH providers.</p>
+          <p>Fast recharge for Tata Play, Airtel DTH, Dish TV, and more.</p>
         </div>
-        <div>
-          <div class="price">₹299.00</div>
-          <button class="btn btn-primary" onclick="payService('DTH Recharge', 299.00, 0.025)">Pay Now</button>
-        </div>
+        <div class="service-footer">Proceed to DTH <span>→</span></div>
       </div>
+
       <!-- Service 3 -->
-      <div class="service">
+      <div class="service" onclick="openServiceModal('utility')">
         <div>
           <div class="service-icon">🧾</div>
           <h3>Utility Bill Payment</h3>
-          <p>Clear electricity, water, and gas utility bills in one place.</p>
+          <p>Clear electricity, water, gas, and broadband bills instantly.</p>
         </div>
-        <div>
-          <div class="price">₹499.00</div>
-          <button class="btn btn-primary" onclick="payService('Utility Bill Payment', 499.00, 5.00, true)">Pay Now</button>
-        </div>
+        <div class="service-footer">Pay Utility Bill <span>→</span></div>
       </div>
+
       <!-- Service 4 -->
-      <div class="service">
+      <div class="service" onclick="openServiceModal('transfer')">
         <div>
           <div class="service-icon">💸</div>
           <h3>Money Transfer</h3>
-          <p>Instant peer-to-peer and bank account wallet transfer.</p>
+          <p>Instant IMPS/NEFT bank account transfers across India.</p>
         </div>
-        <div>
-          <div class="price">₹1000.00</div>
-          <button class="btn btn-primary" onclick="payService('Money Transfer', 1000.00, 10.00, true)">Pay Now</button>
-        </div>
+        <div class="service-footer">Send Money <span>→</span></div>
       </div>
+
       <!-- Service 5 -->
-      <div class="service">
+      <div class="service" onclick="openServiceModal('aeps')">
         <div>
           <div class="service-icon">🏦</div>
           <h3>AEPS Services</h3>
-          <p>Aadhaar-enabled banking and cash withdrawal services.</p>
+          <p>Aadhaar-enabled banking, mini statements, and withdrawals.</p>
         </div>
-        <div>
-          <div class="price">₹100.00</div>
-          <button class="btn btn-primary" onclick="payService('AEPS Services', 100.00, 10.00, true)">Pay Now</button>
-        </div>
+        <div class="service-footer">Access AEPS <span>→</span></div>
       </div>
+
       <!-- Service 6 -->
-      <div class="service">
+      <div class="service" onclick="openServiceModal('other')">
         <div>
           <div class="service-icon">✨</div>
           <h3>Other Digital Services</h3>
-          <p>FastTag, gift cards, and additional digital wallet top-ups.</p>
+          <p>FastTag top-up, Google Play codes, and OTT subscriptions.</p>
         </div>
-        <div>
-          <div class="price">₹500.00</div>
-          <button class="btn btn-primary" onclick="payService('Other Digital Services', 500.00, 0.02)">Pay Now</button>
-        </div>
+        <div class="service-footer">Explore Services <span>→</span></div>
       </div>
     </div>
   </div>
 
-  <!-- Recent Activity -->
+  <!-- Recent Transactions -->
   <div class="card">
     <div class="section-head">
       <h2>Recent Transactions & Commission Earned</h2>
@@ -220,6 +222,18 @@ footer{border-top:1px solid var(--line);padding:20px 0;color:var(--muted);font-s
     </div>
   </div>
 </main>
+
+<!-- Dynamic Service Action Modal -->
+<div class="backdrop" id="serviceModal">
+  <div class="modal">
+    <button class="close" id="closeModal">×</button>
+    <h2 id="modalTitle" style="margin:0 0 14px;font-size:1.35rem;">Service Action</h2>
+    
+    <div id="modalFormContent">
+      <!-- Dynamic form fields injected here -->
+    </div>
+  </div>
+</div>
 
 <footer>
   <div class="container" style="text-align:center;">
@@ -237,6 +251,10 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 const messageBox = document.getElementById('message');
 const balanceEl = document.getElementById('walletBalance');
 const txList = document.getElementById('txList');
+const serviceModal = document.getElementById('serviceModal');
+const closeModal = document.getElementById('closeModal');
+const modalTitle = document.getElementById('modalTitle');
+const modalFormContent = document.getElementById('modalFormContent');
 
 function showMsg(text, type='error') {
   messageBox.textContent = text;
@@ -286,7 +304,7 @@ async function loadTransactions() {
   `).join('');
 }
 
-// Add Top-Up
+// Top Up
 document.getElementById('topupBtn').addEventListener('click', async () => {
   messageBox.className = 'message';
   const topupAmount = 500.00;
@@ -313,26 +331,122 @@ document.getElementById('topupBtn').addEventListener('click', async () => {
   loadTransactions();
 });
 
-// Pay for service & calculate 80/20 Bharat Connect Commission
-window.payService = async function(title, price, commRate, isFlat = false) {
+// Interactive Service Pages Modal
+window.openServiceModal = function(type) {
+  if (type === 'mobile') {
+    modalTitle.textContent = '📱 Mobile Recharge';
+    modalFormContent.innerHTML = `
+      <div class="form-group">
+        <label>Mobile Number</label>
+        <input type="tel" class="form-control" placeholder="Enter 10-digit mobile number" maxlength="10">
+      </div>
+      <div class="form-group">
+        <label>Select Plan to Pay Instantly</label>
+        <button class="btn btn-auto-pay" onclick="executeAutoPay('Mobile Recharge', 199.00, 0.02, false)" style="margin-top:6px;">Pay ₹199 (1.5GB/day 28d) →</button>
+        <button class="btn btn-auto-pay" onclick="executeAutoPay('Mobile Recharge', 299.00, 0.02, false)">Pay ₹299 (2GB/day 28d) →</button>
+        <button class="btn btn-auto-pay" onclick="executeAutoPay('Mobile Recharge', 666.00, 0.02, false)">Pay ₹666 (1.5GB/day 84d) →</button>
+      </div>
+    `;
+  } else if (type === 'dth') {
+    modalTitle.textContent = '📺 DTH Recharge';
+    modalFormContent.innerHTML = `
+      <div class="form-group">
+        <label>Smartcard / VC Number</label>
+        <input type="text" class="form-control" placeholder="Enter VC Number">
+      </div>
+      <div class="form-group">
+        <label>Select Plan to Pay Instantly</label>
+        <button class="btn btn-auto-pay" onclick="executeAutoPay('DTH Recharge', 250.00, 0.025, false)" style="margin-top:6px;">Pay ₹250 (Monthly Standard) →</button>
+        <button class="btn btn-auto-pay" onclick="executeAutoPay('DTH Recharge', 450.00, 0.025, false)">Pay ₹450 (Monthly HD Sports) →</button>
+      </div>
+    `;
+  } else if (type === 'utility') {
+    modalTitle.textContent = '🧾 Utility Bill Payment';
+    modalFormContent.innerHTML = `
+      <div class="form-group">
+        <label>Consumer Number</label>
+        <input type="text" class="form-control" placeholder="Enter Consumer ID">
+      </div>
+      <div class="form-group">
+        <label>Enter Bill Amount (₹)</label>
+        <input type="number" class="form-control" id="customPriceInput" placeholder="e.g. 500">
+      </div>
+      <button class="btn btn-auto-pay" onclick="submitCustomInput('Utility Bill Payment', 5.00, true)">Process Payment →</button>
+    `;
+  } else if (type === 'transfer') {
+    modalTitle.textContent = '💸 Money Transfer';
+    modalFormContent.innerHTML = `
+      <div class="form-group">
+        <label>Account Number</label>
+        <input type="text" class="form-control" placeholder="Enter Account Number">
+      </div>
+      <div class="form-group">
+        <label>IFSC Code</label>
+        <input type="text" class="form-control" placeholder="e.g. SBIN0001234">
+      </div>
+      <div class="form-group">
+        <label>Transfer Amount (₹)</label>
+        <input type="number" class="form-control" id="customPriceInput" placeholder="e.g. 1000">
+      </div>
+      <button class="btn btn-auto-pay" onclick="submitCustomInput('Money Transfer', 10.00, true)">Process Transfer →</button>
+    `;
+  } else if (type === 'aeps') {
+    modalTitle.textContent = '🏦 AEPS Services';
+    modalFormContent.innerHTML = `
+      <div class="form-group">
+        <label>Aadhaar / Virtual ID</label>
+        <input type="text" class="form-control" placeholder="Enter Aadhaar Number" maxlength="12">
+      </div>
+      <div class="form-group">
+        <label>Withdrawal Amount (₹)</label>
+        <input type="number" class="form-control" id="customPriceInput" placeholder="e.g. 100">
+      </div>
+      <button class="btn btn-auto-pay" onclick="submitCustomInput('AEPS Cash Withdrawal', 10.00, true)">Process Withdrawal →</button>
+    `;
+  } else {
+    modalTitle.textContent = '✨ FastTag & Digital Services';
+    modalFormContent.innerHTML = `
+      <div class="form-group">
+        <label>Vehicle / Account Reg. Number</label>
+        <input type="text" class="form-control" placeholder="Enter Vehicle Reg. Number">
+      </div>
+      <div class="form-group">
+        <label>Top-Up Amount (₹)</label>
+        <input type="number" class="form-control" id="customPriceInput" placeholder="e.g. 500">
+      </div>
+      <button class="btn btn-auto-pay" onclick="submitCustomInput('FastTag / Digital Service', 0.02, false)">Process Top-Up →</button>
+    `;
+  }
+
+  serviceModal.classList.add('show');
+};
+
+window.submitCustomInput = function(title, commRate, isFlat) {
+  const priceInput = document.getElementById('customPriceInput');
+  const price = parseFloat(priceInput.value);
+  if (!price || price <= 0) {
+    alert('Please enter a valid amount.');
+    return;
+  }
+  executeAutoPay(title, price, commRate, isFlat);
+};
+
+window.executeAutoPay = async function(title, price, commRate, isFlat) {
   messageBox.className = 'message';
+
+  const totalComm = isFlat ? commRate : price * commRate;
+  const userShare = totalComm * 0.20;
 
   const { data: wallet } = await supabase.from('wallets').select('balance').eq('id', currentUser.id).single();
   const currentBalance = wallet ? parseFloat(wallet.balance) : 0;
 
   if (currentBalance < price) {
     showMsg(`Insufficient wallet balance! Please top-up ₹${(price - currentBalance).toFixed(2)} more.`);
+    serviceModal.classList.remove('show');
     return;
   }
 
-  // Calculate 100% total commission
-  const totalCommission = isFlat ? commRate : price * commRate;
-  
-  // Split 80% Admin / 20% User
-  const userCommission = totalCommission * 0.20;
-
-  // Deduct payment price and instantly add 20% Cashback back to user wallet balance
-  const finalBalance = currentBalance - price + userCommission;
+  const finalBalance = currentBalance - price + userShare;
 
   const { error: walletError } = await supabase.from('wallets').update({ balance: finalBalance }).eq('id', currentUser.id);
   if (walletError) {
@@ -348,18 +462,21 @@ window.payService = async function(title, price, commRate, isFlat = false) {
     description: `Paid: ${title}`
   });
 
-  // Log 20% Commission CashBack Transaction
+  // Log 20% Commission CashBack
   await supabase.from('transactions').insert({
     user_id: currentUser.id,
-    amount: userCommission,
+    amount: userShare,
     type: 'commission',
     description: `Bharat Connect CashBack (20% Share): ${title}`
   });
 
-  showMsg(`Payment successful for "${title}"! You earned ₹${userCommission.toFixed(2)} instant CashBack (20% share).`, 'ok');
+  serviceModal.classList.remove('show');
+  showMsg(`Payment successful for "${title}"! Earned ₹${userShare.toFixed(2)} instant CashBack!`, 'ok');
   loadWallet();
   loadTransactions();
 };
+
+closeModal.addEventListener('click', () => serviceModal.classList.remove('show'));
 
 document.getElementById('logoutBtn').addEventListener('click', async () => {
   await supabase.auth.signOut();
@@ -371,3 +488,4 @@ initDashboard();
 </script>
 </body>
 </html>
+  
