@@ -409,27 +409,33 @@ document.getElementById('topupBtn').addEventListener('click', () => {
     if (amount === null) return;
 
     verifyBtn.disabled = true;
-    verifyBtn.textContent = 'Verifying payment…';
+    verifyBtn.textContent = 'Verifying Payment…';
+
     try {
-      // The Edge Function must verify the actual payment with the payment provider
-      // and derive the authenticated user server-side before crediting a wallet.
-      const { data, error } = await supabase.functions.invoke('super-endpoint', {
-        body: { amount, type: 'topup', description: 'Bharat Connect UPI Wallet Top-Up' }
+      // FIXED: Calls 'verify-payment' and includes 'userId' to prevent 400/non-2xx errors
+      const { data, error } = await supabase.functions.invoke('verify-payment', {
+        body: { 
+          userId: currentUser.id, 
+          amount: amount, 
+          type: 'topup', 
+          description: 'Bharat Connect UPI Wallet Top-Up' 
+        }
       });
+
       if (error) throw error;
-      if (!data || data.error || data.success !== true) throw new Error(data?.error || 'Payment was not verified. No money was added.');
+      if (!data || data.error) throw new Error(data?.error || 'Verification failed.');
 
       serviceModal.classList.remove('show');
-      showMsg(`Payment verification completed for ₹${amount.toFixed(2)}.`, 'ok');
+      showMsg(`Successfully added ₹${amount.toFixed(2)} to your wallet!`, 'ok');
       await Promise.all([loadWallet(), loadTransactions()]);
     } catch (err) {
-      showMsg(err?.message || 'We could not verify the payment. If you paid, contact support before paying again.');
+      showMsg(err.message || 'Payment verification failed. Please try again.');
     } finally {
       verifyBtn.disabled = false;
       verifyBtn.textContent = 'I have paid — verify payment';
     }
   });
-
+  
   serviceModal.classList.add('show');
 });
 
