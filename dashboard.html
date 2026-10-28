@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b57d0">
+<title>Dashboard & Wallet | PaySaathi</title>
+<style>
+:root{--blue:#0b57d0;--dark:#073b91;--light:#eaf2ff;--ink:#172033;--muted:#667085;--line:#e5eaf2;--page:#f6f8fc;--green:#137a4b;--red:#b42318;--bharat:#e65100}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:var(--page);line-height:1.55;min-height:100vh;display:flex;flex-direction:column}
+a{text-decoration:none;color:inherit}button{font:inherit;cursor:pointer}
+.container{width:min(1120px,calc(100% - 32px));margin:auto}
+header{position:sticky;top:0;z-index:10;background:#ffffffef;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav{min-height:70px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:850;font-size:1.25rem}
+.mark{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;color:white;background:linear-gradient(145deg,#1675f5,#073b91)}
+.brand-name span{color:var(--blue)}
+main{flex:1;padding:24px 0 40px}
+.card{background:white;border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:0 5px 18px #142d5a09;margin-bottom:24px}
+
+/* Wallet Banner */
+.wallet-box{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(120deg,var(--blue),var(--dark));color:white;border-radius:20px;padding:24px 28px}
+.balance-amount{font-size:2.2rem;font-weight:800;margin:4px 0 0}
+.btn{border:0;border-radius:12px;padding:10px 18px;font-weight:750;display:inline-flex;justify-content:center;align-items:center;gap:8px;cursor:pointer;transition:0.15s}
+.btn-topup{background:white;color:var(--blue)}
+.btn-topup:hover{background:#eaf2ff}
+.btn-logout{background:#fff0ef;color:var(--red);border:1px solid #ffd5d2}
+.btn-logout:hover{background:#ffe3e1}
+.btn-auto-pay{background:var(--green);color:white;width:100%;margin-top:14px;padding:12px;border-radius:12px;font-size:0.95rem;font-weight:750;border:0}
+.btn-auto-pay:hover{background:#0e623b}
+.btn-secondary{background:var(--light);color:var(--blue);border:1px solid var(--line)}
+
+.section-head{margin-bottom:18px}
+.section-head h2{margin:0;font-size:1.35rem;letter-spacing:-.4px}
+.section-head p{margin:4px 0 0;color:var(--muted);font-size:.92rem}
+
+/* Quick Actions Strip */
+.quick-chip-container{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;margin-bottom:20px}
+.chip{background:white;border:1px solid var(--line);padding:8px 16px;border-radius:999px;font-size:0.85rem;font-weight:700;white-space:nowrap;cursor:pointer;display:flex;align-items:center;gap:6px;transition:0.15s}
+.chip:hover{border-color:var(--blue);color:var(--blue);background:#f8fbff}
+
+/* Commission Table Styling */
+.comm-table{width:100%;border-collapse:collapse;margin-top:10px}
+.comm-table th,.comm-table td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--line);font-size:0.9rem}
+.comm-table th{background:#f8fafc;color:var(--muted);font-weight:700}
+.user-share-badge{background:#eaf8f0;color:var(--green);padding:4px 10px;border-radius:999px;font-weight:800;font-size:0.8rem;display:inline-block}
+
+/* Service Grid */
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.service{width:100%;text-align:left;border:1px solid var(--line);border-radius:19px;padding:22px;background:white;color:var(--ink);box-shadow:0 5px 18px #142d5a09;transition:.18s;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;position:relative}
+.service:hover{transform:translateY(-4px);border-color:#a9c8ff;box-shadow:0 12px 34px #142d5a17}
+.service-icon{width:48px;height:48px;display:grid;place-items:center;border-radius:15px;background:var(--light);font-size:1.4rem;margin-bottom:12px}
+.service h3{margin:0 0 6px;font-size:1.05rem}
+.service p{color:var(--muted);margin:0 0 14px;font-size:.88rem}
+.service-footer{display:flex;justify-content:space-between;align-items:center;border-top:1px dashed var(--line);padding-top:12px;color:var(--blue);font-weight:800;font-size:0.88rem}
+
+.message{padding:12px 16px;border-radius:12px;font-size:.9rem;margin-bottom:20px;display:none}
+.message.show{display:block}
+.message.error{background:#fff0ef;color:var(--red);border:1px solid #ffd5d2}
+.message.ok{background:#eaf8f0;color:var(--green);border:1px solid #c7ecd6}
+
+.tx-list{display:grid;gap:10px;max-height:300px;overflow-y:auto}
+.tx-item{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#f8fafc;border-radius:12px;border:1px solid var(--line);font-size:.9rem}
+
+/* Modal Styling */
+.backdrop{position:fixed;inset:0;z-index:30;display:none;align-items:center;justify-content:center;padding:18px;background:#0c172d94;backdrop-filter:blur(5px)}
+.backdrop.show{display:flex}
+.modal{width:min(480px,100%);position:relative;background:white;border-radius:24px;padding:28px;box-shadow:0 25px 80px #0004;max-height:90vh;overflow-y:auto}
+.close{position:absolute;right:16px;top:16px;border:0;background:#f1f4f9;color:#475467;width:36px;height:36px;border-radius:50%;font-size:1.3rem;cursor:pointer}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:0.85rem;font-weight:700;margin-bottom:6px;color:var(--ink)}
+.form-control{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font-size:0.95rem;outline:none;background:#fff}
+.form-control:focus{border-color:var(--blue);box-shadow:0 0 0 3px #0b57d014}
+
+/* Dynamic Plan Search & Filter UI */
+.plan-tabs{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;padding-bottom:4px}
+.plan-tab{background:#f1f4f9;border:0;padding:6px 14px;border-radius:8px;font-size:0.8rem;font-weight:700;color:var(--muted);white-space:nowrap}
+.plan-tab.active{background:var(--blue);color:white}
+.plan-group{display:grid;gap:10px;margin:12px 0 16px;max-height:220px;overflow-y:auto}
+.plan-option{display:flex;align-items:center;gap:12px;width:100%;padding:14px;border:1.5px solid var(--line);border-radius:14px;background:#fff;text-align:left;color:var(--ink);transition:.15s}
+.plan-option:hover{border-color:#9bbcf7;background:#f8fbff}
+.plan-option.selected{border-color:var(--blue);background:#eef5ff;box-shadow:0 0 0 2px #0b57d014}
+.plan-radio{width:19px;height:19px;border:2px solid #aab5c5;border-radius:50%;flex-shrink:0;display:grid;place-items:center}
+.plan-option.selected .plan-radio{border-color:var(--blue)}
+.plan-option.selected .plan-radio:after{content:"";width:9px;height:9px;background:var(--blue);border-radius:50%}
+.plan-main{flex:1;min-width:0}
+.plan-price{font-size:1.12rem;font-weight:850;color:var(--blue);white-space:nowrap}
+.plan-title{display:block;font-weight:750;font-size:.92rem}
+.plan-meta{display:block;color:var(--muted);font-size:.8rem;margin-top:2px}
+.plan-tag{display:inline-block;background:#eaf8f0;color:var(--green);border-radius:6px;padding:3px 6px;font-size:.7rem;font-weight:800;margin-top:5px}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+
+footer{border-top:1px solid var(--line);padding:20px 0;color:var(--muted);font-size:.88rem;background:white}
+@media(max-width:800px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.container{width:calc(100% - 24px)}.grid{grid-template-columns:1fr}.wallet-box{flex-direction:column;align-items:flex-start;gap:16px}.btn-topup{width:100%}}
+</style>
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <a class="brand" href="dashboard.html">
+      <span class="mark">P</span>
+      <span class="brand-name">Pay<span>Saathi</span></span>
+    </a>
+    <button class="btn btn-logout" id="logoutBtn">Sign Out</button>
+  </div>
+</header>
+
+<main class="container">
+  <div id="message" class="message"></div>
+
+  <!-- Wallet Overview -->
+  <div class="card">
+    <div class="wallet-box">
+      <div>
+        <span style="opacity:0.85;font-size:0.88rem;">Available Balance</span>
+        <div class="balance-amount" id="walletBalance">₹0.00</div>
+      </div>
+      <button class="btn btn-topup" id="topupBtn" type="button">＋ Add Money</button>
+    </div>
+  </div>
+
+  <!-- Quick Actions Chip Bar -->
+  <div class="quick-chip-container">
+    <div class="chip" onclick="openServiceModal('mobile')">📱 Mobile Recharge</div>
+    <div class="chip" onclick="openServiceModal('dth')">📺 DTH Recharge</div>
+    <div class="chip" onclick="openServiceModal('utility')">⚡ Electricity Bill</div>
+    <div class="chip" onclick="openServiceModal('transfer')">💸 Instant Money Transfer</div>
+    <div class="chip" onclick="openServiceModal('aeps')">🏦 AEPS Mini Banking</div>
+  </div>
+
+  <!-- Services Grid -->
+  <div class="card">
+    <div class="section-head">
+      <h2>Available Services</h2>
+      <p>Select a digital service to begin live transaction processing.</p>
+    </div>
+    <div class="grid">
+      <div class="service" onclick="openServiceModal('mobile')">
+        <div>
+          <div class="service-icon">📱</div>
+          <h3>Mobile Recharge</h3>
+          <p>Instant prepaid recharge across all Indian operators with live pack discovery.</p>
+        </div>
+        <div class="service-footer">Proceed to Recharge <span>→</span></div>
+      </div>
+
+      <div class="service" onclick="openServiceModal('dth')">
+        <div>
+          <div class="service-icon">📺</div>
+          <h3>DTH Recharge</h3>
+          <p>Tata Play, Airtel Digital TV, Dish TV, and D2H monthly top-ups.</p>
+        </div>
+        <div class="service-footer">Proceed to DTH <span>→</span></div>
+      </div>
+
+      <div class="service" onclick="openServiceModal('utility')">
+        <div>
+          <div class="service-icon">🧾</div>
+          <h3>Utility Bill Payment</h3>
+          <p>Instant settlement for Electricity, Water, Gas, and Broadband bills.</p>
+        </div>
+        <div class="service-footer">Pay Utility Bill <span>→</span></div>
+      </div>
+
+      <div class="service" onclick="openServiceModal('transfer')">
+        <div>
+          <div class="service-icon">💸</div>
+          <h3>Money Transfer</h3>
+          <p>Instant IMPS/NEFT bank transfers with account name verification.</p>
+        </div>
+        <div class="service-footer">Send Money <span>→</span></div>
+      </div>
+
+      <div class="service" onclick="openServiceModal('aeps')">
+        <div>
+          <div class="service-icon">🏦</div>
+          <h3>AEPS Services</h3>
+          <p>Aadhaar-enabled cash withdrawals, balance inquiry, and mini-statements.</p>
+        </div>
+        <div class="service-footer">Access AEPS <span>→</span></div>
+      </div>
+
+      <div class="service" onclick="openServiceModal('other')">
+        <div>
+          <div class="service-icon">✨</div>
+          <h3>Digital Vouchers & FastTag</h3>
+          <p>FastTag recharges, Google Play redeem codes, and digital subscriptions.</p>
+        </div>
+        <div class="service-footer">Explore Services <span>→</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Commission Rates Chart -->
+  <div class="card">
+    <div class="section-head">
+      <h2>Service Cashback & Commission Structure</h2>
+      <p>Instant cashback credited directly to your wallet upon successful transaction completion.</p>
+    </div>
+    <table class="comm-table">
+      <thead>
+        <tr>
+          <th>Service Name</th>
+          <th>Standard Commission</th>
+          <th>Your Earned Cashback</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>📱 Mobile Recharge</td>
+          <td>2.0%</td>
+          <td><span class="user-share-badge">+0.40% Instant Cashback</span></td>
+        </tr>
+        <tr>
+          <td>📺 DTH Recharge</td>
+          <td>2.5%</td>
+          <td><span class="user-share-badge">+0.50% Instant Cashback</span></td>
+        </tr>
+        <tr>
+          <td>🧾 Utility Bill Payment</td>
+          <td>₹5.00 / bill</td>
+          <td><span class="user-share-badge">+₹1.00 Cashback</span></td>
+        </tr>
+        <tr>
+          <td>💸 Money Transfer</td>
+          <td>₹10.00 / txn</td>
+          <td><span class="user-share-badge">+₹2.00 Cashback</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Transaction History -->
+  <div class="card">
+    <div class="section-head">
+      <h2>Recent Transactions & Earnings</h2>
+    </div>
+    <div class="tx-list" id="txList">
+      <p style="color:var(--muted);font-size:0.88rem">Loading transactions...</p>
+    </div>
+  </div>
+</main>
+
+<!-- Dynamic Action Modal -->
+<div class="backdrop" id="serviceModal">
+  <div class="modal">
+    <button class="close" id="closeModal">×</button>
+    <h2 id="modalTitle" style="margin:0 0 14px;font-size:1.35rem;">Service Action</h2>
+    <div id="modalFormContent"></div>
+  </div>
+</div>
+
+<footer>
+  <div class="container" style="text-align:center;">
+    © <span id="year"></span> PaySaathi. Powered by Bharat Connect Architecture.
+  </div>
+</footer>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const SUPABASE_URL = 'https://hhqcycwfvxoxjizlbivv.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_NdrUA-ubf67oW5hiS-Yw4A_-r2xbJRV';
+const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+const messageBox = document.getElementById('message');
+const balanceEl = document.getElementById('walletBalance');
+const txList = document.getElementById('txList');
+const serviceModal = document.getElementById('serviceModal');
+const closeModal = document.getElementById('closeModal');
+const modalTitle = document.getElementById('modalTitle');
+const modalFormContent = document.getElementById('modalFormContent');
+
+let currentUser = null;
+
+function showMsg(text, type='error') {
+  messageBox.textContent = text;
+  messageBox.className = 'message show ' + type;
+}
+
+async function initDashboard() {
+  try {
+    const { data, error } = await supabase.auth.getSession();
+    if (error) throw error;
+    if (!data?.session) {
+      window.location.href = 'login.html';
+      return;
+    }
+    currentUser = data.session.user;
+    await supabase.from('wallets').upsert({ id: currentUser.id }, { onConflict: 'id', ignoreDuplicates: true });
+    await Promise.all([loadWallet(), loadTransactions()]);
+  } catch (err) {
+    console.error('Init error:', err);
+    showMsg('Could not load dashboard. Please refresh.');
+  }
+}
+
+async function loadWallet() {
+  if (!currentUser) return;
+  const { data, error } = await supabase.from('wallets').select('balance').eq('id', currentUser.id).single();
+  if (data) balanceEl.textContent = `₹${Number(data.balance || 0).toFixed(2)}`;
+}
+
+async function loadTransactions() {
+  if (!currentUser) return;
+  const { data, error } = await supabase.from('transactions')
+    .select('*').eq('user_id', currentUser.id)
+    .order('created_at', { ascending: false }).limit(10);
+    
+  if (error || !data || data.length === 0) {
+    txList.innerHTML = '<p style="color:var(--muted);font-size:0.88rem">No recent transactions found.</p>';
+    return;
+  }
+
+  txList.innerHTML = data.map(tx => `
+    <div class="tx-item">
+      <div>
+        <strong>${tx.description}</strong>
+        <div style="font-size:0.78rem;color:var(--muted)">${new Date(tx.created_at).toLocaleString()}</div>
+      </div>
+      <div style="font-weight:850;color:${tx.type === 'topup' || tx.type === 'commission' ? 'var(--green)' : 'var(--ink)'}">
+        ${tx.type === 'topup' || tx.type === 'commission' ? '+' : '-'}₹${parseFloat(tx.amount).toFixed(2)}
+      </div>
+    </div>
+  `).join('');
+}
+
+// Seamless Top-Up Flow
+document.getElementById('topupBtn').addEventListener('click', () => {
+  if (!currentUser) return;
+
+  const merchantVPA = 'Mr.rajbongshi.1@superyes';
+  const merchantName = 'PaySaathi';
+
+  modalTitle.textContent = 'Add Money to Wallet';
+  modalFormContent.innerHTML = `
+    <p style="color:var(--muted);margin:0 0 16px;font-size:0.88rem">Enter amount between ₹1 and ₹2,000 to add funds via UPI instant verification.</p>
+    <div class="form-group">
+      <label>Amount (₹)</label>
+      <input class="form-control" id="topupAmountInput" type="number" min="1" max="2000" placeholder="e.g. 500" required>
+    </div>
+    <button id="prepareTopupBtn" class="btn btn-auto-pay" type="button">Generate QR Code</button>
+    <div id="topupPaymentArea" style="display:none;text-align:center;padding-top:14px">
+      <p id="topupPayLabel" style="font-weight:800;font-size:1.1rem;margin:0 0 10px"></p>
+      <div style="display:inline-block;background:white;padding:10px;border:1px solid var(--line);border-radius:16px">
+        <img id="topupQr" alt="UPI QR" width="180" height="180" style="display:block">
+      </div>
+      <a id="topupUpiLink" class="btn btn-auto-pay" style="background:var(--blue);display:flex;margin-top:12px">Pay via Installed App</a>
+      <button id="verifyTopupBtn" class="btn btn-auto-pay" type="button" style="background:var(--dark)">Verify Payment Settlement</button>
+    </div>
+  `;
+
+  const amountInput = document.getElementById('topupAmountInput');
+  const paymentArea = document.getElementById('topupPaymentArea');
+  const qr = document.getElementById('topupQr');
+  const payLabel = document.getElementById('topupPayLabel');
+  const upiLink = document.getElementById('topupUpiLink');
+  const prepareBtn = document.getElementById('prepareTopupBtn');
+  const verifyBtn = document.getElementById('verifyTopupBtn');
+
+  prepareBtn.addEventListener('click', () => {
+    const amt = Number(amountInput.value);
+    if (!amt || amt < 1 || amt > 2000) return alert('Enter a valid amount (₹1-₹2000)');
+
+    const upiUrl = `upi://pay?pa=${encodeURIComponent(merchantVPA)}&pn=${encodeURIComponent(merchantName)}&am=${amt}&cu=INR&tn=${encodeURIComponent('Wallet TopUp')}`;
+    qr.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiUrl)}`;
+    payLabel.textContent = `Scan to Pay ₹${amt.toFixed(2)}`;
+    upiLink.href = upiUrl;
+    paymentArea.style.display = 'block';
+    prepareBtn.style.display = 'none';
+  });
+
+  verifyBtn.addEventListener('click', async () => {
+    const amt = Number(amountInput.value);
+    verifyBtn.disabled = true;
+    verifyBtn.textContent = 'Verifying Server Settlement...';
+
+    try {
+      const { data, error } = await supabase.functions.invoke('verify-payment', {
+        body: { userId: currentUser.id, amount: amt, type: 'topup', description: 'Instant UPI Wallet Add' }
+      });
+      if (error || data?.error) throw new Error(data?.error || 'Payment verification failed.');
+
+      serviceModal.classList.remove('show');
+      showMsg(`Successfully credited ₹${amt.toFixed(2)} to your wallet!`, 'ok');
+      await Promise.all([loadWallet(), loadTransactions()]);
+    } catch (err) {
+      showMsg(err.message, 'error');
+    } finally {
+      verifyBtn.disabled = false;
+      verifyBtn.textContent = 'Verify Payment Settlement';
+    }
+  });
+
+  serviceModal.classList.add('show');
+});
+
+// Service Pages Modal Workflow
+window.openServiceModal = function(type) {
+  if (type === 'mobile') {
+    modalTitle.textContent = '📱 Mobile Recharge';
+    modalFormContent.innerHTML = `
+      <div class="form-group">
+        <label>Mobile Number</label>
+        <input id="rechargePhone" type="tel" class="form-control" maxlength="10" placeholder="10-digit Mobile Number" required>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="form-group">
+          <label>Operator</label>
+          <select id="rechargeOperator" class="form-control">
+            <option value="">Select Operator</option>
+            <option value="JIO">Jio</option>
+            <option value="AIRTEL">Airtel</option>
+            <option value="VI">Vi (Vodafone Idea)</option>
+            <option value="BSNL">BSNL</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Circle / Region</label>
+           <select id="rechargeCircle" class="form-control">
+            <option value="Assam">Assam</option>
+            <option value="NE">North East</option>
+            <option value="WB">West Bengal</option>
+            <option value="DL">Delhi NCR</option>
+            <option value="MH">Mumbai</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Select Plan</label>
+        <div class="plan-tabs">
+          <button class="plan-tab active">Popular</button>
+          <button class="plan-tab">Data Packs</button>
+          <button class="plan-tab">Unlimited</button>
+        </div>
+        <div class="plan-group" id="mobilePlanGroup">
+          <button type="button" class="plan-option" data-price="299" data-title="2GB/Day Pack">
+            <span class="plan-radio"></span>
+            <span class="plan-main">
+              <span class="plan-title">2GB/Day + Unlimited Calls</span>
+              <span class="plan-meta">28 Days Validity · 100 SMS/Day</span>
+              <span class="plan-tag">POPULAR</span>
+            </span>
+            <span class="plan-price">₹299</span>
+          </button>
+          <button type="button" class="plan-option" data-price="666" data-title="1.5GB/Day Pack">
+            <span class="plan-radio"></span>
+            <span class="plan-main">
+              <span class="plan-title">1.5GB/Day + Unlimited Calls</span>
+              <span class="plan-meta">84 Days Validity · 100 SMS/Day</span>
+            </span>
+            <span class="plan-price">₹666</span>
+          </button>
+          <button type="button" class="plan-option" data-price="19" data-title="Data Booster">
+            <span class="plan-radio"></span>
+            <span class="plan-main">
+              <span class="plan-title">1GB Data Booster</span>
+              <span class="plan-meta">Base Pack Validity</span>
+            </span>
+            <span class="plan-price">₹19</span>
+          </button>
+        </div>
+      </div>
+      <button class="btn btn-auto-pay" id="processRechargeBtn" type="button" disabled>Complete Recharge</button>
+    `;
+
+    let selectedPlan = null;
+    const phoneInput = document.getElementById('rechargePhone');
+    const opInput = document.getElementById('rechargeOperator');
+    const btn = document.getElementById('processRechargeBtn');
+
+    const validate = () => {
+      btn.disabled = !(selectedPlan && opInput.value && phoneInput.value.length === 10);
+    };
+
+    document.querySelectorAll('#mobilePlanGroup .plan-option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        document.querySelectorAll('#mobilePlanGroup .plan-option').forEach(i => i.classList.remove('selected'));
+        opt.classList.add('selected');
+        selectedPlan = { price: Number(opt.dataset.price), title: opt.dataset.title };
+        validate();
+      });
+    });
+
+    phoneInput.addEventListener('input', validate);
+    opInput.addEventListener('change', validate);
+
+    btn.addEventListener('click', async () => {
+      btn.disabled = true;
+      btn.textContent = 'Processing Recharge...';
+      await window.executeServiceTransaction(`Mobile Recharge (${opInput.value})`, selectedPlan.price, 0.004);
+    });
+  } else if (type === 'dth') {
+    modalTitle.textContent = '📺 DTH Recharge';
+    modalFormContent.innerHTML = `
+      <div class="form-group">
+        <label>DTH Operator</label>
+        <select id="dthOperator" class="form-control">
+          <option value="Tata Play">Tata Play</option>
+          <option value="Airtel Digital TV">Airtel Digital TV</option>
+          <option value="Dish TV">Dish TV</option>
+          <option value="D2H">Videocon D2H</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Subscriber / Customer ID</label>
+        <input id="dthId" type="text" class="form-control" placeholder="Enter VC Number or Registered Mobile">
+      </div>
+      <div class="form-group">
+        <label>Recharge Amount (₹)</label>
+        <input id="dthAmount" type="number" class="form-control" placeholder="e.g. 500">
+      </div>
+      <button class="btn btn-auto-pay" id="dthSubmitBtn" type="button">Process DTH Recharge</button>
+    `;
+
+    document.getElementById('dthSubmitBtn').addEventListener('click', async () => {
+      const amt = Number(document.getElementById('dthAmount').value);
+      const op = document.getElementById('dthOperator').value;
+      if (!amt || amt <= 0) return alert('Enter a valid recharge amount');
+      await window.executeServiceTransaction(`DTH Recharge (${op})`, amt, 0.005);
+    });
+  } else {
+    modalTitle.textContent = '⚡ Utility & Digital Bills';
+    modalFormContent.innerHTML = `
+      <div class="form-group">
+        <label>Consumer Number / Account ID</label>
+        <input type="text" class="form-control" placeholder="Enter Consumer ID">
+      </div>
+      <div class="form-group">
+        <label>Payment Amount (₹)</label>
+        <input type="number" id="genericAmount" class="form-control" placeholder="e.g. 1000">
+      </div>
+      <button class="btn btn-auto-pay" id="genericSubmitBtn" type="button">Process Bill Settlement</button>
+    `;
+    document.getElementById('genericSubmitBtn').addEventListener('click', async () => {
+      const amt = Number(document.getElementById('genericAmount').value);
+      if (!amt || amt <= 0) return alert('Enter a valid bill amount');
+      await window.executeServiceTransaction('Utility Settlement', amt, 0.002);
+    });
+  }
+
+  serviceModal.classList.add('show');
+};
+
+// Unified Transaction Execution Pipeline with Cashback Logic
+window.executeServiceTransaction = async function(description, amount, cashbackRate) {
+  try {
+    const { data: wallet } = await supabase.from('wallets').select('balance').eq('id', currentUser.id).single();
+    if (!wallet || wallet.balance < amount) {
+      throw new Error('Insufficient wallet balance. Please add funds to continue.');
+    }
+
+    // Deduct main amount
+    const newBal = wallet.balance - amount;
+    await supabase.from('wallets').update({ balance: newBal }).eq('id', currentUser.id);
+
+    // Record Debit
+    await supabase.from('transactions').insert({
+      user_id: currentUser.id,
+      amount: amount,
+      type: 'recharge',
+      description: `${description} Successful`
+    });
+
+    // Award Cashback if applicable
+    if (cashbackRate > 0) {
+      const cashbackAmt = amount * cashbackRate;
+      await supabase.from('wallets').update({ balance: newBal + cashbackAmt }).eq('id', currentUser.id);
+      await supabase.from('transactions').insert({
+        user_id: currentUser.id,
+        amount: cashbackAmt,
+        type: 'commission',
+        description: `Cashback Earned for ${description}`
+      });
+    }
+
+    serviceModal.classList.remove('show');
+    showMsg(`Transaction completed successfully!`, 'ok');
+    await Promise.all([loadWallet(), loadTransactions()]);
+  } catch (err) {
+    showMsg(err.message, 'error');
+  }
+};
+
+closeModal.addEventListener('click', () => serviceModal.classList.remove('show'));
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+  await supabase.auth.signOut();
+  window.location.replace('login.html');
+});
+
+document.getElementById('year').textContent = new Date().getFullYear();
+initDashboard();
+</script>
+</body>
+</html>
