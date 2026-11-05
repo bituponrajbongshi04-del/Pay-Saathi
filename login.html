@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b57d0">
+<title>Login | PaySaathi</title>
+<style>
+:root{--blue:#0b57d0;--dark:#073b91;--ink:#172033;--muted:#667085;--line:#e2e8f0}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:radial-gradient(circle at 10% 10%,#e0ebff,transparent 32%),#f5f8ff;display:flex;flex-direction:column}
+a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+header{height:70px;background:#ffffffed;border-bottom:1px solid var(--line);display:flex;align-items:center}
+.nav{width:min(1100px,calc(100% - 32px));margin:auto;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.brand{display:flex;align-items:center;gap:10px;color:var(--ink);font-size:1.2rem;font-weight:850}.mark{width:40px;height:40px;display:grid;place-items:center;border-radius:13px;color:white;background:linear-gradient(145deg,#1675f5,#073b91)}.brand span:last-child span{color:var(--blue)}
+.main{flex:1;display:grid;place-items:center;padding:34px 16px}.layout{width:min(940px,100%);display:grid;grid-template-columns:1fr 1fr;background:white;border:1px solid #e6ecf5;border-radius:26px;overflow:hidden;box-shadow:0 22px 70px #1c3b7014}
+.intro{padding:40px;background:linear-gradient(145deg,var(--blue),var(--dark));color:white;display:flex;flex-direction:column;justify-content:space-between;min-height:540px}
+.tag{display:inline-block;border:1px solid #ffffff40;background:#ffffff12;border-radius:999px;padding:7px 12px;font-size:.8rem;font-weight:750}
+h1{font-size:clamp(2rem,4vw,2.8rem);line-height:1.1;letter-spacing:-1px;margin:22px 0 14px}.intro p{color:#dce8ff;line-height:1.7;max-width:360px}
+.benefits{display:grid;gap:14px;margin-top:28px}.benefit{display:flex;align-items:center;gap:10px;color:#f2f6ff;font-size:.9rem}.check{width:25px;height:25px;display:grid;place-items:center;background:#ffffff1d;border-radius:8px}
+.intro-foot{color:#dce8ff;font-size:.82rem;margin-top:30px}.form-panel{padding:42px;display:flex;flex-direction:column;justify-content:center}.form-panel h2{font-size:1.8rem;letter-spacing:-.6px;margin:0 0 7px}.sub{color:var(--muted);margin:0 0 25px;font-size:.94rem}
+.field{margin-bottom:17px}label{display:block;font-size:.88rem;font-weight:750;margin-bottom:7px}input{width:100%;min-height:48px;border:1px solid #d0d8e5;border-radius:12px;padding:12px 13px;font:inherit;outline:none}input:focus{border-color:var(--blue);box-shadow:0 0 0 3px #0b57d018}
+.pass{position:relative}.pass input{padding-right:72px}.toggle{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:var(--blue);font-weight:750;padding:8px}
+.row{display:flex;justify-content:flex-end;margin:-3px 0 18px;font-size:.86rem}.submit{width:100%;min-height:49px;border:0;border-radius:12px;background:var(--blue);color:white;font:inherit;font-weight:800;cursor:pointer}.submit:hover{background:var(--dark)}.submit:disabled{opacity:.65;cursor:wait}
+.message{display:none;margin:0 0 15px;padding:11px 12px;border-radius:10px;font-size:.87rem;overflow-wrap:anywhere}.message.show{display:block}.error{background:#fff0ef;color:#b42318;border:1px solid #ffd5d2}.ok{background:#eaf8f0;color:#137a4b;border:1px solid #c7ecd6}
+.sep{display:flex;align-items:center;gap:12px;color:#98a2b3;font-size:.8rem;margin:22px 0}.sep:before,.sep:after{content:"";height:1px;flex:1;background:var(--line)}.signup{text-align:center;font-size:.9rem;color:var(--muted);margin:0}
+.note{display:flex;gap:9px;background:#f5f8ff;border:1px solid #e3ebfa;padding:12px;border-radius:12px;color:#52627a;font-size:.78rem;line-height:1.5;margin-top:22px}.otp-panel{display:none}.otp-panel.show{display:block}.otp-actions{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;font-size:.86rem}.text-button{border:0;background:transparent;color:var(--blue);font:inherit;font-weight:750;cursor:pointer;padding:7px 0}.text-button:disabled{opacity:.5;cursor:wait}.otp-hint{color:var(--muted);font-size:.85rem;line-height:1.5;margin:-5px 0 16px}.otp-input{letter-spacing:.35em;text-align:center;font-weight:800;font-size:1.2rem}
+footer{text-align:center;padding:18px;color:var(--muted);font-size:.82rem}
+@media(max-width:760px){.layout{grid-template-columns:1fr;max-width:480px}.intro{min-height:auto;padding:25px 26px}.intro h1{font-size:1.9rem;margin:15px 0 10px}.intro p{font-size:.92rem;margin-bottom:0}.benefits{grid-template-columns:1fr 1fr;gap:10px;margin-top:19px}.benefit{font-size:.8rem;align-items:flex-start}.check{width:22px;height:22px;flex:none}.intro-foot{display:none}.form-panel{padding:29px 26px}.nav{height:64px}}
+@media(max-width:380px){.benefits{grid-template-columns:1fr}.form-panel{padding:25px 20px}.intro{padding:23px 20px}}
+</style>
+</head>
+<body>
+<header><div class="nav">
+<a class="brand" href="index.html" aria-label="PaySaathi home"><span class="mark">P</span><span>Pay<span>Saathi</span></span></a>
+<a href="index.html">← Back to home</a>
+</div></header>
+<main><div class="layout">
+<section class="intro">
+<div><span class="tag">Welcome back</span><h1>Your services,<br>one Saathi away.</h1>
+<p>Sign in to your PaySaathi account to continue to the services available to you.</p>
+<div class="benefits">
+<div class="benefit"><span class="check">✓</span><span>Simple account access</span></div>
+<div class="benefit"><span class="check">✓</span><span>Services in one place</span></div>
+<div class="benefit"><span class="check">✓</span><span>Account-based access</span></div>
+<div class="benefit"><span class="check">✓</span><span>Mobile-friendly design</span></div>
+</div></div><div class="intro-foot">PaySaathi · A simpler way to access services</div>
+</section>
+<section class="form-panel">
+<h2>Customer login</h2><p class="sub">Enter your email address and we'll send you a secure one-time code.</p>
+<div id="message" class="message" role="status" aria-live="polite"></div>
+<form id="loginForm">
+<div class="field"><label for="email">Email address</label><input id="email" type="email" placeholder="you@example.com" autocomplete="email" required></div>
+<button class="submit" id="loginButton" type="submit">Send login code</button>
+</form>
+<div class="otp-panel" id="otpPanel">
+  <p class="otp-hint" id="otpHint">Enter the 6-digit code sent to your email.</p>
+  <div class="field"><label for="otpCode">Email verification code</label><input class="otp-input" id="otpCode" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="000000"></div>
+  <button class="submit" id="verifyButton" type="button">Verify and login</button>
+  <div class="otp-actions"><button class="text-button" id="resendOtp" type="button" disabled>Resend code in 30s</button><button class="text-button" id="changeEmail" type="button">Change email</button></div>
+</div>
+<div class="sep">NEW TO PAYSAATHI?</div>
+<p class="signup">Don't have an account? <a href="register.html">Create account</a></p>
+<div class="note"><span>🔒</span><span>Authentication is handled by Supabase. Never share your one-time email verification code with anyone.</span></div>
+</section></div></main>
+<footer>© <span id="year"></span> PaySaathi. All rights reserved.</footer>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const SUPABASE_URL = 'https://hhqcycwfvxoxjizlbivv.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_NdrUA-ubf67oW5hiS-Yw4A_-r2xbJRV';
+const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+const message = document.getElementById('message');
+const form = document.getElementById('loginForm');
+const button = document.getElementById('loginButton');
+const emailInput = document.getElementById('email');
+const otpPanel = document.getElementById('otpPanel');
+const otpCode = document.getElementById('otpCode');
+const verifyButton = document.getElementById('verifyButton');
+const resendButton = document.getElementById('resendOtp');
+const changeButton = document.getElementById('changeEmail');
+let pendingEmail = '';
+let resendTimer = null;
+
+document.getElementById('year').textContent = new Date().getFullYear();
+
+function showMessage(text, type='error') {
+  message.textContent = text;
+  message.className = 'message show ' + type;
+}
+function setBusy(control, busy, busyText, normalText) {
+  control.disabled = busy;
+  control.textContent = busy ? busyText : normalText;
+}
+function startResendCountdown(seconds=30) {
+  clearInterval(resendTimer);
+  let remaining = seconds;
+  resendButton.disabled = true;
+  resendButton.textContent = `Resend code in ${remaining}s`;
+  resendTimer = setInterval(() => {
+    remaining -= 1;
+    if (remaining <= 0) {
+      clearInterval(resendTimer);
+      resendButton.disabled = false;
+      resendButton.textContent = 'Resend code';
+    } else {
+      resendButton.textContent = `Resend code in ${remaining}s`;
+    }
+  }, 1000);
+}
+
+form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  message.className = 'message';
+  pendingEmail = emailInput.value.trim().toLowerCase();
+
+  setBusy(button, true, 'Sending code…', 'Send login code');
+  try {
+    const { error } = await supabase.auth.signInWithOtp({
+      email: pendingEmail,
+      options: { shouldCreateUser: false }
+    });
+    if (error) throw error;
+
+    form.style.display = 'none';
+    otpPanel.classList.add('show');
+    document.getElementById('otpHint').textContent =
+      `Enter the 6-digit code sent to ${pendingEmail}.`;
+    showMessage('Login code sent. Check your inbox and spam folder.', 'ok');
+    otpCode.focus();
+    startResendCountdown();
+  } catch (error) {
+    console.error('Login OTP request error:', error);
+    let text = error?.message || 'Unable to send a login code. Please try again.';
+    if (/signups not allowed|user not found|no user/i.test(text)) {
+      text = 'No account was found for this email. Please create a PaySaathi account first.';
+    }
+    showMessage(text);
+    setBusy(button, false, '', 'Send login code');
+  }
+});
+
+verifyButton.addEventListener('click', async () => {
+  const token = otpCode.value.trim();
+  if (!/^\d{6}$/.test(token)) {
+    showMessage('Enter the 6-digit code from your email.');
+    return;
+  }
+  setBusy(verifyButton, true, 'Verifying…', 'Verify and login');
+  try {
+    const { data, error } = await supabase.auth.verifyOtp({
+      email: pendingEmail,
+      token,
+      type: 'email'
+    });
+    if (error) throw error;
+    if (!data.session) throw new Error('No active session was returned. Please request a new code.');
+    showMessage('Login successful! Opening your dashboard…', 'ok');
+    window.setTimeout(() => { window.location.href = 'dashboard.html'; }, 700);
+  } catch (error) {
+    console.error('Login OTP verification error:', error);
+    showMessage(error?.message || 'That code could not be verified. Request a new code and try again.');
+    setBusy(verifyButton, false, '', 'Verify and login');
+  }
+});
+
+resendButton.addEventListener('click', async () => {
+  if (!pendingEmail) return;
+  resendButton.disabled = true;
+  resendButton.textContent = 'Sending…';
+  try {
+    const { error } = await supabase.auth.signInWithOtp({
+      email: pendingEmail,
+      options: { shouldCreateUser: false }
+    });
+    if (error) throw error;
+    showMessage('A new login code has been sent.', 'ok');
+    otpCode.value = '';
+    startResendCountdown();
+  } catch (error) {
+    showMessage(error?.message || 'Could not resend the code. Please try again.');
+    resendButton.disabled = false;
+    resendButton.textContent = 'Resend code';
+  }
+});
+
+changeButton.addEventListener('click', () => {
+  clearInterval(resendTimer);
+  otpPanel.classList.remove('show');
+  form.style.display = '';
+  otpCode.value = '';
+  message.className = 'message';
+  setBusy(button, false, '', 'Send login code');
+  emailInput.focus();
+});
+</script>
+</body>
+</html>
