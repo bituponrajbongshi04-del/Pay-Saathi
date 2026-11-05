@@ -34,42 +34,65 @@
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-const SUPABASE_URL = 'https://hhqcycwfvxoxjizlbivv.supabase.co';
-const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_NdrUA-ubf67oW5hiS-Yw4A_-r2xbJRV';
-const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+const supabase = createClient(
+  'https://hhqcycwfvxoxjizlbivv.supabase.co',
+  'sb_publishable_NdrUA-ubf67oW5hiS-Yw4A_-r2xbJRV'
+);
 
-const form = document.getElementById('registerForm');
-const message = document.getElementById('message');
-const button = document.getElementById('registerButton');
-const password = document.getElementById('password');
-const email = document.getElementById('email');
-const otpPanel = document.getElementById('otpPanel');
-const otpCode = document.getElementById('otpCode');
-const verifyButton = document.getElementById('verifyButton');
-const resendButton = document.getElementById('resendOtp');
-const changeButton = document.getElementById('changeEmail');
+const $ = id => document.getElementById(id);
+
+const form = $('registerForm');
+const message = $('message');
+const registerButton = $('registerButton');
+const otpPanel = $('otpPanel');
+const otpInput = $('otpCode');
+const verifyButton = $('verifyButton');
+const resendButton = $('resendOtp');
+const changeButton = $('changeEmail');
+
 let pendingEmail = '';
-let resendTimer = null;
+let resendInterval = null;
+let submitting = false;
 
-document.getElementById('year').textContent = new Date().getFullYear();
+$('year').textContent = new Date().getFullYear();
 
-function showMessage(text, type='error') {
+function showMessage(text, type = 'error') {
   message.textContent = text;
-  message.className = 'message show ' + type;
+  message.className = `message show ${type}`;
 }
-function setBusy(control, busy, busyText, normalText) {
-  control.disabled = busy;
-  control.textContent = busy ? busyText : normalText;
+
+function hideMessage() {
+  message.className = 'message';
 }
-function startResendCountdown(seconds=30) {
-  clearInterval(resendTimer);
+
+function busy(element, state, loading, normal) {
+  element.disabled = state;
+  element.textContent = state ? loading : normal;
+}
+
+function showOtp(emailAddress) {
+  pendingEmail = emailAddress;
+  form.style.display = 'none';
+  otpPanel.classList.add('show');
+  $('otpHint').textContent =
+    `Enter the 6-digit verification code sent to ${emailAddress}.`;
+  otpInput.value = '';
+  otpInput.focus();
+  startCountdown();
+}
+
+function startCountdown(seconds = 30) {
+  clearInterval(resendInterval);
+
   let remaining = seconds;
   resendButton.disabled = true;
   resendButton.textContent = `Resend code in ${remaining}s`;
-  resendTimer = setInterval(() => {
-    remaining -= 1;
+
+  resendInterval = setInterval(() => {
+    remaining--;
+
     if (remaining <= 0) {
-      clearInterval(resendTimer);
+      clearInterval(resendInterval);
       resendButton.disabled = false;
       resendButton.textContent = 'Resend code';
     } else {
@@ -78,59 +101,91 @@ function startResendCountdown(seconds=30) {
   }, 1000);
 }
 
-document.getElementById('togglePassword').addEventListener('click', () => {
-  const show = password.type === 'password';
-  password.type = show ? 'text' : 'password';
-  document.getElementById('togglePassword').textContent = show ? 'Hide' : 'Show';
+// Check if someone is already logged in.
+async function checkExistingSession() {
+  const { data, error } = await supabase.auth.getSession();
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  if (data.session) {
+    window.location.replace('dashboard.html');
+  }
+}
+
+checkExistingSession();
+
+// Show/hide password
+$('togglePassword').addEventListener('click', () => {
+  const show = $('password').type === 'password';
+  $('password').type = show ? 'text' : 'password';
+  $('togglePassword').textContent = show ? 'Hide' : 'Show';
 });
 
-
-form.addEventListener('submit', async (event) => {
+// REGISTER
+form.addEventListener('submit', async event => {
   event.preventDefault();
-  message.className = 'message';
 
-  const fullName = document.getElementById('fullName').value.trim();
-  const userEmail = email.value.trim().toLowerCase();
-  const userPassword = password.value;
-  const confirmPassword = document.getElementById('confirmPassword').value;
+  if (submitting) return;
+  submitting = true;
+  hideMessage();
 
-  if (userPassword !== confirmPassword) {
-    showMessage('Passwords do not match.');
-    return;
-  }
-
-  if (userPassword.length < 8) {
-    showMessage('Password must be at least 8 characters.');
-    return;
-  }
-
-  setBusy(button, true, 'Checking account...', 'Create account securely');
+  const fullName = $('fullName').value.trim();
+  const emailAddress = $('email').value.trim().toLowerCase();
+  const password = $('password').value;
+  const confirmPassword = $('confirmPassword').value;
 
   try {
+    if (!fullName) {
+      throw new Error('Please enter your full name.');
+    }
+
+    if (password.length < 8) {
+      throw new Error('Password must contain at least 8 characters.');
+    }
+
+    if (password !== confirmPassword) {
+      throw new Error('Passwords do not match.');
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailAddress)) {
+      throw new Error('Please enter a valid email address.');
+    }
+
+    busy(registerButton, true, 'Creating account...', 'Create account securely');
+
     const { data, error } = await supabase.auth.signUp({
-      email: userEmail,
-      password: userPassword,
+      email: emailAddress,
+      password,
       options: {
-        data: { full_name: fullName }
+        data: {
+          full_name: fullName
+        }
       }
     });
 
-    // Existing registered email
+    // Supabase may return an obfuscated user for an
+    // already registered, confirmed email.
     if (
       data?.user &&
-      data.user.identities?.length === 0
+      Array.isArray(data.user.identities) &&
+      data.user.identities.length === 0
     ) {
       showMessage(
-        'You already have an account with this Gmail. Please log in instead.',
-        'error'
+        'You already have an account with this email. Please log in instead.'
       );
       return;
     }
 
     if (error) {
+      const code = error.code || '';
+
       if (
-        ['user_already_exists', 'email_exists'].includes(error.code) ||
-        /already registered|already exists/i.test(error.message)
+        code === 'email_exists' ||
+        code === 'user_already_exists' ||
+        /already registered|email.*already exists/i.test(error.message)
       ) {
         showMessage(
           'You already have an account. Please log in instead.'
@@ -141,109 +196,119 @@ form.addEventListener('submit', async (event) => {
       throw error;
     }
 
-    if (!data?.user) {
-      throw new Error('Unable to create your account.');
+    if (!data.user) {
+      throw new Error('Unable to create your account. Please try again.');
     }
 
     if (data.session) {
       showMessage('Account created successfully!', 'ok');
-      window.location.href = 'dashboard.html';
+      window.location.replace('dashboard.html');
       return;
     }
 
-    // New account: show OTP screen
-    pendingEmail = userEmail;
-    form.style.display = 'none';
-    otpPanel.classList.add('show');
+    // New account: show verification screen.
+    showOtp(emailAddress);
 
-    document.getElementById('otpHint').textContent =
-      `Enter the 6-digit verification code sent to ${pendingEmail}.`;
-
-    otpCode.value = '';
-
-    showMessage('Verification code sent successfully!', 'ok');
-
-    otpCode.focus();
-    startResendCountdown(30);
+    showMessage(
+      'Account created! Check your email for the verification code.',
+      'ok'
+    );
 
   } catch (error) {
-    console.error(error);
-    showMessage(error.message || 'Something went wrong.');
+    console.error('Registration:', error);
+    showMessage(error.message || 'Registration failed.');
 
   } finally {
-    button.disabled = false;
-    button.textContent = 'Create account securely';
-  }
-});
-  
-
-    form.style.display = 'none';
-    otpPanel.classList.add('show');
-    document.getElementById('otpHint').textContent =
-      `Enter the 6-digit code sent to ${pendingEmail}. The code expires after the period configured in Supabase.`;
-    showMessage('Verification code sent. Check your inbox and spam folder.', 'ok');
-    otpCode.focus();
-    startResendCountdown();
-  } catch (error) {
-    console.error('Registration error:', error);
-    let msg = error?.message || 'Could not create your account. Please try again.';
-    if (/already registered|user already exists/i.test(msg)) {
-      msg = 'An account may already exist for this email. Try logging in instead.';
-    }
-    showMessage(msg);
-    setBusy(button, false, '', 'Create account securely');
+    submitting = false;
+    busy(registerButton, false, '', 'Create account securely');
   }
 });
 
+// OTP: digits only
+otpInput.addEventListener('input', () => {
+  otpInput.value = otpInput.value.replace(/\D/g, '').slice(0, 6);
+});
+
+// VERIFY OTP
 verifyButton.addEventListener('click', async () => {
-  const token = otpCode.value.trim();
+  const token = otpInput.value.trim();
+
   if (!/^\d{6}$/.test(token)) {
-    showMessage('Enter the 6-digit code from your email.');
+    showMessage('Please enter a valid 6-digit OTP.');
     return;
   }
-  setBusy(verifyButton, true, 'Verifying…', 'Verify email');
+
+  busy(verifyButton, true, 'Verifying...', 'Verify email');
+
   try {
     const { data, error } = await supabase.auth.verifyOtp({
       email: pendingEmail,
       token,
       type: 'signup'
     });
+
     if (error) throw error;
-    if (!data.session) throw new Error('Email verified, but no login session was returned. Please log in.');
-    showMessage('Email verified successfully! Opening your dashboard…', 'ok');
-    window.setTimeout(() => { window.location.href = 'dashboard.html'; }, 1200);
+
+    if (!data.session) {
+      throw new Error('Verification succeeded but no session was returned. Please log in.');
+    }
+
+    showMessage('Email verified! Welcome to PaySaathi.', 'ok');
+
+    window.location.replace('dashboard.html');
+
   } catch (error) {
-    console.error('OTP verification error:', error);
-    showMessage(error?.message || 'That code could not be verified. Request a new code and try again.');
-    setBusy(verifyButton, false, '', 'Verify email');
+    console.error('OTP:', error);
+    showMessage(error.message || 'Incorrect or expired OTP.');
+    busy(verifyButton, false, '', 'Verify email');
   }
 });
 
+// RESEND OTP
 resendButton.addEventListener('click', async () => {
   if (!pendingEmail) return;
+
   resendButton.disabled = true;
-  resendButton.textContent = 'Sending…';
+  resendButton.textContent = 'Sending...';
+
   try {
-    const { error } = await supabase.auth.resend({ type: 'signup', email: pendingEmail });
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email: pendingEmail
+    });
+
     if (error) throw error;
-    showMessage('A new verification code has been sent.', 'ok');
-    otpCode.value = '';
-    startResendCountdown();
+
+    otpInput.value = '';
+
+    showMessage('New verification code sent!', 'ok');
+    startCountdown(30);
+
   } catch (error) {
-    showMessage(error?.message || 'Could not resend the code. Please try again.');
+    showMessage(error.message || 'Could not resend OTP.');
     resendButton.disabled = false;
     resendButton.textContent = 'Resend code';
   }
 });
 
+// CHANGE DETAILS
 changeButton.addEventListener('click', () => {
-  clearInterval(resendTimer);
+  clearInterval(resendInterval);
+
   otpPanel.classList.remove('show');
   form.style.display = '';
-  otpCode.value = '';
-  message.className = 'message';
-  setBusy(button, false, '', 'Create account securely');
-  email.focus();
+
+  otpInput.value = '';
+  pendingEmail = '';
+
+  hideMessage();
+  $('password').value = '';
+  $('confirmPassword').value = '';
+
+  $('email').focus();
+
+  resendButton.disabled = true;
+  resendButton.textContent = 'Resend code in 30s';
 });
 </script>
 </body>
