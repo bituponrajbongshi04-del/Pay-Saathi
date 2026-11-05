@@ -107,15 +107,25 @@ form.addEventListener('submit', async (event) => {
       options: {
         data: { full_name: document.getElementById('fullName').value.trim() }
       }
-    });
     if (error) throw error;
 
-    // When email confirmation is enabled, Supabase sends a signup OTP.
-    if (data.session) {
-      showMessage('Your email is verified and your account is ready. Opening your dashboard…', 'ok');
-      window.setTimeout(() => { window.location.href = 'dashboard.html'; }, 1200);
-      return;
-    }
+// Detect an existing account (when Supabase returns an empty identities array)
+if (
+  data.user &&
+  Array.isArray(data.user.identities) &&
+  data.user.identities.length === 0
+) {
+  showMessage(
+    'You already have an account with this email. Please log in instead.',
+    'error'
+  );
+
+  button.disabled = false;
+  button.textContent = 'Create account securely';
+  return;
+}
+
+if (data.session) {
 
     form.style.display = 'none';
     otpPanel.classList.add('show');
