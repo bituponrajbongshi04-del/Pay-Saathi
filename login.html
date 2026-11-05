@@ -88,31 +88,63 @@ document.getElementById('togglePassword').addEventListener('click', () => {
   document.getElementById('togglePassword').textContent = show ? 'Hide' : 'Show';
 });
 
+
 form.addEventListener('submit', async (event) => {
-  event.preventDefault(); message.className='message';
+  event.preventDefault();
+  message.className = 'message';
+
   if (configMissing || !supabase) {
-    showMessage('Supabase is not connected yet. Add your project URL and publishable key in this file, then publish it again.'); return;
+    showMessage('Supabase is not connected.');
+    return;
   }
-  button.disabled=true; button.textContent='Signing in…';
+
+  button.disabled = true;
+  button.textContent = 'Signing in…';
+
   try {
-    const {data,error}=await supabase.auth.signInWithPassword({email:emailInput.value.trim(),password:passwordInput.value});
-    if(error) throw error;
-    if(!data.session) throw new Error('No active session was returned. Please try again.');
-    showMessage('Login successful! Opening your dashboard…','ok');
-    // Create dashboard.html in the next step. Protect private data with backend policies too.
-    // Honour only known same-site destinations; default remains the customer dashboard.
-    const requested = new URLSearchParams(window.location.search).get('next');
-    const destination = requested === 'admin.html' ? 'admin.html' : 'dashboard.html';
-    window.location.replace(destination);
-  } catch(error) {
-    console.error('Login error:',error);
-    let text=error?.message||'Unable to sign in. Please try again.';
-    if(/invalid login credentials/i.test(text)) text='Email or password is incorrect. Check your details or use Forgot password.';
-    if(/email not confirmed/i.test(text)) text='Please confirm your email first, then try signing in again.';
-    showMessage(text); button.disabled=false; button.textContent='Login securely';
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: emailInput.value.trim(),
+      password: passwordInput.value
+    });
+
+    if (error) throw error;
+    if (!data.session) throw new Error('No active session.');
+
+    // Verify admin status securely through Supabase
+    const { data: isAdmin, error: adminError } =
+      await supabase.rpc('is_paysaathi_admin');
+
+    if (adminError) {
+      throw new Error('Could not verify admin access. Please try again.');
+    }
+
+    showMessage('Login successful! Redirecting…', 'ok');
+
+    if (isAdmin === true) {
+      window.location.replace('admin.html');
+    } else {
+      window.location.replace('dashboard.html');
+    }
+
+  } catch (error) {
+    console.error('Login error:', error);
+
+    let errorText = error?.message || 'Unable to sign in.';
+
+    if (/invalid login credentials/i.test(errorText)) {
+      errorText = 'Email or password is incorrect.';
+    }
+
+    if (/email not confirmed/i.test(errorText)) {
+      errorText = 'Please confirm your email first.';
+    }
+
+    showMessage(errorText);
+    button.disabled = false;
+    button.textContent = 'Login securely';
   }
 });
-
+  
 document.getElementById('forgotPassword').addEventListener('click', async (event) => {
   event.preventDefault(); message.className='message';
   if(configMissing||!supabase){showMessage('Connect your Supabase project URL and publishable key first.');return;}
