@@ -84,50 +84,98 @@ document.getElementById('togglePassword').addEventListener('click', () => {
   document.getElementById('togglePassword').textContent = show ? 'Hide' : 'Show';
 });
 
+
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
   message.className = 'message';
 
-  if (password.value !== document.getElementById('confirmPassword').value) {
-    showMessage('The passwords do not match. Please check them.');
-    return;
-  }
-  if (password.value.length < 8) {
-    showMessage('Please use a password with at least 8 characters.');
+  const fullName = document.getElementById('fullName').value.trim();
+  const userEmail = email.value.trim().toLowerCase();
+  const userPassword = password.value;
+  const confirmPassword = document.getElementById('confirmPassword').value;
+
+  if (userPassword !== confirmPassword) {
+    showMessage('Passwords do not match.');
     return;
   }
 
-  pendingEmail = email.value.trim().toLowerCase();
-  setBusy(button, true, 'Sending verification code…', 'Create account securely');
+  if (userPassword.length < 8) {
+    showMessage('Password must be at least 8 characters.');
+    return;
+  }
+
+  setBusy(button, true, 'Checking account...', 'Create account securely');
 
   try {
     const { data, error } = await supabase.auth.signUp({
-      email: pendingEmail,
-      password: password.value,
+      email: userEmail,
+      password: userPassword,
       options: {
-        data: { full_name: document.getElementById('fullName').value.trim() }
+        data: { full_name: fullName }
       }
-    if (error) throw error;
+    });
 
-// Detect an existing account (when Supabase returns an empty identities array)
-if (
-  data.user &&
-  Array.isArray(data.user.identities) &&
-  data.user.identities.length === 0
-) {
-  showMessage(
-    'You already have an account with this email. Please log in instead.',
-    'error'
-  );
+    // Existing registered email
+    if (
+      data?.user &&
+      data.user.identities?.length === 0
+    ) {
+      showMessage(
+        'You already have an account with this Gmail. Please log in instead.',
+        'error'
+      );
+      return;
+    }
 
-  button.disabled = false;
-  button.textContent = 'Create account securely';
-  return;
-}
+    if (error) {
+      if (
+        ['user_already_exists', 'email_exists'].includes(error.code) ||
+        /already registered|already exists/i.test(error.message)
+      ) {
+        showMessage(
+          'You already have an account. Please log in instead.'
+        );
+        return;
+      }
 
-if (data.session) {
+      throw error;
+    }
 
+    if (!data?.user) {
+      throw new Error('Unable to create your account.');
+    }
+
+    if (data.session) {
+      showMessage('Account created successfully!', 'ok');
+      window.location.href = 'dashboard.html';
+      return;
+    }
+
+    // New account: show OTP screen
+    pendingEmail = userEmail;
+    form.style.display = 'none';
+    otpPanel.classList.add('show');
+
+    document.getElementById('otpHint').textContent =
+      `Enter the 6-digit verification code sent to ${pendingEmail}.`;
+
+    otpCode.value = '';
+
+    showMessage('Verification code sent successfully!', 'ok');
+
+    otpCode.focus();
+    startResendCountdown(30);
+
+  } catch (error) {
+    console.error(error);
+    showMessage(error.message || 'Something went wrong.');
+
+  } finally {
+    button.disabled = false;
+    button.textContent = 'Create account securely';
+  }
 });
+  
 
     form.style.display = 'none';
     otpPanel.classList.add('show');
