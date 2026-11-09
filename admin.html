@@ -23,6 +23,8 @@
     <button data-section="transactions"><span class="ico">⇄</span>Transactions</button>
     <button data-section="analytics"><span class="ico">▥</span>Analytics</button>
     <button data-section="settings"><span class="ico">⚙</span>Settings</button>
+    <button data-section="support">
+  <span class="ico">♧</span>Support Team</button>
   </nav>
   <div class="side-bottom">Protected admin area<br><span id="projectState">Connecting to Supabase…</span></div>
 </aside>
@@ -40,6 +42,87 @@
   </div>
   <div class="grid-two"><article class="panel"><div class="panel-head"><div><h3>Transaction activity</h3><p>Last 7 days · based on recorded transactions</p></div><span class="pill">LIVE DATA</span></div><div class="chart" id="overviewChart"><div class="empty-chart">Loading activity…</div></div></article>
   <article class="panel"><div class="panel-head"><div><h3>Platform status</h3><p>Backend connection and data availability</p></div></div><div class="activity-list"><div class="activity"><span class="activity-icon">●</span><div><strong>Supabase authentication</strong><small id="authStatus">Checking session…</small></div></div><div class="activity"><span class="activity-icon">▤</span><div><strong>Admin authorization</strong><small id="adminStatus">Checking admin access…</small></div></div><div class="activity"><span class="activity-icon">⇄</span><div><strong>Transaction records</strong><small id="transactionStatus">Checking database…</small></div></div></div></article></div>
+<section class="section" id="section-support">
+
+  <div class="page-head">
+    <div>
+      <h2>Support Management</h2>
+      <p>Manage your support agents and customer notifications.</p>
+    </div>
+  </div>
+
+  <div class="settings-grid">
+
+    <article class="setting">
+      <h4>Send customer notification</h4>
+      <p>Send a message to all active customer accounts.</p>
+
+      <input id="broadcastTitle"
+        placeholder="Notification title" maxlength="90">
+
+      <textarea id="broadcastMessage"
+        placeholder="Write your notification..." maxlength="1000"
+        style="margin-top:10px"></textarea>
+
+      <div class="setting-actions">
+        <button class="btn primary" id="sendBroadcast">
+          Send notification
+        </button>
+      </div>
+    </article>
+
+    <article class="setting">
+      <h4>Add support agent</h4>
+      <p>The agent must register an account before you add them.</p>
+
+      <input id="agentName" placeholder="Agent full name">
+      <input id="agentEmail" type="email"
+        placeholder="Registered email" style="margin-top:10px">
+      <input id="agentPhone" placeholder="Phone number"
+        style="margin-top:10px">
+      <textarea id="agentDetails"
+        placeholder="Agent details" style="margin-top:10px"></textarea>
+
+      <div class="setting-actions">
+        <button class="btn primary" id="addAgent">
+          Add agent
+        </button>
+      </div>
+    </article>
+
+  </div>
+
+  <article class="panel" style="margin-top:18px">
+    <div class="panel-head">
+      <h3>Support team</h3>
+      <button class="btn" id="refreshAgents">Refresh</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Availability</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="agentsBody">
+          <tr><td colspan="5" class="empty">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+  <article class="panel" style="margin-top:18px">
+    <div class="panel-head">
+      <h3>Broadcast history</h3>
+      <button class="btn" id="refreshBroadcasts">Refresh</button>
+    </div>
+    <div id="broadcastHistory"></div>
+  </article>
 </section>
 <section class="section" id="section-users"><div class="page-head"><div><h2>User management</h2><p>Review registered accounts and restrict access when necessary.</p></div><button class="btn" id="usersRefresh">↻ Refresh</button></div><div class="toolbar"><input class="search" id="userSearch" placeholder="Search by email or user ID…" aria-label="Search users"></div><div class="panel"><div class="table-wrap"><table><thead><tr><th>Email</th><th>Joined</th><th>Last sign-in</th><th>Account status</th><th>Action</th></tr></thead><tbody id="usersBody"><tr><td colspan="5" class="empty">Loading users…</td></tr></tbody></table></div></div></section>
 <section class="section" id="section-transactions"><div class="page-head"><div><h2>Transactions</h2><p>Only records written by your trusted payment backend are shown here.</p></div><button class="btn" id="txRefresh">↻ Refresh</button></div><div class="toolbar"><input class="search" id="txSearch" placeholder="Search reference, service or user ID…" aria-label="Search transactions"><select class="btn" id="txStatus"><option value="all">All statuses</option><option value="success">Success</option><option value="pending">Pending</option><option value="failed">Failed</option></select><button class="btn" id="exportBtn">↓ Export CSV</button></div><div class="panel"><div class="table-wrap"><table><thead><tr><th>Date</th><th>Reference</th><th>Service</th><th>User</th><th>Amount</th><th>Status</th></tr></thead><tbody id="transactionsBody"><tr><td colspan="6" class="empty">Loading transactions…</td></tr></tbody></table></div></div></section>
