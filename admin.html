@@ -42,91 +42,11 @@
   </div>
   <div class="grid-two"><article class="panel"><div class="panel-head"><div><h3>Transaction activity</h3><p>Last 7 days · based on recorded transactions</p></div><span class="pill">LIVE DATA</span></div><div class="chart" id="overviewChart"><div class="empty-chart">Loading activity…</div></div></article>
   <article class="panel"><div class="panel-head"><div><h3>Platform status</h3><p>Backend connection and data availability</p></div></div><div class="activity-list"><div class="activity"><span class="activity-icon">●</span><div><strong>Supabase authentication</strong><small id="authStatus">Checking session…</small></div></div><div class="activity"><span class="activity-icon">▤</span><div><strong>Admin authorization</strong><small id="adminStatus">Checking admin access…</small></div></div><div class="activity"><span class="activity-icon">⇄</span><div><strong>Transaction records</strong><small id="transactionStatus">Checking database…</small></div></div></div></article></div>
-<section class="section" id="section-support">
-
-  <div class="page-head">
-    <div>
-      <h2>Support Management</h2>
-      <p>Manage your support agents and customer notifications.</p>
-    </div>
-  </div>
-
-  <div class="settings-grid">
-
-    <article class="setting">
-      <h4>Send customer notification</h4>
-      <p>Send a message to all active customer accounts.</p>
-
-      <input id="broadcastTitle"
-        placeholder="Notification title" maxlength="90">
-
-      <textarea id="broadcastMessage"
-        placeholder="Write your notification..." maxlength="1000"
-        style="margin-top:10px"></textarea>
-
-      <div class="setting-actions">
-        <button class="btn primary" id="sendBroadcast">
-          Send notification
-        </button>
-      </div>
-    </article>
-
-    <article class="setting">
-      <h4>Add support agent</h4>
-      <p>The agent must register an account before you add them.</p>
-
-      <input id="agentName" placeholder="Agent full name">
-      <input id="agentEmail" type="email"
-        placeholder="Registered email" style="margin-top:10px">
-      <input id="agentPhone" placeholder="Phone number"
-        style="margin-top:10px">
-      <textarea id="agentDetails"
-        placeholder="Agent details" style="margin-top:10px"></textarea>
-
-      <div class="setting-actions">
-        <button class="btn primary" id="addAgent">
-          Add agent
-        </button>
-      </div>
-    </article>
-
-  </div>
-
-  <article class="panel" style="margin-top:18px">
-    <div class="panel-head">
-      <h3>Support team</h3>
-      <button class="btn" id="refreshAgents">Refresh</button>
-    </div>
-
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Status</th>
-            <th>Availability</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="agentsBody">
-          <tr><td colspan="5" class="empty">Loading...</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </article>
-
-  <article class="panel" style="margin-top:18px">
-    <div class="panel-head">
-      <h3>Broadcast history</h3>
-      <button class="btn" id="refreshBroadcasts">Refresh</button>
-    </div>
-    <div id="broadcastHistory"></div>
-  </article>
 </section>
 <section class="section" id="section-users"><div class="page-head"><div><h2>User management</h2><p>Review registered accounts and restrict access when necessary.</p></div><button class="btn" id="usersRefresh">↻ Refresh</button></div><div class="toolbar"><input class="search" id="userSearch" placeholder="Search by email or user ID…" aria-label="Search users"></div><div class="panel"><div class="table-wrap"><table><thead><tr><th>Email</th><th>Joined</th><th>Last sign-in</th><th>Account status</th><th>Action</th></tr></thead><tbody id="usersBody"><tr><td colspan="5" class="empty">Loading users…</td></tr></tbody></table></div></div></section>
 <section class="section" id="section-transactions"><div class="page-head"><div><h2>Transactions</h2><p>Only records written by your trusted payment backend are shown here.</p></div><button class="btn" id="txRefresh">↻ Refresh</button></div><div class="toolbar"><input class="search" id="txSearch" placeholder="Search reference, service or user ID…" aria-label="Search transactions"><select class="btn" id="txStatus"><option value="all">All statuses</option><option value="success">Success</option><option value="pending">Pending</option><option value="failed">Failed</option></select><button class="btn" id="exportBtn">↓ Export CSV</button></div><div class="panel"><div class="table-wrap"><table><thead><tr><th>Date</th><th>Reference</th><th>Service</th><th>User</th><th>Amount</th><th>Status</th></tr></thead><tbody id="transactionsBody"><tr><td colspan="6" class="empty">Loading transactions…</td></tr></tbody></table></div></div></section>
 <section class="section" id="section-analytics"><div class="page-head"><div><h2>Analytics</h2><p>Usage and payment metrics from your database records.</p></div><button class="btn" id="analyticsRefresh">↻ Refresh</button></div><div class="stats"><article class="stat"><div class="stat-top">New users · 7 days<span class="stat-icon">＋</span></div><div class="stat-value" id="newUsers7">—</div><div class="stat-foot">Accounts created in the last 7 days</div></article><article class="stat"><div class="stat-top">Pending transactions<span class="stat-icon">◷</span></div><div class="stat-value" id="pendingTx">—</div><div class="stat-foot">Awaiting trusted provider confirmation</div></article><article class="stat"><div class="stat-top">Failed transactions<span class="stat-icon">!</span></div><div class="stat-value" id="failedTx">—</div><div class="stat-foot">Recorded as failed</div></article><article class="stat"><div class="stat-top">Success rate<span class="stat-icon">%</span></div><div class="stat-value" id="successRate">—</div><div class="stat-foot">Successful / all recorded transactions</div></article></div><article class="panel"><div class="panel-head"><div><h3>Daily transaction volume</h3><p>Count by transaction creation date</p></div></div><div class="chart" id="analyticsChart"><div class="empty-chart">Loading analytics…</div></div></article></section>
+<section class="section" id="section-support"><div class="page-head"><div><h2>Support Management</h2><p>Manage your support agents and customer notifications.</p></div></div><div class="settings-grid"><article class="setting"><h4>Send customer notification</h4><p>Send a message to all active customer accounts.</p><input id="broadcastTitle"placeholder="Notification title" maxlength="90"><textarea id="broadcastMessage"placeholder="Write your notification..." maxlength="1000"style="margin-top:10px"></textarea><div class="setting-actions"><button class="btn primary" id="sendBroadcast">Send notification</button></div></article><article class="setting"><h4>Add support agent</h4><p>The agent must register an account before you add them.</p><input id="agentName" placeholder="Agent full name"><input id="agentEmail" type="email"placeholder="Registered email" style="margin-top:10px"><input id="agentPhone" placeholder="Phone number"style="margin-top:10px"><textarea id="agentDetails"placeholder="Agent details" style="margin-top:10px"></textarea><div class="setting-actions"><button class="btn primary" id="addAgent">Add agent</button></div></article></div><article class="panel" style="margin-top:18px"><div class="panel-head"><h3>Support team</h3><button class="btn" id="refreshAgents">Refresh</button></div><div class="table-wrap"><table><thead><tr><th>Name</th><th>Email</th><th>Status</th><th>Availability</th><th>Actions</th></tr></thead><tbody id="agentsBody"><tr><td colspan="5" class="empty">Loading...</td></tr></tbody></table></div></article><article class="panel" style="margin-top:18px"><div class="panel-head"><h3>Broadcast history</h3><button class="btn" id="refreshBroadcasts">Refresh</button></div><div id="broadcastHistory"></div></article></section>
 <section class="section" id="section-settings"><div class="page-head"><div><h2>Platform settings</h2><p>Store operational preferences for your application.</p></div><button class="btn" id="settingsRefresh">↻ Reload settings</button></div><div class="notice" id="settingsNotice"></div><div class="settings-grid"><article class="setting"><h4>Maintenance mode</h4><p>Operational flag for your app. Your public pages must read this setting before it affects visitors.</p><select id="maintenanceMode"><option value="false">Off</option><option value="true">On</option></select><div class="setting-actions"><button class="btn primary" data-save="maintenance_mode">Save setting</button></div></article><article class="setting"><h4>Support email</h4><p>Contact address displayed by your application, if the public pages are wired to this setting.</p><input id="supportEmail" type="email" placeholder="support@example.com"><div class="setting-actions"><button class="btn primary" data-save="support_email">Save setting</button></div></article><article class="setting" style="grid-column:1/-1"><h4>Site announcement</h4><p>Optional announcement text. Saving stores it; it will appear publicly only after the relevant page is connected to this setting.</p><textarea id="siteAnnouncement" maxlength="500" placeholder="Write an announcement for your users…"></textarea><div class="setting-actions"><button class="btn primary" data-save="site_announcement">Save announcement</button></div></article>
 <article class="setting"><h4>Dashboard notification</h4><p>Turn the user-dashboard notification on or off. The dashboard will read this setting after it is connected.</p><select id="notificationEnabled"><option value="false">Off</option><option value="true">On</option></select><div class="setting-actions"><button class="btn primary" data-save="notification_enabled">Save notification status</button></div></article><article class="setting"><h4>Notification title</h4><p>Short heading shown with the dashboard notification.</p><input id="notificationTitle" maxlength="90" placeholder="Important update"><div class="setting-actions"><button class="btn primary" data-save="notification_title">Save title</button></div></article><article class="setting" style="grid-column:1/-1"><h4>Notification message</h4><p>Write the message you want users to see on their dashboard.</p><textarea id="notificationMessage" maxlength="1000" placeholder="Write your notification…"></textarea><div class="setting-actions"><button class="btn primary" data-save="notification_message">Save notification</button></div></article></div></section>
 </div></main></div>
