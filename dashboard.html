@@ -459,32 +459,53 @@
       </div>
 
       <!-- TAB 4: SUPPORT VIEW -->
-      <div id="tab-support" class="px-5 py-6 space-y-4 hidden flex-1">
-        <h2 class="text-lg font-bold text-gray-800">Partner Helpdesk</h2>
-        <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-4">
-          <div class="flex items-center space-x-3 text-blue-600">
-            <i class="fa-solid fa-phone-volume text-xl"></i>
-            <div>
-              <p class="text-xs text-gray-500">Call Toll Free Support</p>
-              <p class="font-bold text-sm text-gray-800">1800-123-XXXX (24/7)</p>
-            </div>
-          </div>
-          <div class="flex items-center space-x-3 text-green-600">
-            <i class="fa-brands fa-whatsapp text-xl"></i>
-            <div>
-              <p class="text-xs text-gray-500">WhatsApp Helpdesk</p>
-              <p class="font-bold text-sm text-gray-800">+91 91234 XXXXX</p>
-            </div>
-          </div>
-          <div id="dynamic-support-email" class="hidden flex items-center space-x-3 text-blue-600">
-            <i class="fa-regular fa-envelope text-xl"></i>
-            <div>
-              <p class="text-xs text-gray-500">Email Support</p>
-              <a id="support-email-link" class="font-bold text-sm text-gray-800 break-all" href="#">—</a>
-            </div>
-          </div>
-        </div>
-      </div>
+<div id="paysaathi-customer-support"
+  class="bg-white rounded-2xl p-4 md:p-6 mt-4 shadow-sm">
+
+  <h2 class="text-xl font-bold text-slate-800">
+    PaySaathi Customer Support
+  </h2>
+  <p class="text-sm text-slate-500 mt-1">
+    Create a complaint and communicate with our support team.
+  </p>
+
+  <form id="customerTicketForm" class="grid gap-3 mt-5">
+    <input id="customerTicketSubject" required maxlength="120"
+      placeholder="Complaint subject"
+      class="border rounded-xl p-3 w-full">
+
+    <textarea id="customerTicketMessage" required maxlength="3000"
+      placeholder="Describe your problem..."
+      class="border rounded-xl p-3 w-full"></textarea>
+
+    <button class="bg-blue-600 text-white rounded-xl p-3 font-bold">
+      Submit support ticket
+    </button>
+  </form>
+
+  <p id="customerSupportStatus" class="text-sm mt-3"></p>
+
+  <hr class="my-5">
+
+  <h3 class="font-bold mb-3">My tickets</h3>
+  <div id="customerTicketList" class="space-y-3"></div>
+
+  <div id="customerTicketConversation" class="mt-5 hidden">
+    <h3 id="customerConversationTitle" class="font-bold mb-3"></h3>
+    <div id="customerMessages"
+      class="bg-slate-50 rounded-xl p-3 space-y-3 max-h-80 overflow-y-auto">
+    </div>
+
+    <form id="customerReplyForm" class="flex gap-2 mt-3">
+      <input id="customerReplyInput" required maxlength="3000"
+        placeholder="Write your reply..."
+        class="border rounded-xl p-3 flex-1 min-w-0">
+      <button class="bg-blue-600 text-white rounded-xl px-4">
+        Send
+      </button>
+    </form>
+  </div>
+</div>
 
       <!-- MOBILE BOTTOM NAVIGATION -->
       <nav aria-label="Mobile navigation" class="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur border-t border-gray-200 py-2.5 px-5 sm:px-8 flex justify-between items-center z-40 shadow-lg" style="padding-bottom: calc(.625rem + env(safe-area-inset-bottom));">
