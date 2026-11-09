@@ -1023,7 +1023,292 @@
     window.loadProfile();
     loadSiteStatus();
     window.setInterval(loadSiteStatus, 60000);
-  </script>
+    // PAYSAATHI CUSTOMER SUPPORT + NOTIFICATIONS
+
+let activeCustomerTicket=null;
+
+function customerSafeText(value){
+  return String(value??'').replace(/[&<>"']/g,c=>({
+    '&':'&amp;','<':'&lt;','>':'&gt;',
+    '"':'&quot;',"'":'&#39;'
+  })[c]);
+}
+
+// BROADCAST NOTIFICATIONS
+async function loadCustomerBroadcasts(){
+  const {data,error}=await supabase
+    .from('paysaathi_notifications')
+    .select('id,title,message,created_at')
+    .eq('is_active',true)
+    .order('created_at',{ascending:false})
+    .limit(20);
+
+  if(error){
+    console.warn('Notification load failed:',error.message);
+    return;
+  }
+
+  let box=document.getElementById('paysaathi-broadcasts');
+
+  if(!box){
+    box=document.createElement('div');
+    box.id='paysaathi-broadcasts';
+
+    const container=document.querySelector('main') ||
+      document.body;
+
+    container.prepend(box);
+  }
+
+  box.replaceChildren();
+
+  (data||[]).forEach(notification=>{
+    const card=document.createElement('article');
+
+    card.className=
+      'bg-blue-50 border border-blue-100 rounded-xl p-4 mb-3';
+
+    card.innerHTML=`
+      <div class="font-bold text-blue-900">
+        🔔 ${customerSafeText(notification.title)}
+      </div>
+      <p class="text-sm text-blue-800 mt-2 whitespace-pre-wrap">
+        ${customerSafeText(notification.message)}
+      </p>
+      <small class="text-blue-600">
+        ${new Date(notification.created_at).toLocaleString()}
+      </small>`;
+
+    box.appendChild(card);
+  });
+}
+
+// CUSTOMER TICKET LIST
+async function loadCustomerTickets(){
+  const user=await getCurrentUser();
+
+  const {data,error}=await supabase
+    .from('paysaathi_support_tickets')
+    .select('*')
+    .eq('customer_id',user.id)
+    .order('updated_at',{ascending:false});
+
+  if(error){
+    document.getElementById('customerTicketList').textContent=
+      error.message;
+    return;
+  }
+
+  const list=document.getElementById('customerTicketList');
+  list.replaceChildren();
+
+  if(!data?.length){
+    list.textContent='No support tickets yet.';
+    return;
+  }
+
+  data.forEach(ticket=>{
+    const button=document.createElement('button');
+
+    button.className=
+      'w-full text-left border rounded-xl p-3 mb-2 hover:border-blue-400';
+
+    button.innerHTML=`
+      <strong>${customerSafeText(ticket.subject)}</strong>
+      <span class="float-right text-xs text-blue-600">
+        ${customerSafeText(ticket.status)}
+      </span>
+      <p class="text-xs text-slate-500 mt-2">
+        ${new Date(ticket.created_at).toLocaleString()}
+      </p>`;
+
+    button.onclick=()=>openCustomerTicket(ticket);
+
+    list.appendChild(button);
+  });
+}
+
+// OPEN TICKET
+async function openCustomerTicket(ticket){
+  activeCustomerTicket=ticket;
+
+  document.getElementById('customerTicketConversation')
+    .classList.remove('hidden');
+
+  document.getElementById('customerConversationTitle')
+    .textContent=ticket.subject;
+
+  await loadCustomerMessages();
+}
+
+// LOAD CONVERSATION
+async function loadCustomerMessages(){
+  if(!activeCustomerTicket)return;
+
+  const {data,error}=await supabase
+    .from('paysaathi_support_messages')
+    .select('*')
+    .eq('ticket_id',activeCustomerTicket.id)
+    .order('created_at');
+
+  const box=document.getElementById('customerMessages');
+
+  if(error){
+    box.textContent=error.message;
+    return;
+  }
+
+  box.replaceChildren();
+
+  (data||[]).forEach(msg=>{
+    const mine=msg.sender_id===activeCustomerTicket.customer_id;
+    const item=document.createElement('div');
+
+    item.className=
+      'rounded-xl p-3 max-w-[90%] '+
+      (mine?'bg-blue-100 ml-auto':'bg-white border');
+
+    item.innerHTML=`
+      <strong class="text-xs">${mine?'You':'Support Agent'}</strong>
+      <p class="text-sm whitespace-pre-wrap break-words mt-1">
+        ${customerSafeText(msg.message)}
+      </p>
+      <small class="text-xs text-slate-500">
+        ${new Date(msg.created_at).toLocaleString()}
+      </small>`;
+
+    box.appendChild(item);
+  });
+
+  box.scrollTop=box.scrollHeight;
+}
+
+// CREATE TICKET
+document.getElementById('customerTicketForm')
+.addEventListener('submit',async event=>{
+  event.preventDefault();
+
+  const user=await getCurrentUser();
+
+  const subject=document.getElementById(
+    'customerTicketSubject').value.trim();
+
+  const message=document.getElementById(
+    'customerTicketMessage').value.trim();
+
+  const status=document.getElementById(
+    'customerSupportStatus');
+
+  if(!subject || !message)return;
+
+  status.textContent='Submitting...';
+
+  const {data:ticket,error}=await supabase
+    .from('paysaathi_support_tickets')
+    .insert({
+      customer_id:user.id,
+      subject,
+      message
+    })
+    .select()
+    .single();
+
+  if(error){
+    status.textContent=error.message;
+    return;
+  }
+
+  const {error:messageError}=await supabase
+    .from('paysaathi_support_messages')
+    .insert({
+      ticket_id:ticket.id,
+      sender_id:user.id,
+      message
+    });
+
+  if(messageError){
+    status.textContent=
+      'Ticket created, but initial message could not be saved: '+
+      messageError.message;
+  }else{
+    status.textContent='Your support ticket has been created.';
+  }
+
+  event.target.reset();
+  await loadCustomerTickets();
+});
+
+// CUSTOMER REPLY
+document.getElementById('customerReplyForm')
+.addEventListener('submit',async event=>{
+  event.preventDefault();
+
+  if(!activeCustomerTicket)return;
+
+  const user=await getCurrentUser();
+
+  const input=document.getElementById('customerReplyInput');
+  const message=input.value.trim();
+
+  if(!message)return;
+
+  const {error}=await supabase
+    .from('paysaathi_support_messages')
+    .insert({
+      ticket_id:activeCustomerTicket.id,
+      sender_id:user.id,
+      message
+    });
+
+  if(error){
+    alert(error.message);
+    return;
+  }
+
+  input.value='';
+  await loadCustomerMessages();
+});
+
+// INITIAL LOAD + REALTIME
+async function initPaySaathiSupport(){
+  try{
+    const user=await getCurrentUser();
+
+    await Promise.all([
+      loadCustomerBroadcasts(),
+      loadCustomerTickets()
+    ]);
+
+    supabase.channel('customer-support-'+user.id)
+      .on('postgres_changes',{
+        event:'*',
+        schema:'public',
+        table:'paysaathi_notifications'
+      },loadCustomerBroadcasts)
+      .on('postgres_changes',{
+        event:'*',
+        schema:'public',
+        table:'paysaathi_support_tickets',
+        filter:'customer_id=eq.'+user.id
+      },loadCustomerTickets)
+      .on('postgres_changes',{
+        event:'*',
+        schema:'public',
+        table:'paysaathi_support_messages'
+      },async()=>{
+        if(activeCustomerTicket){
+          await loadCustomerMessages();
+        }
+      })
+      .subscribe();
+
+  }catch(error){
+    console.error('PaySaathi support:',error);
+  }
+}
+
+initPaySaathiSupport();
+</script>
 
 </body>
 </html>
