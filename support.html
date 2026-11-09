@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PaySaathi Support Desk</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body{font-family:Inter,system-ui;background:#f3f6fc}
+button:disabled{opacity:.5;cursor:not-allowed}
+</style>
+</head>
+<body class="min-h-screen">
+
+<header class="bg-slate-950 text-white px-5 py-4 flex justify-between items-center">
+  <div>
+    <h1 class="font-bold text-xl">PaySaathi Support</h1>
+    <p class="text-xs text-slate-300">Agent workspace</p>
+  </div>
+  <button id="logout" class="bg-white/10 px-4 py-2 rounded-lg">Logout</button>
+</header>
+
+<main class="max-w-6xl mx-auto p-4 md:p-7">
+  <div class="grid md:grid-cols-3 gap-4 mb-5">
+    <div class="bg-white p-5 rounded-xl shadow-sm">
+      <p class="text-slate-500 text-sm">Open tickets</p>
+      <h2 id="openCount" class="text-3xl font-bold">0</h2>
+    </div>
+    <div class="bg-white p-5 rounded-xl shadow-sm">
+      <p class="text-slate-500 text-sm">Pending tickets</p>
+      <h2 id="pendingCount" class="text-3xl font-bold">0</h2>
+    </div>
+    <div class="bg-white p-5 rounded-xl shadow-sm">
+      <p class="text-slate-500 text-sm">Resolved tickets</p>
+      <h2 id="resolvedCount" class="text-3xl font-bold">0</h2>
+    </div>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-5">
+    <section class="bg-white rounded-xl p-4 shadow-sm">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="font-bold text-lg">Assigned tickets</h2>
+        <button id="refresh" class="text-blue-600 text-sm">Refresh</button>
+      </div>
+      <div id="ticketList" class="space-y-3">
+        <p class="text-slate-500 text-sm">Loading tickets...</p>
+      </div>
+    </section>
+
+    <section class="bg-white rounded-xl p-4 shadow-sm">
+      <div class="flex justify-between items-center gap-3 mb-4">
+        <div>
+          <h2 id="ticketTitle" class="font-bold text-lg">Ticket details</h2>
+          <p id="ticketStatus" class="text-xs text-slate-500">Select a ticket</p>
+        </div>
+        <select id="statusSelect" class="border rounded-lg p-2 text-sm" disabled>
+          <option value="open">Open</option>
+          <option value="pending">Pending</option>
+          <option value="resolved">Resolved</option>
+          <option value="closed">Closed</option>
+        </select>
+      </div>
+
+      <div id="conversation"
+        class="h-80 overflow-y-auto bg-slate-50 rounded-xl p-3 space-y-3">
+        <p class="text-sm text-slate-500">Choose a ticket to view messages.</p>
+      </div>
+
+      <form id="replyForm" class="flex gap-2 mt-3">
+        <input id="replyInput" maxlength="3000"
+          placeholder="Write your reply..."
+          class="flex-1 min-w-0 border rounded-lg p-3" disabled required>
+        <button id="sendReply" disabled
+          class="bg-blue-600 text-white px-4 rounded-lg">Send</button>
+      </form>
+    </section>
+  </div>
+</main>
+
+<script type="module">
+import { createClient } from
+'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const SUPABASE_URL='https://hhqcycwfvxoxjizlbivv.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_NdrUA-ubf67oW5hiS-Yw4A_-r2xbJRV';
+
+const supabase=createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+
+let agent=null;
+let selectedTicket=null;
+let tickets=[];
+
+const $=id=>document.getElementById(id);
+
+function escapeHTML(value){
+  return String(value??'').replace(/[&<>"']/g,c=>({
+    '&':'&amp;','<':'&lt;','>':'&gt;',
+    '"':'&quot;',"'":'&#39;'
+  })[c]);
+}
+
+async function init(){
+  const {data,error}=await supabase.auth.getUser();
+  if(error || !data.user){
+    location.replace('login.html');
+    return;
+  }
+
+  agent=data.user;
+
+  const {data:allowed,error:roleError}=
+    await supabase.rpc('is_paysaathi_support');
+
+  if(roleError || !allowed){
+    document.body.innerHTML=
+      '<div class="p-10 text-center"><h2 class="text-xl font-bold">Access denied</h2><p>This account is not an active support agent.</p></div>';
+    return;
+  }
+
+  await loadTickets();
+
+  supabase.channel('support-agent-'+agent.id)
+    .on('postgres_changes',{
+      event:'*',schema:'public',
+      table:'paysaathi_support_tickets'
+    },loadTickets)
+    .on('postgres_changes',{
+      event:'*',schema:'public',
+      table:'paysaathi_support_messages'
+    },async payload=>{
+      if(selectedTicket &&
+        payload.new?.ticket_id===selectedTicket.id){
+        await loadMessages();
+      }
+    })
+    .subscribe();
+}
+
+async function loadTickets(){
+  const {data,error}=await supabase
+    .from('paysaathi_support_tickets')
+    .select('*')
+    .eq('assigned_to',agent.id)
+    .order('updated_at',{ascending:false});
+
+  if(error){
+    $('ticketList').textContent=error.message;
+    return;
+  }
+
+  tickets=data||[];
+
+  $('openCount').textContent=
+    tickets.filter(t=>t.status==='open').length;
+  $('pendingCount').textContent=
+    tickets.filter(t=>t.status==='pending').length;
+  $('resolvedCount').textContent=
+    tickets.filter(t=>t.status==='resolved').length;
+
+  $('ticketList').replaceChildren();
+
+  if(!tickets.length){
+    $('ticketList').innerHTML=
+      '<p class="text-slate-500 text-sm">No assigned tickets yet.</p>';
+    return;
+  }
+
+  tickets.forEach(ticket=>{
+    const button=document.createElement('button');
+    button.className=
+      'w-full text-left border rounded-xl p-3 hover:border-blue-400';
+    button.innerHTML=`
+      <div class="flex justify-between gap-2">
+        <strong>${escapeHTML(ticket.subject)}</strong>
+        <span class="text-xs text-blue-600">${escapeHTML(ticket.status)}</span>
+      </div>
+      <p class="text-xs text-slate-500 mt-2">
+        ${new Date(ticket.created_at).toLocaleString()}
+      </p>`;
+    button.onclick=()=>selectTicket(ticket);
+    $('ticketList').appendChild(button);
+  });
+}
+
+async function selectTicket(ticket){
+  selectedTicket=ticket;
+  $('ticketTitle').textContent=ticket.subject;
+  $('ticketStatus').textContent='Customer ID: '+ticket.customer_id;
+  $('statusSelect').value=ticket.status;
+  $('statusSelect').disabled=false;
+  $('replyInput').disabled=false;
+  $('sendReply').disabled=false;
+  await loadMessages();
+}
+
+async function loadMessages(){
+  if(!selectedTicket)return;
+
+  const {data,error}=await supabase
+    .from('paysaathi_support_messages')
+    .select('*')
+    .eq('ticket_id',selectedTicket.id)
+    .order('created_at');
+
+  if(error){
+    $('conversation').textContent=error.message;
+    return;
+  }
+
+  $('conversation').replaceChildren();
+
+  (data||[]).forEach(msg=>{
+    const item=document.createElement('div');
+    const mine=msg.sender_id===agent.id;
+    item.className='p-3 rounded-xl max-w-[90%] '+
+      (mine?'bg-blue-100 ml-auto':'bg-white border');
+
+    item.innerHTML=`
+      <p class="text-xs font-bold mb-1">
+        ${mine?'You':'Customer'}
+      </p>
+      <p class="text-sm whitespace-pre-wrap break-words">
+        ${escapeHTML(msg.message)}
+      </p>
+      <p class="text-xs text-slate-400 mt-2">
+        ${new Date(msg.created_at).toLocaleString()}
+      </p>`;
+
+    $('conversation').appendChild(item);
+  });
+
+  $('conversation').scrollTop=$('conversation').scrollHeight;
+}
+
+$('replyForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+
+  if(!selectedTicket)return;
+
+  const message=$('replyInput').value.trim();
+  if(!message)return;
+
+  $('sendReply').disabled=true;
+
+  const {error}=await supabase
+    .from('paysaathi_support_messages')
+    .insert({
+      ticket_id:selectedTicket.id,
+      sender_id:agent.id,
+      message
+    });
+
+  $('sendReply').disabled=false;
+
+  if(error){
+    alert(error.message);
+    return;
+  }
+
+  $('replyInput').value='';
+
+  await supabase.from('paysaathi_support_tickets')
+    .update({
+      status:'pending',
+      updated_at:new Date().toISOString()
+    })
+    .eq('id',selectedTicket.id);
+
+  await loadMessages();
+  await loadTickets();
+});
+
+$('statusSelect').addEventListener('change',async()=>{
+  if(!selectedTicket)return;
+
+  const {error}=await supabase
+    .from('paysaathi_support_tickets')
+    .update({
+      status:$('statusSelect').value,
+      updated_at:new Date().toISOString()
+    })
+    .eq('id',selectedTicket.id);
+
+  if(error){
+    alert(error.message);
+    return;
+  }
+
+  selectedTicket.status=$('statusSelect').value;
+  $('ticketStatus').textContent=
+    'Customer ID: '+selectedTicket.customer_id+
+    ' · '+selectedTicket.status;
+
+  await loadTickets();
+});
+
+$('refresh').onclick=loadTickets;
+
+$('logout').onclick=async()=>{
+  await supabase.auth.signOut();
+  location.replace('login.html');
+};
+
+init();
+</script>
+</body>
+</html>
