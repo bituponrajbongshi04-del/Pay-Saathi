@@ -113,6 +113,194 @@ function exportCsv(){const cols=['created_at','reference','service_name','user_i
 async function logout(){await supabase.auth.signOut();location.replace('login.html');}
 $('logoutBtn').addEventListener('click',logout);$('refreshBtn').addEventListener('click',refreshAll);$('usersRefresh').addEventListener('click',()=>loadUsers().catch(e=>notify(e.message,'error')));$('txRefresh').addEventListener('click',()=>loadTransactions().catch(e=>notify(e.message,'error')));$('analyticsRefresh').addEventListener('click',refreshAll);$('settingsRefresh').addEventListener('click',()=>loadSettings().catch(e=>notify(e.message,'error','settingsNotice')));$('userSearch').addEventListener('input',renderUsers);$('txSearch').addEventListener('input',renderTransactions);$('txStatus').addEventListener('change',renderTransactions);$('exportBtn').addEventListener('click',exportCsv);document.querySelectorAll('[data-save]').forEach(b=>b.addEventListener('click',()=>saveSetting(b.dataset.save)));
 $('todayLabel').textContent=new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+function safeText(value){
+  return String(value??'').replace(/[&<>"']/g,c=>({
+    '&':'&amp;','<':'&lt;','>':'&gt;',
+    '"':'&quot;',"'":'&#39;'
+  })[c]);
+}
+
+// SEND NOTIFICATION
+async function sendBroadcast(){
+  const title=$('broadcastTitle').value.trim();
+  const message=$('broadcastMessage').value.trim();
+
+  if(!title || !message){
+    notify('Enter notification title and message.','error');
+    return;
+  }
+
+  const {error}=await supabase
+    .from('paysaathi_notifications')
+    .insert({
+      title,
+      message,
+      created_by:currentUser.id,
+      is_active:true
+    });
+
+  if(error){
+    notify(error.message,'error');
+    return;
+  }
+
+  $('broadcastTitle').value='';
+  $('broadcastMessage').value='';
+  notify('Notification sent to customers.');
+  await loadBroadcasts();
+}
+
+// LOAD NOTIFICATIONS
+async function loadBroadcasts(){
+  const {data,error}=await supabase
+    .from('paysaathi_notifications')
+    .select('*')
+    .order('created_at',{ascending:false})
+    .limit(30);
+
+  if(error){
+    $('broadcastHistory').textContent=error.message;
+    return;
+  }
+
+  $('broadcastHistory').replaceChildren();
+
+  (data||[]).forEach(item=>{
+    const card=document.createElement('div');
+    card.className='setting';
+    card.style.marginBottom='10px';
+
+    card.innerHTML=`
+      <strong>${safeText(item.title)}</strong>
+      <p>${safeText(item.message)}</p>
+      <small class="muted">
+        ${new Date(item.created_at).toLocaleString()}
+        · ${item.is_active?'Active':'Archived'}
+      </small>
+      <div class="setting-actions">
+        <button class="btn small" data-notice-id="${item.id}"
+          data-notice-active="${!item.is_active}">
+          ${item.is_active?'Archive':'Republish'}
+        </button>
+      </div>`;
+
+    card.querySelector('button').onclick=async()=>{
+      const {error}=await supabase
+        .from('paysaathi_notifications')
+        .update({is_active:!item.is_active})
+        .eq('id',item.id);
+
+      if(error){notify(error.message,'error');return;}
+      await loadBroadcasts();
+      notify('Notification updated.');
+    };
+
+    $('broadcastHistory').appendChild(card);
+  });
+}
+
+// ADD AGENT
+async function addAgent(){
+  const name=$('agentName').value.trim();
+  const email=$('agentEmail').value.trim();
+  const phone=$('agentPhone').value.trim();
+  const details=$('agentDetails').value.trim();
+
+  if(!name || !email){
+    notify('Enter agent name and registered email.','error');
+    return;
+  }
+
+  const {error}=await supabase.rpc(
+    'paysaathi_admin_add_support_agent',
+    {
+      p_email:email,
+      p_full_name:name,
+      p_phone:phone||null,
+      p_details:details||null
+    }
+  );
+
+  if(error){
+    notify(error.message,'error');
+    return;
+  }
+
+  $('agentName').value='';
+  $('agentEmail').value='';
+  $('agentPhone').value='';
+  $('agentDetails').value='';
+
+  notify('Support agent added successfully.');
+  await loadAgents();
+}
+
+// LOAD AGENTS
+async function loadAgents(){
+  const {data,error}=await supabase
+    .from('paysaathi_support_staff')
+    .select('*')
+    .order('created_at',{ascending:false});
+
+  if(error){
+    $('agentsBody').innerHTML=
+      `<tr><td colspan="5">${safeText(error.message)}</td></tr>`;
+    return;
+  }
+
+  $('agentsBody').replaceChildren();
+
+  (data||[]).forEach(agent=>{
+    const tr=document.createElement('tr');
+
+    tr.innerHTML=`
+      <td>${safeText(agent.full_name)}</td>
+      <td>${safeText(agent.email)}</td>
+      <td>
+        <select class="btn" data-status>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </td>
+      <td>
+        <select class="btn" data-availability>
+          <option value="available">Available</option>
+          <option value="busy">Busy</option>
+          <option value="off_duty">Off duty</option>
+        </select>
+      </td>
+      <td>
+        <button class="btn primary small">Save</button>
+      </td>`;
+
+    const status=tr.querySelector('[data-status]');
+    const availability=tr.querySelector('[data-availability]');
+
+    status.value=agent.status;
+    availability.value=agent.availability;
+
+    tr.querySelector('button').onclick=async()=>{
+      const {error}=await supabase
+        .from('paysaathi_support_staff')
+        .update({
+          status:status.value,
+          availability:availability.value
+        })
+        .eq('user_id',agent.user_id);
+
+      if(error){notify(error.message,'error');return;}
+      notify('Agent updated.');
+      await loadAgents();
+    };
+
+    $('agentsBody').appendChild(tr);
+  });
+}
+
+$('sendBroadcast').addEventListener('click',sendBroadcast);
+$('addAgent').addEventListener('click',addAgent);
+$('refreshAgents').addEventListener('click',loadAgents);
+$('refreshBroadcasts').addEventListener('click',loadBroadcasts);
 try{if(await requireAdmin()){await refreshAll();await loadUsers();await loadSettings();}}catch(e){console.error(e);$('projectState').textContent='Setup required';notify(e.message,'error');$('adminStatus').textContent='Setup required';}
 supabase.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'||!session)location.replace('login.html?next=admin.html')});
 </script>
