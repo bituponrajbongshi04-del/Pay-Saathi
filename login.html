@@ -208,46 +208,6 @@ passwordForm.addEventListener('submit', async (event) => {
   } finally {
     setBusy(passwordLoginButton, false, '', 'Continue securely');
   }
-  
-} catch(error) {
-    console.error('Login error:', error);
-
-    const msg = String(error?.message || '');
-    const code = String(error?.code || '').toLowerCase();
-    const status = Number(error?.status || 0);
-
-    if (
-        code.includes('banned') ||
-        /user is banned|user banned|account banned|banned until/i.test(msg)
-    ) {
-        showMessage(
-            'BANNED: Your PaySaathi account has been restricted. Please contact Customer Support for assistance.'
-        );
-    }
-    else if (/invalid login credentials/i.test(msg)) {
-        showMessage(
-            'Email or password is incorrect. Check your details or use Forgot password.'
-        );
-    }
-    else if (/email not confirmed/i.test(msg)) {
-        showMessage(
-            'Please confirm your email first, then try signing in again.'
-        );
-    }
-    else if (status === 403) {
-        showMessage(
-            'Access denied. Your account may be restricted. Please contact Customer Support.'
-        );
-    }
-    else {
-        showMessage(
-            'Unable to sign in. Please try again. If the problem continues, contact Customer Support.'
-        );
-    }
-
-    button.disabled = false;
-    button.textContent = 'Login securely';
-  }
 });
 
 verifyButton.addEventListener('click', async () => {
