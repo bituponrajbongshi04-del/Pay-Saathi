@@ -103,8 +103,85 @@ function renderTransactions(){if(!$('transactionsBody'))return;const q=($('txSea
 function statusClass(s){s=String(s||'').toLowerCase();return s==='success'?'success':s==='pending'?'warning':s==='failed'?'danger':''}
 function renderChart(el,list){if(!el)return;const days=Array.from({length:7},(_,i)=>{const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-(6-i));return d});const counts=days.map(d=>list.filter(t=>{const x=new Date(t.created_at);return x.toDateString()===d.toDateString()}).length);const max=Math.max(1,...counts);el.innerHTML=days.map((d,i)=>`<div class="bar-col"><div class="bar" title="${counts[i]} transactions" style="height:${Math.max(2,counts[i]/max*155)}px"></div><span class="bar-label">${d.toLocaleDateString('en-IN',{weekday:'short'})}</span></div>`).join('');if(!list.length)el.innerHTML='<div class="empty-chart">No transaction activity recorded yet.</div>';}
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-async function changeUserAccess(userId,action){if(userId===currentUser.id){notify('You cannot restrict your own admin account from this page.','error');return;}if(!confirm(action==='ban'?'Restrict this user from signing in?':'Restore this user’s sign-in access?'))return;try{const {data:{session}}=await supabase.auth.getSession();const res=await fetch(SUPABASE_URL+'/functions/v1/admin-user-action',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token,'apikey':SUPABASE_PUBLISHABLE_KEY},body:JSON.stringify({userId,action})});const payload=await res.json().catch(()=>({}));if(!res.ok)throw new Error(payload.error||'Could not update account access. Deploy the admin-user-action Edge Function.');notify(action==='ban'?'User access restricted.':'User access restored.');await loadUsers();}catch(e){notify(e.message,'error');}}
 
+async function changeUserAccess(userId, action) {
+    if (!currentUser || userId === currentUser.id) {
+        notify('Cannot restrict your own admin account.', 'error');
+        return;
+    }
+
+    if (!['ban', 'unban'].includes(action)) {
+        notify('Invalid restriction action.', 'error');
+        return;
+    }
+
+    if (!confirm(action === 'ban'
+        ? 'Restrict this user from signing in?'
+        : 'Restore this user’s sign-in access?')) return;
+
+    try {
+        const { data: { session }, error: sessionError } =
+            await supabase.auth.getSession();
+
+        if (sessionError) throw sessionError;
+
+        if (!session?.access_token) {
+            throw new Error('Admin session missing. Please log in again.');
+        }
+
+        console.log('Restriction diagnostic:', {
+            endpoint: SUPABASE_URL + '/rest/v1/rpc/paysaathi_admin_set_user_restriction',
+            userId,
+            action,
+            online: navigator.onLine,
+            sessionAvailable: !!session.access_token
+        });
+
+        const { data, error } = await supabase.rpc(
+            'paysaathi_admin_set_user_restriction',
+            {
+                p_user_id: userId,
+                p_action: action
+            }
+        );
+
+        if (error) {
+            console.error('Supabase RPC error:', {
+                message: error.message,
+                code: error.code,
+                details: error.details,
+                hint: error.hint,
+                status: error.status
+            });
+
+            throw new Error(
+                'RPC Error: ' + error.message +
+                ' | Code: ' + (error.code || 'unknown')
+            );
+        }
+
+        if (data !== true) {
+            throw new Error('Unexpected RPC response: ' + JSON.stringify(data));
+        }
+
+        notify(
+            action === 'ban'
+                ? 'User access restricted successfully.'
+                : 'User access restored successfully.'
+        );
+
+        await loadUsers();
+
+    } catch (e) {
+        console.error('Restriction diagnostic failed:', e);
+
+        notify(
+            e.message || 'Unknown restriction error',
+            'error'
+        );
+    }
+}
+  
 async function loadAgentActivity(){
  const body=$('agentActivityBody');if(!body)return;
  body.innerHTML='<tr><td colspan="6" class="empty">Loading agent activity…</td></tr>';
