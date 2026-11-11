@@ -58,6 +58,8 @@ body{background:radial-gradient(circle at 85% 0%,#e8f0ff 0,transparent 27%),#f3f
     <button data-section="transactions"><span class="ico">⇄</span>Transactions</button>
     <button data-section="analytics"><span class="ico">▥</span>Analytics</button>
     <button data-section="support"><span class="ico">☏</span>Customer Support</button>
+    <button data-section="staff"><span class="ico">♙</span>Staff & Payroll</button>
+    <button data-section="audit"><span class="ico">▤</span>Activity & Security</button>
     <button data-section="settings"><span class="ico">⚙</span>Settings</button>
   </nav>
   <div class="side-bottom">Protected admin area<br><span id="projectState">Connecting to Supabase…</span></div>
@@ -92,8 +94,52 @@ body{background:radial-gradient(circle at 85% 0%,#e8f0ff 0,transparent 27%),#f3f
 </section>
 <section class="section" id="section-settings"><div class="page-head"><div><h2>Platform settings</h2><p>Store operational preferences for your application.</p></div><button class="btn" id="settingsRefresh">↻ Reload settings</button></div><div class="notice" id="settingsNotice"></div><div class="settings-grid"><article class="setting"><h4>Maintenance mode</h4><p>Block customer access during planned maintenance. Admin access remains available.</p><select id="maintenanceMode"><option value="false">Off</option><option value="true">On</option></select><div class="setting-actions"><button class="btn primary" data-save="maintenance_mode">Save setting</button></div><label for="maintenanceMessage" style="display:block;font-size:.78rem;font-weight:700;margin:12px 0 6px">Customer message</label><textarea id="maintenanceMessage" maxlength="500" placeholder="We are updating PaySaathi. Please check back shortly."></textarea><div class="setting-actions"><button class="btn" data-save="maintenance_message">Save message</button></div></article><article class="setting"><h4>Support email</h4><p>Contact address displayed by your application, if the public pages are wired to this setting.</p><input id="supportEmail" type="email" placeholder="support@example.com"><div class="setting-actions"><button class="btn primary" data-save="support_email">Save setting</button></div></article><article class="setting" style="grid-column:1/-1"><h4>Site announcement</h4><p>Announcement shown in the customer dashboard Home tab. It refreshes automatically.</p><textarea id="siteAnnouncement" maxlength="500" placeholder="Write an announcement for your users…"></textarea><div class="setting-actions"><button class="btn primary" data-save="site_announcement">Save announcement</button></div></article>
 <article class="setting"><h4>Dashboard notification</h4><p>Turn the notification shown in the dashboard Home tab and bell popup on or off.</p><select id="notificationEnabled"><option value="false">Off</option><option value="true">On</option></select><div class="setting-actions"><button class="btn primary" data-save="notification_enabled">Save notification status</button></div></article><article class="setting"><h4>Notification title</h4><p>Short heading shown with the dashboard notification.</p><input id="notificationTitle" maxlength="90" placeholder="Important update"><div class="setting-actions"><button class="btn primary" data-save="notification_title">Save title</button></div></article><article class="setting" style="grid-column:1/-1"><h4>Notification message</h4><p>Write the message users will see in the Home updates card and Notifications popup.</p><textarea id="notificationMessage" maxlength="350" placeholder="Write your notification…"></textarea><div class="setting-actions"><button class="btn primary" data-save="notification_message">Save notification</button></div></article></div></section>
-</div></main></div>
-<script type="module">
+
+
+<section class="section" id="section-staff">
+  <div class="page-head"><div><h2>Staff & Payroll</h2><p>Manage staff records, monthly salary, attendance and payment history.</p></div><button class="btn" id="staffRefresh">↻ Refresh</button></div>
+  <div class="notice" id="staffNotice"></div>
+  <div class="settings-grid">
+    <article class="setting"><h4>Add / Update Staff</h4><p>Staff records are visible to administrators. Payroll data is protected by a separate owner permission.</p>
+      <input id="staffUserId" placeholder="Staff Auth User UUID">
+      <input id="staffFullName" placeholder="Full name">
+      <input id="staffEmail" type="email" placeholder="Email">
+      <input id="staffPhone" placeholder="Phone (optional)">
+      <select id="staffRole"><option value="support">Support</option><option value="admin">Admin</option><option value="operations">Operations</option><option value="finance">Finance</option></select>
+      <input id="staffSalary" type="number" min="0" step="0.01" placeholder="Monthly salary (INR)">
+      <button class="btn primary" id="staffSave">Save staff record</button>
+    </article>
+    <article class="setting"><h4>Record Attendance / Leave</h4><p>Record attendance against a staff UUID. Use Present, Absent, Half day or Leave.</p>
+      <input id="attUserId" placeholder="Staff Auth User UUID">
+      <input id="attDate" type="date">
+      <select id="attStatus"><option value="present">Present</option><option value="absent">Absent</option><option value="half_day">Half day</option><option value="leave">Leave</option></select>
+      <input id="attNote" maxlength="250" placeholder="Note (optional)">
+      <button class="btn primary" id="attendanceSave">Save attendance</button>
+    </article>
+    <article class="setting"><h4>Payroll Payment</h4><p>Owner-only payroll access. Record net salary payment after verifying the real bank/payment transfer.</p>
+      <input id="payUserId" placeholder="Staff Auth User UUID">
+      <input id="payMonth" type="month">
+      <input id="payGross" type="number" min="0" step="0.01" placeholder="Gross salary (INR)">
+      <input id="payBonus" type="number" min="0" step="0.01" placeholder="Bonus (INR)">
+      <input id="payDeduction" type="number" min="0" step="0.01" placeholder="Deduction (INR)">
+      <input id="payAdvance" type="number" min="0" step="0.01" placeholder="Advance recovery (INR)">
+      <input id="payReference" maxlength="100" placeholder="Payment reference">
+      <button class="btn primary" id="paySave">Record salary payment</button>
+    </article>
+  </div>
+  <div class="panel" style="margin-top:18px"><h3>Staff directory</h3><div class="table-wrap"><table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Salary</th></tr></thead><tbody id="staffBody"><tr><td colspan="5" class="empty">Run the supplied SQL migration, then refresh.</td></tr></tbody></table></div></div>
+  <div class="panel" style="margin-top:18px"><h3>Attendance & leave records</h3><div class="table-wrap"><table><thead><tr><th>Date</th><th>Staff</th><th>Status</th><th>Note</th></tr></thead><tbody id="attendanceBody"><tr><td colspan="4" class="empty">No attendance loaded.</td></tr></tbody></table></div></div>
+  <div class="panel" style="margin-top:18px"><h3>Salary payment history</h3><div class="table-wrap"><table><thead><tr><th>Month</th><th>Staff</th><th>Gross</th><th>Net</th><th>Status</th><th>Reference</th></tr></thead><tbody id="payrollBody"><tr><td colspan="6" class="empty">Payroll is owner-only.</td></tr></tbody></table></div></div>
+</section>
+<section class="section" id="section-audit">
+  <div class="page-head"><div><h2>Activity & Security</h2><p>Review recorded PaySaathi administrative and support activity.</p></div><button class="btn" id="auditRefresh">↻ Refresh</button></div>
+  <div class="notice" id="auditNotice"></div>
+  <div class="panel"><h3>Agent activity log</h3><p class="muted">This view reads existing ps_agent_activity records. It does not monitor activity outside PaySaathi.</p>
+    <div class="table-wrap"><table><thead><tr><th>Time</th><th>Agent</th><th>Action</th><th>Ticket</th><th>Details</th></tr></thead><tbody id="auditBody"><tr><td colspan="5" class="empty">Loading…</td></tr></tbody></table></div>
+  </div>
+  <div class="panel" style="margin-top:18px"><h3>Security notes</h3><ul><li>Never expose Supabase Service Role keys in frontend files.</li><li>Keep payroll access restricted to designated owner accounts.</li><li>Review RLS policies before deploying schema changes.</li><li>Use verified payment-provider callbacks before marking transactions successful.</li></ul></div>
+</section>
+\n</div></main></div>\n<script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 const SUPABASE_URL='https://hhqcycwfvxoxjizlbivv.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_NdrUA-ubf67oW5hiS-Yw4A_-r2xbJRV';
@@ -103,7 +149,7 @@ const money=n=>new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',ma
 const date=v=>v?new Date(v).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'—';
 const dateTime=v=>v?new Date(v).toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'Never';
 function notify(text,type='ok',target='notice'){const el=$(target);el.textContent=text;el.className='notice show '+type;setTimeout(()=>el.classList.remove('show'),5500)}
-function setSection(name){document.querySelectorAll('.section').forEach(x=>x.classList.toggle('active',x.id==='section-'+name));document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.section===name));$('sidebar').classList.remove('open');$('overlay').classList.remove('show');if(name==='users')renderUsers();if(name==='transactions')renderTransactions();if(name==='support')loadSupport().catch(e=>notify(e.message,'error','supportNotice'));}
+function setSection(name){document.querySelectorAll('.section').forEach(x=>x.classList.toggle('active',x.id==='section-'+name));document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.section===name));$('sidebar').classList.remove('open');$('overlay').classList.remove('show');if(name==='users')renderUsers();if(name==='transactions')renderTransactions();if(name==='support')loadSupport().catch(e=>notify(e.message,'error','supportNotice'));if(name==='staff')loadStaff().catch(e=>notify(e.message,'error','staffNotice'));if(name==='audit')loadAudit().catch(e=>notify(e.message,'error','auditNotice'));}
 document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>setSection(b.dataset.section)));
 $('menuBtn').addEventListener('click',()=>{$('sidebar').classList.add('open');$('overlay').classList.add('show')});$('overlay').addEventListener('click',()=>{$('sidebar').classList.remove('open');$('overlay').classList.remove('show')});
 async function requireAdmin(){const {data:{session},error}=await supabase.auth.getSession();if(error)throw error;if(!session){location.replace('login.html?next=admin.html');return false;}currentUser=session.user;$('adminEmail').textContent=currentUser.email||'Admin';$('avatar').textContent=(currentUser.email||'A').slice(0,1).toUpperCase();$('authStatus').textContent='Authenticated';const {data:allowed,error:adminError}=await supabase.rpc('is_paysaathi_admin');if(adminError)throw new Error('Admin authorization is not configured. Run admin_setup.sql in Supabase SQL Editor. '+adminError.message);if(!allowed){$('adminStatus').textContent='Access denied';document.querySelector('.content').innerHTML='<div class="panel" style="max-width:650px;margin:50px auto;text-align:center;padding:35px"><div style="font-size:2rem">🔒</div><h2>Admin access required</h2><p class="muted">This account is signed in, but it has not been granted the PaySaathi administrator role.</p><p class="muted">Ask the project owner to add this account in the Supabase admin_users table.</p><button class="btn" id="backDashboard">Go to dashboard</button> <button class="btn danger" id="deniedLogout">Log out</button></div>';document.getElementById('backDashboard').onclick=()=>location.href='dashboard.html';document.getElementById('deniedLogout').onclick=logout;return false;}$('adminStatus').textContent='Authorized administrator';$('projectState').textContent='Supabase connected · Admin verified';return true;}
@@ -123,7 +169,7 @@ async function changeUserAccess(userId,action){
  if(button){button.disabled=true;button.textContent=action==='ban'?'Restricting…':'Restoring…';}
  try{
    // Supabase Functions client supplies the current session token and apikey consistently.
-   const {data,error}=await supabase.functions.invoke('admin-user-action',{body:{userId,action}});
+   const {data,error}=await supabase.functions.invoke('bright-service',{body:{userId,action}});
    if(error)throw new Error(error.message||'The admin-user-action Edge Function could not be reached.');
    if(data?.error)throw new Error(data.error);
    notify(action==='ban'?'User access restricted successfully.':'User access restored successfully.');
@@ -360,6 +406,51 @@ async function saveSetting(key){
 }
 async function refreshAll(){try{await loadOverview();$('transactionStatus').textContent=transactions.length+' records available';}catch(e){notify('Could not load dashboard data: '+e.message,'error');}}
 function exportCsv(){const cols=['created_at','reference','service_name','user_id','amount','currency','status'];const lines=[cols.join(','),...transactions.map(t=>cols.map(k=>'"'+String(t[k]??'').replace(/"/g,'""')+'"').join(','))];const blob=new Blob([lines.join('\n')],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='paysaathi-transactions.csv';a.click();URL.revokeObjectURL(url);}
+
+async function loadStaff(){
+  const {data:staff,error}=await supabase.from('ps_staff_directory').select('user_id,full_name,email,phone,role,status,monthly_salary,created_at').order('created_at',{ascending:false});
+  if(error)throw error;
+  $('staffBody').innerHTML=(staff||[]).map(x=>`<tr><td>${esc(x.full_name)}</td><td>${esc(x.email)}</td><td>${esc(x.role)}</td><td>${esc(x.status)}</td><td>${money(x.monthly_salary)}</td></tr>`).join('')||'<tr><td colspan="5" class="empty">No staff records yet.</td></tr>';
+  const {data:att,error:ae}=await supabase.from('ps_staff_attendance').select('staff_user_id,attendance_date,status,note').order('attendance_date',{ascending:false}).limit(100);
+  if(ae)throw ae;
+  $('attendanceBody').innerHTML=(att||[]).map(x=>`<tr><td>${date(x.attendance_date)}</td><td>${esc(x.staff_user_id)}</td><td>${esc(x.status)}</td><td>${esc(x.note||'')}</td></tr>`).join('')||'<tr><td colspan="4" class="empty">No attendance records.</td></tr>';
+  try{
+    const {data:pay,error:pe}=await supabase.from('ps_staff_payroll').select('staff_user_id,pay_month,gross_amount,bonus,deductions,advance_recovery,net_amount,payment_status,payment_reference').order('pay_month',{ascending:false}).limit(100);
+    if(pe)throw pe;
+    $('payrollBody').innerHTML=(pay||[]).map(x=>`<tr><td>${esc(x.pay_month)}</td><td>${esc(x.staff_user_id)}</td><td>${money(x.gross_amount)}</td><td>${money(x.net_amount)}</td><td>${esc(x.payment_status)}</td><td>${esc(x.payment_reference||'—')}</td></tr>`).join('')||'<tr><td colspan="6" class="empty">No payroll records.</td></tr>';
+  }catch(e){$('payrollBody').innerHTML='<tr><td colspan="6" class="empty">Payroll is owner-only or migration is not installed.</td></tr>';}
+}
+async function saveStaff(){
+ const user_id=$('staffUserId').value.trim(),full_name=$('staffFullName').value.trim(),email=$('staffEmail').value.trim().toLowerCase();
+ if(!user_id||!full_name||!email)throw new Error('Staff UUID, name and email are required.');
+ const row={user_id,full_name,email,phone:$('staffPhone').value.trim()||null,role:$('staffRole').value,monthly_salary:Number($('staffSalary').value||0),status:'active',updated_at:new Date().toISOString()};
+ const {error}=await supabase.from('ps_staff_directory').upsert(row,{onConflict:'user_id'});if(error)throw error;
+ notify('Staff record saved.','ok','staffNotice');await loadStaff();
+}
+async function saveAttendance(){
+ const staff_user_id=$('attUserId').value.trim(),attendance_date=$('attDate').value;
+ if(!staff_user_id||!attendance_date)throw new Error('Staff UUID and attendance date are required.');
+ const {error}=await supabase.from('ps_staff_attendance').upsert({staff_user_id,attendance_date,status:$('attStatus').value,note:$('attNote').value.trim()||null,recorded_by:currentUser.id},{onConflict:'staff_user_id,attendance_date'});
+ if(error)throw error;notify('Attendance saved.','ok','staffNotice');await loadStaff();
+}
+async function savePayroll(){
+ const staff_user_id=$('payUserId').value.trim(),pay_month=$('payMonth').value;
+ if(!staff_user_id||!pay_month)throw new Error('Staff UUID and payroll month are required.');
+ const gross_amount=Number($('payGross').value||0),bonus=Number($('payBonus').value||0),deductions=Number($('payDeduction').value||0),advance_recovery=Number($('payAdvance').value||0),net_amount=gross_amount+bonus-deductions-advance_recovery;
+ if([gross_amount,bonus,deductions,advance_recovery].some(n=>!Number.isFinite(n)||n<0)||net_amount<0)throw new Error('Enter valid non-negative amounts; net salary cannot be negative.');
+ const {error}=await supabase.from('ps_staff_payroll').upsert({staff_user_id,pay_month:pay_month+'-01',gross_amount,bonus,deductions,advance_recovery,net_amount,payment_status:'paid',payment_reference:$('payReference').value.trim()||null,paid_at:new Date().toISOString(),paid_by:currentUser.id},{onConflict:'staff_user_id,pay_month'});
+ if(error)throw error;notify('Payroll payment record saved. Ensure the actual transfer is completed separately.','ok','staffNotice');await loadStaff();
+}
+async function loadAudit(){
+ const {data,error}=await supabase.from('ps_agent_activity').select('id,agent_id,action,ticket_id,details,created_at').order('created_at',{ascending:false}).limit(100);
+ if(error)throw error;
+ $('auditBody').innerHTML=(data||[]).map(x=>`<tr><td>${dateTime(x.created_at)}</td><td>${esc(x.agent_id)}</td><td>${esc(x.action)}</td><td>${esc(x.ticket_id||'—')}</td><td>${esc(JSON.stringify(x.details||{}))}</td></tr>`).join('')||'<tr><td colspan="5" class="empty">No recorded activity.</td></tr>';
+}
+$('staffSave')?.addEventListener('click',()=>saveStaff().catch(e=>notify(e.message,'error','staffNotice')));
+$('attendanceSave')?.addEventListener('click',()=>saveAttendance().catch(e=>notify(e.message,'error','staffNotice')));
+$('paySave')?.addEventListener('click',()=>savePayroll().catch(e=>notify(e.message,'error','staffNotice')));
+$('staffRefresh')?.addEventListener('click',()=>loadStaff().catch(e=>notify(e.message,'error','staffNotice')));
+$('auditRefresh')?.addEventListener('click',()=>loadAudit().catch(e=>notify(e.message,'error','auditNotice')));
 async function logout(){window.__paysaathiLoggingOut=true;await supabase.auth.signOut({scope:'local'});location.replace('login.html');}
 $('logoutBtn').addEventListener('click',logout);$('refreshBtn').addEventListener('click',refreshAll);$('usersRefresh').addEventListener('click',()=>loadUsers().catch(e=>notify(e.message,'error')));$('txRefresh').addEventListener('click',()=>loadTransactions().catch(e=>notify(e.message,'error')));$('analyticsRefresh').addEventListener('click',refreshAll);$('settingsRefresh').addEventListener('click',()=>loadSettings().catch(e=>notify(e.message,'error','settingsNotice')));$('userSearch').addEventListener('input',renderUsers);$('txSearch').addEventListener('input',renderTransactions);$('txStatus').addEventListener('change',renderTransactions);$('exportBtn').addEventListener('click',exportCsv);document.querySelectorAll('[data-save]').forEach(b=>b.addEventListener('click',()=>saveSetting(b.dataset.save)));
 $('todayLabel').textContent=new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
