@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#071d35">
+<meta name="description" content="PaySaathi — everyday digital financial services, made simple.">
+<title>PaySaathi — Your money. Your services. One Saathi.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#071d35;--navy2:#0d3154;--blue:#087fca;--cyan:#36c5ed;--ink:#10243a;--muted:#62768b;--line:#e4edf5;--pale:#f3f8fc;--white:#fff;--shadow:0 22px 65px #0b2e5017}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:88px}body{margin:0;font-family:"Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink);line-height:1.65;background:#fff}a{text-decoration:none;color:inherit}button{font:inherit}.wrap{width:min(1180px,calc(100% - 42px));margin:auto}
+header{height:78px;position:sticky;top:0;z-index:50;background:#ffffffed;backdrop-filter:blur(18px);border-bottom:1px solid #e9f0f6}.nav{height:100%;display:flex;align-items:center;justify-content:space-between;gap:24px}.brand{display:flex;align-items:center;gap:11px;font-size:21px;font-weight:800;letter-spacing:-.8px}.brand-name span{color:var(--blue)}.logo{width:43px;height:43px;display:grid;place-items:center;position:relative;border-radius:15px;color:#fff;font-size:15px;font-weight:900;letter-spacing:-1px;background:linear-gradient(145deg,#27b9e8,#0874bd 58%,#064b83);box-shadow:0 9px 22px #087fca45;overflow:hidden}.logo:before{content:"";position:absolute;width:65px;height:16px;left:-75px;top:4px;transform:rotate(-35deg);background:#ffffff8a;animation:logoShine 5s ease-in-out infinite}.links{display:flex;gap:28px;align-items:center;color:#425970;font-size:13px;font-weight:700}.links a{transition:color .2s}.links a:hover{color:var(--blue)}.actions{display:flex;align-items:center;gap:10px}.btn{min-height:46px;padding:0 21px;display:inline-flex;align-items:center;justify-content:center;gap:9px;border:1px solid #dce7f0;border-radius:13px;font-size:13px;font-weight:800;cursor:pointer;position:relative;overflow:hidden;isolation:isolate;transition:transform .25s,box-shadow .25s,background .25s,border-color .25s}.btn:hover{transform:translateY(-3px);box-shadow:0 12px 26px #0b477b20}.btn:active{transform:scale(.97)}.primary{color:white;border:0;background:linear-gradient(115deg,#139de0,#0872ba 70%,#07528d);box-shadow:0 9px 22px #087fca35}.primary:hover{box-shadow:0 15px 30px #087fca50}.ghost{background:#fff;color:var(--ink)}.menu{display:none;width:44px;height:44px;border:1px solid var(--line);border-radius:12px;background:#fff;font-size:20px;cursor:pointer}.mobile-nav{display:none;position:absolute;top:100%;left:0;right:0;background:white;padding:12px 22px 18px;border-bottom:1px solid var(--line);box-shadow:0 18px 35px #09243d18}.mobile-nav a{display:block;padding:12px 4px;border-bottom:1px solid #edf2f6;font-weight:700;font-size:14px}.mobile-nav.open{display:block;animation:drop .25s ease both}
+.hero{position:relative;overflow:hidden;padding:86px 0 72px;background:radial-gradient(ellipse at 80% 15%,#d8f2ff 0,transparent 37%),radial-gradient(ellipse at 5% 90%,#eaf5ff 0,transparent 35%),linear-gradient(180deg,#fbfdff,#f4f9fd)}.hero:before{content:"";position:absolute;inset:0;opacity:.35;background-image:linear-gradient(#7eb9df22 1px,transparent 1px),linear-gradient(90deg,#7eb9df22 1px,transparent 1px);background-size:48px 48px;mask-image:linear-gradient(90deg,transparent,#000 70%,transparent)}.hero-grid{position:relative;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:55px}.eyebrow{display:inline-flex;align-items:center;gap:9px;padding:8px 13px;border:1px solid #cde9f8;background:#ffffffc9;border-radius:99px;color:#0875b7;text-transform:uppercase;letter-spacing:1.5px;font-size:10px;font-weight:900}.pulse{width:7px;height:7px;border-radius:50%;background:#1bbd8b;box-shadow:0 0 0 5px #1bbd8b20}.hero h1{font-size:clamp(43px,5.2vw,68px);line-height:1.06;letter-spacing:-3.4px;margin:21px 0 18px;color:var(--navy)}.hero h1 em{font-style:normal;background:linear-gradient(100deg,#0876bd,#22b8df);background-clip:text;color:transparent}.lead{max-width:540px;color:#5a7085;font-size:16px;line-height:1.85}.cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}.trust{display:flex;gap:19px;flex-wrap:wrap;margin-top:28px;color:#536b80;font-size:11px;font-weight:700}.trust span{display:flex;align-items:center;gap:6px}.check{color:#13a77a;font-size:15px}.visual{min-height:470px;position:relative;display:grid;place-items:center}.halo{position:absolute;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,#c7edff 0,#e6f6ff 48%,#eaf6fc00 72%);animation:breathe 7s ease-in-out infinite alternate}.device{position:relative;z-index:2;width:min(100%,500px);padding:13px;border:1px solid #dbe8f2;border-radius:25px;background:#fff;box-shadow:0 35px 85px #092e4a25;transform:perspective(1000px) rotateY(-7deg) rotateX(2deg);animation:deviceFloat 6s ease-in-out infinite}.desktop-bar{height:25px;display:flex;align-items:center;gap:5px;padding:0 5px 9px}.dot{width:7px;height:7px;border-radius:50%;background:#d7e3ed}.desktop-label{margin-left:auto;color:#8ca0b2;font-size:8px;font-weight:700}.dash{display:grid;grid-template-columns:105px 1fr;min-height:310px;border-radius:15px;overflow:hidden;background:#f5f8fc}.side{background:linear-gradient(180deg,#092744,#0c4169);padding:15px 10px;color:#fff}.side-brand{font-size:10px;font-weight:900;margin-bottom:22px}.side-brand b{color:#4dd4ef}.side-link{font-size:8px;padding:8px 7px;margin:4px 0;border-radius:7px;color:#c4d8e8}.side-link.active{background:#ffffff20;color:#fff}.dash-main{padding:17px}.dash-head{display:flex;justify-content:space-between;align-items:center;font-size:10px;font-weight:800}.avatar{width:25px;height:25px;border-radius:50%;background:#d8effc;color:#0875b7;display:grid;place-items:center;font-size:9px}.welcome{font-size:8px;color:#8193a4;margin-top:3px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}.stat{background:#fff;border:1px solid #e9eff5;border-radius:9px;padding:10px}.stat small{display:block;color:#8b9bab;font-size:7px}.stat b{font-size:12px;color:#14334f}.dash-lower{display:grid;grid-template-columns:1.3fr 1fr;gap:9px;margin-top:10px}.panel{background:#fff;border:1px solid #e9eff5;border-radius:9px;padding:11px;min-height:105px}.panel strong{font-size:8px}.service-mini{display:flex;align-items:center;gap:7px;margin-top:9px;font-size:7px;color:#536b80}.mini-ico{width:21px;height:21px;border-radius:6px;background:#e7f5fc;display:grid;place-items:center;font-size:11px}.bars{height:55px;display:flex;align-items:end;gap:6px;margin-top:8px}.bars i{display:block;flex:1;border-radius:4px 4px 1px 1px;background:linear-gradient(#35c4e8,#0876bd)}.float-card{position:absolute;z-index:3;padding:12px 15px;border:1px solid #e5eef5;border-radius:14px;background:#fff;box-shadow:0 15px 35px #0b31501b;font-size:10px;font-weight:800;color:#28465f}.float-card small{display:block;font-size:8px;color:#8497a8;font-weight:600}.float-a{left:-10px;top:73px;animation:floaty 5s ease-in-out infinite}.float-b{right:-10px;bottom:63px;animation:floaty 6s ease-in-out infinite reverse}.float-icon{display:inline-grid;place-items:center;width:27px;height:27px;border-radius:8px;background:#e7f8f2;color:#0a9a70;margin-right:7px}
+section{padding:84px 0}.section-head{text-align:center;max-width:700px;margin:0 auto 39px}.kicker{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#087cbd;font-weight:900}.section-head h2{font-size:clamp(30px,4vw,43px);line-height:1.15;letter-spacing:-1.8px;margin:10px 0;color:var(--navy)}.section-head p{color:var(--muted);font-size:14px}.services{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.service{position:relative;background:#fff;border:1px solid var(--line);border-radius:19px;padding:23px;box-shadow:0 8px 25px #0e365b08;transition:transform .3s,box-shadow .3s,border-color .3s;cursor:pointer;overflow:hidden}.service:after{content:"";position:absolute;width:130px;height:130px;border-radius:50%;right:-70px;top:-70px;background:#eaf7ff;transition:transform .4s}.service:hover{transform:translateY(-7px);border-color:#b8e1f6;box-shadow:0 20px 40px #0e365b14}.service:hover:after{transform:scale(1.5)}.ico{position:relative;z-index:1;width:48px;height:48px;display:grid;place-items:center;border-radius:15px;background:linear-gradient(145deg,#e6f6ff,#f1faff);font-size:22px;margin-bottom:16px}.service h3{position:relative;z-index:1;font-size:15px;margin:0 0 6px}.service p{position:relative;z-index:1;color:#718397;font-size:12px;margin:0;line-height:1.7}.service .arrow{position:absolute;right:21px;bottom:20px;color:#0b83c7;font-weight:900;opacity:0;transform:translateX(-5px);transition:.25s}.service:hover .arrow{opacity:1;transform:none}
+.preview-section{background:linear-gradient(180deg,#f4f9fd,#edf6fb)}.preview-shell{background:#fff;border:1px solid #e1ebf3;border-radius:26px;padding:28px;box-shadow:var(--shadow)}.preview-top{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:22px}.preview-top h3{margin:0;font-size:17px}.preview-top p{margin:3px 0 0;color:#7a8da0;font-size:11px}.switcher{display:flex;gap:5px;padding:5px;border-radius:12px;background:#eef4f8}.switcher button{border:0;border-radius:9px;padding:9px 14px;background:transparent;color:#61788c;font-size:11px;font-weight:800;cursor:pointer;transition:.25s}.switcher button.active{background:#fff;color:#0878ba;box-shadow:0 3px 12px #12344d12}.preview-stage{position:relative;min-height:430px;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 35%,#d8f1ff 0%,#edf8ff 43%,#f8fbfd 76%);border:1px solid #e5f2fa;border-radius:22px;padding:28px;overflow:hidden}.preview-stage:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;background-image:radial-gradient(#8bc7e8 1px,transparent 1px);background-size:18px 18px;mask-image:linear-gradient(90deg,transparent,#000 50%,transparent)}.phone-preview{position:relative;z-index:1;display:block;width:248px;max-width:100%;background:linear-gradient(145deg,#102e49,#061a2d);padding:9px;border:1px solid #ffffff55;border-radius:35px;box-shadow:0 28px 70px #082b4940,0 0 0 7px #ffffff70;transition:transform .4s ease,opacity .3s ease}.phone-screen{min-height:365px;background:#f5f8fc;border-radius:22px;padding:15px 12px}.phone-notch{height:13px;width:65px;border-radius:20px;background:#09233b;margin:-10px auto 13px}.phone-head{display:flex;justify-content:space-between;font-size:9px;font-weight:900}.phone-welcome{font-size:8px;color:#8395a6;margin-top:15px}.phone-balance{padding:15px;margin-top:8px;border-radius:13px;color:#fff;background:linear-gradient(130deg,#0b3c64,#0785c6)}.phone-balance small{font-size:8px;opacity:.8}.phone-balance b{display:block;font-size:20px;margin:4px 0}.phone-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:12px}.phone-grid div{background:#fff;border:1px solid #e9eff4;border-radius:9px;text-align:center;padding:10px 3px;font-size:7px;font-weight:800}.phone-grid i{display:block;font-style:normal;font-size:16px;margin-bottom:4px}.phone-list{margin-top:15px;background:#fff;border-radius:10px;padding:10px;font-size:8px}.phone-list div{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #eff3f6}.phone-list div:last-child{border:0}.desktop-preview{position:relative;z-index:1;display:block;width:min(100%,820px);border-radius:18px;background:rgba(255,255,255,.94);padding:12px;border:1px solid #ffffff;box-shadow:0 24px 65px #0b315022;transition:transform .4s ease,opacity .3s ease}.desktop-preview .dash{min-height:300px}.preview-stage[data-mode="phone"] .desktop-preview{display:none!important}.preview-stage[data-mode="desktop"] .phone-preview{display:none!important}.preview-stage[data-mode="phone"] .phone-preview{display:block}.preview-stage[data-mode="desktop"] .desktop-preview{display:block}.preview-stage.swap .phone-preview,.preview-stage.swap .desktop-preview{animation:previewEnter .55s cubic-bezier(.2,.75,.2,1) both}.preview-caption{text-align:center;font-size:10px;color:#8294a5;margin-top:13px}
+.benefits{background:var(--navy);color:#fff;position:relative;overflow:hidden}.benefits:before{content:"";position:absolute;width:500px;height:500px;border-radius:50%;right:-180px;top:-260px;background:#087fca30;filter:blur(20px)}.benefits .section-head h2{color:#fff}.benefits .section-head p{color:#a8bfd1}.benefit-grid{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.benefit{border:1px solid #ffffff20;background:#ffffff09;border-radius:17px;padding:22px;transition:.25s}.benefit:hover{transform:translateY(-5px);background:#ffffff12;border-color:#ffffff40}.benefit b{font-size:14px}.benefit p{font-size:12px;color:#a8bfd1;margin:8px 0 0}.benefit-num{font-size:10px;color:#4bc9ed;font-weight:900;letter-spacing:1px;margin-bottom:10px}
+.steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}.step{text-align:center;padding:20px}.step-num{width:52px;height:52px;margin:0 auto 16px;display:grid;place-items:center;border-radius:17px;background:linear-gradient(145deg,#19a9e0,#0868ad);color:#fff;font-weight:900;box-shadow:0 10px 22px #087fca30}.step h3{font-size:15px;margin:0 0 6px}.step p{font-size:12px;color:#75899b}
+.banner{position:relative;overflow:hidden;border-radius:25px;padding:43px 48px;background:linear-gradient(115deg,#082b49,#075d96 65%,#0c9bcf);color:#fff;display:flex;justify-content:space-between;align-items:center;gap:25px}.banner:after{content:"";position:absolute;width:280px;height:280px;border-radius:50%;right:15%;top:-180px;border:1px solid #ffffff25;box-shadow:0 0 0 35px #ffffff08,0 0 0 70px #ffffff05}.banner h2{font-size:clamp(26px,3.4vw,38px);line-height:1.15;margin:0 0 9px;letter-spacing:-1.2px}.banner p{font-size:13px;color:#d0e9f7;margin:0}.banner-content,.banner .btn{position:relative;z-index:1}.banner .btn{background:#fff;color:#075b8c;white-space:nowrap}
+footer{background:#061626;color:#fff;padding:48px 0 22px}.foot{display:grid;grid-template-columns:2fr 1fr 1fr;gap:35px}.foot p,.foot a{color:#a8bfd2;font-size:12px}.foot h4{font-size:12px;margin:0 0 13px}.footlinks{display:grid;gap:9px}.footlinks a:hover{color:#fff}.copy{border-top:1px solid #ffffff20;margin-top:30px;padding-top:17px;color:#829db3;font-size:10px}
+.reveal{opacity:0;transform:translate3d(0,16px,0);transition:opacity .45s ease,transform .45s cubic-bezier(.2,.7,.2,1);will-change:opacity,transform}.reveal.visible{opacity:1;transform:translate3d(0,0,0);will-change:auto}.hero .hero-copy>*{animation:rise .7s both}.hero .hero-copy>*:nth-child(2){animation-delay:.1s}.hero .hero-copy>*:nth-child(3){animation-delay:.18s}.hero .hero-copy>*:nth-child(4){animation-delay:.26s}.hero .hero-copy>*:nth-child(5){animation-delay:.34s}
+@keyframes rise{from{opacity:0;transform:translate3d(0,16px,0)}to{opacity:1;transform:translate3d(0,0,0)}}@keyframes drop{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}@keyframes breathe{to{transform:scale(1.08);opacity:.75}}@keyframes deviceFloat{0%,100%{transform:perspective(1000px) rotateY(-7deg) rotateX(2deg) translateY(0)}50%{transform:perspective(1000px) rotateY(-5deg) rotateX(1deg) translateY(-10px)}}@keyframes floaty{0%,100%{translate:0 0}50%{translate:0 -9px}}@keyframes logoShine{0%,65%{left:-75px}100%{left:70px}}@keyframes popIn{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:none}}@keyframes previewEnter{from{opacity:0;transform:translateY(12px) scale(.985);filter:blur(5px)}to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
+@media(max-width:900px){.links{display:none}.menu{display:block}.hero-grid{grid-template-columns:1fr;gap:24px}.hero-copy{text-align:center}.lead{margin:auto}.cta,.trust{justify-content:center}.visual{min-height:430px}.services,.benefit-grid{grid-template-columns:repeat(2,1fr)}.steps{grid-template-columns:repeat(2,minmax(0,1fr))}.banner{padding:35px;flex-direction:column;align-items:flex-start}.device{width:min(100%,490px)}}
+@media(max-width:600px){.wrap{width:calc(100% - 30px)}header{height:68px}.brand{font-size:19px}.actions .ghost{display:none}.hero{padding:55px 0 45px}.hero h1{font-size:42px;letter-spacing:-2.3px}.lead{font-size:14px}.visual{min-height:350px}.halo{width:310px;height:310px}.device{width:100%;padding:8px;border-radius:18px;transform:none;animation:none}.dash{grid-template-columns:78px 1fr;min-height:255px}.side{padding:12px 6px}.side-link{font-size:7px;padding:7px 4px}.dash-main{padding:11px}.stat{padding:7px}.stat b{font-size:10px}.panel{padding:8px}.float-card{font-size:8px;padding:9px 10px}.float-a{left:-4px;top:22px}.float-b{right:-3px;bottom:20px}section{padding:62px 0}.services,.benefit-grid,.steps{grid-template-columns:1fr}.service{padding:20px}.preview-shell{padding:16px}.preview-top{align-items:flex-start;flex-direction:column}.preview-stage{min-height:380px;padding:14px}.desktop-preview .dash{min-height:240px}.desktop-preview .side{padding:8px 5px}.desktop-preview .dash-main{padding:9px}.banner{padding:29px 23px}.foot{grid-template-columns:1fr 1fr}.foot>div:first-child{grid-column:1/-1}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.reveal{opacity:1;transform:none;filter:none}}
+
+/* PaySaathi premium glass refresh */
+:root{--glass:rgba(255,255,255,.72);--glass-border:rgba(255,255,255,.78);--glass-shadow:0 18px 55px rgba(7,45,77,.11)}
+body{background:linear-gradient(145deg,#f8fcff 0%,#eef8ff 48%,#fff 100%)}
+header{background:rgba(255,255,255,.76);backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);border-bottom:1px solid rgba(194,222,241,.7)}
+.logo{border:1px solid #ffffff70;box-shadow:0 10px 28px #087fca45,inset 0 1px 0 #ffffff70}
+.hero{background:radial-gradient(ellipse at 78% 15%,#bfeaff 0,transparent 40%),radial-gradient(ellipse at 8% 92%,#d9edff 0,transparent 42%),linear-gradient(135deg,#f9fdff,#edf7ff)}
+.hero:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(120deg,transparent 30%,#fff5 48%,transparent 65%);transform:translateX(-100%);animation:heroSheen 10s ease-in-out infinite}
+@keyframes heroSheen{0%,65%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.device,.preview-shell,.service,.benefit,.banner{-webkit-backdrop-filter:none;backdrop-filter:none}
+.service{background:linear-gradient(145deg,rgba(255,255,255,.88),rgba(239,249,255,.68));border:1px solid rgba(255,255,255,.95);box-shadow:0 12px 32px rgba(11,57,91,.07),inset 0 1px 0 #fff;min-height:190px;padding:25px;cursor:pointer}
+.service:before{content:"";position:absolute;inset:0;opacity:0;background:linear-gradient(120deg,transparent,#fff9,transparent);transform:translateX(-100%);transition:transform .7s,opacity .3s;pointer-events:none}
+.service:hover:before{opacity:1;transform:translateX(100%)}
+.service:focus-visible{outline:3px solid #39bce9;outline-offset:4px}
+.service:after{background:radial-gradient(circle,#d9f2ff,#d9f2ff00 72%)}
+.ico{width:58px;height:58px;border-radius:19px;background:linear-gradient(145deg,#fff,#dff4ff);border:1px solid #d6effb;box-shadow:0 9px 22px #087fca16,inset 0 1px 0 #fff;color:#087fca;margin-bottom:18px}
+.ico svg{width:27px;height:27px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.service h3{font-size:16px;letter-spacing:-.3px}
+.service p{font-size:12px;max-width:95%}
+.service .arrow{opacity:1;right:22px;bottom:21px;font-size:18px}
+.service:active{transform:scale(.975)}
+.service-tools{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:-12px 0 22px}
+.service-search{width:min(100%,390px);position:relative}
+.service-search input{width:100%;height:48px;border:1px solid #dcebf5;border-radius:15px;padding:0 16px 0 44px;background:rgba(255,255,255,.78);backdrop-filter:blur(15px);font-family:inherit;font-size:13px;font-weight:600;color:var(--ink);outline:none;box-shadow:0 8px 25px #0b31500a;transition:.25s}
+.service-search input:focus{border-color:#65c4eb;box-shadow:0 0 0 4px #36bce91c}
+.service-search:before{content:"⌕";position:absolute;left:16px;top:5px;font-size:25px;color:#148ac5}
+.service-count{font-size:11px;font-weight:800;color:#6b8195;white-space:nowrap}
+.no-services{grid-column:1/-1;text-align:center;padding:34px;border:1px dashed #b9d9eb;border-radius:18px;color:#688096;background:#ffffff90}
+.service-modal{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:18px;background:rgba(4,22,39,.52);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}
+.service-modal.open{opacity:1;visibility:visible}
+.modal-card{width:min(100%,440px);position:relative;padding:30px;border-radius:27px;border:1px solid #ffffffb8;background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(235,248,255,.91));box-shadow:0 30px 100px #031c3480;transform:translateY(22px) scale(.96);transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.service-modal.open .modal-card{transform:none}
+.modal-close{position:absolute;right:16px;top:15px;width:37px;height:37px;border:1px solid #dfebf3;border-radius:12px;background:#fff;color:#456176;font-size:20px;cursor:pointer}
+.modal-icon{width:65px;height:65px;border-radius:21px;display:grid;place-items:center;background:linear-gradient(145deg,#e4f7ff,#fff);border:1px solid #d7effa;color:#087fca;box-shadow:0 10px 24px #087fca18}
+.modal-icon svg{width:31px;height:31px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.modal-card h3{font-size:24px;letter-spacing:-.8px;margin:18px 0 7px;color:var(--navy)}
+.modal-card p{font-size:13px;color:#6b8093;line-height:1.8;margin:0 0 20px}
+.modal-note{padding:12px 14px;border-radius:13px;background:#eaf6fc;color:#41657d;font-size:11px;margin-bottom:19px}
+.modal-actions{display:flex;gap:10px;flex-wrap:wrap}
+.modal-actions .btn{flex:1}
+.ripple{position:absolute;border-radius:50%;transform:scale(0);animation:ripple .55s linear;background:#35b8e944;pointer-events:none}
+@keyframes ripple{to{transform:scale(4);opacity:0}}
+.preview-shell{background:#ffffff;border:1px solid #fff;box-shadow:var(--glass-shadow)}
+.benefit{background:#102d48;backdrop-filter:none;-webkit-backdrop-filter:none}
+@media(max-width:600px){.service-tools{align-items:stretch;flex-direction:column}.service-search{width:100%}.service-count{padding-left:3px}.modal-card{padding:25px 21px}.service{min-height:170px}}
+@media(prefers-reduced-motion:reduce){.hero:after{animation:none}}
+
+
+/* Refined brand motion: a calm horizontal sheen, never a vertical jump. */
+.logo:before{left:-90%;top:0;width:45%;height:100%;transform:skewX(-22deg);background:linear-gradient(90deg,transparent,#ffffff9c,transparent);animation:logoSweep 6s ease-in-out infinite}
+@keyframes logoSweep{0%,72%{left:-90%}100%{left:145%}}
+.preview-top{position:relative;z-index:2}
+.preview-stage[data-mode="phone"]{min-height:485px}
+.preview-stage[data-mode="desktop"]{min-height:390px}
+.phone-screen{min-height:420px;background:linear-gradient(180deg,#f8fbfe,#eef5fa);border-radius:27px;padding:16px 13px}
+.phone-balance{box-shadow:0 12px 25px #087fca2b}
+.phone-grid div{min-height:61px;box-shadow:0 4px 12px #0d365b08}
+.desktop-preview .dash{min-height:330px;grid-template-columns:145px 1fr}
+.desktop-preview .side{padding:20px 13px}
+.desktop-preview .side-link{font-size:10px;padding:10px 9px}
+.desktop-preview .dash-main{padding:22px}
+.desktop-preview .dash-head{font-size:14px}
+.desktop-preview .welcome{font-size:10px}
+.desktop-preview .stat small{font-size:9px}
+.desktop-preview .stat b{font-size:16px}
+.desktop-preview .panel{min-height:125px}
+.desktop-preview .panel strong{font-size:10px}
+.desktop-preview .service-mini{font-size:9px}
+@media(max-width:700px){
+ .preview-shell{padding:14px}
+ .preview-stage{padding:18px 10px;min-height:440px}
+ .preview-stage[data-mode="phone"]{min-height:475px}
+ .preview-stage[data-mode="desktop"]{min-height:310px;padding:12px 5px}
+ .desktop-preview{padding:6px;width:100%;overflow:hidden}
+ .desktop-preview .dash{grid-template-columns:75px minmax(0,1fr);min-height:245px}
+ .desktop-preview .side{padding:9px 5px}
+ .desktop-preview .side-brand{font-size:8px;margin-bottom:12px}
+ .desktop-preview .side-link{font-size:6px;padding:7px 3px;margin:3px 0}
+ .desktop-preview .dash-main{padding:9px}
+ .desktop-preview .dash-head{font-size:9px}
+ .desktop-preview .welcome{font-size:6px}
+ .desktop-preview .stats{gap:4px;margin-top:8px}
+ .desktop-preview .stat{padding:5px}
+ .desktop-preview .stat small{font-size:6px}
+ .desktop-preview .stat b{font-size:9px}
+ .desktop-preview .dash-lower{gap:4px}
+ .desktop-preview .panel{padding:6px;min-height:90px}
+ .desktop-preview .panel strong{font-size:6px}
+ .desktop-preview .service-mini{font-size:6px;gap:3px;margin-top:6px}
+ .desktop-preview .mini-ico{width:15px;height:15px;font-size:8px}
+ .desktop-preview .bars{height:42px}
+ .preview-top{gap:12px}
+ .switcher{width:100%}
+ .switcher button{flex:1}
+}
+
+
+/* Performance and accessibility refinements */
+@media (max-width:900px){
+  .device{animation:none;transform:none}
+  .halo,.float-a,.float-b{animation:none}
+  .hero:after{animation:none}
+}
+@media (max-width:600px){
+  .steps{grid-template-columns:1fr;gap:8px}
+  .step{padding:14px 10px}
+  .step-num{margin-bottom:10px}
+}
+@media (prefers-reduced-motion:reduce){
+  .reveal{opacity:1;transform:none;will-change:auto}
+}
+</style>
+</head>
+<body>
+<header><div class="wrap nav">
+<a class="brand" href="#" aria-label="PaySaathi home"><span class="logo">PS</span><span class="brand-name">Pay<span>Saathi</span></span></a>
+<nav class="links" aria-label="Main navigation"><a href="#services">Services</a><a href="#preview">Dashboard preview</a><a href="#why">Why PaySaathi</a><a href="#how">How it works</a><a href="contact-support.html">Support</a></nav>
+<div class="actions"><a class="btn ghost" href="login.html">Log in</a><a class="btn primary" href="signup.html">Get started <span>↗</span></a><button class="menu" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNav">☰</button></div></div>
+<div class="wrap mobile-nav" id="mobileNav"><a href="#services">Services</a><a href="#preview">Dashboard preview</a><a href="#why">Why PaySaathi</a><a href="#how">How it works</a><a href="contact-support.html">Support</a><a href="login.html">Log in</a><a href="signup.html">Register</a></div></header>
+<main>
+<section class="hero"><div class="wrap hero-grid"><div class="hero-copy">
+<div class="eyebrow"><i class="pulse"></i> Your trusted digital service companion</div>
+<h1>Your everyday services.<br><em>One smart Saathi.</em></h1>
+<p class="lead">Create your account, complete KYC and get verified. Once your account is activated, add funds and access supported recharges, bill payments and other digital services — all from one simple dashboard.</p>
+<div class="cta"><a class="btn primary" href="signup.html">Create your account <span>→</span></a><a class="btn ghost" href="#preview">Explore the dashboard <span>⌄</span></a></div>
+<div class="trust"><span><b class="check">✓</b> Simple to use</span><span><b class="check">✓</b> Clear service journeys</span><span><b class="check">✓</b> Support when needed</span></div>
+</div>
+<div class="visual"><div class="halo"></div><div class="float-card float-a"><span class="float-icon">✓</span>Easy service access<small>Everything in one place</small></div>
+<div class="device"><div class="desktop-bar"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span class="desktop-label">paysaathi.in / dashboard</span></div><div class="dash"><aside class="side"><div class="side-brand">Pay<b>Saathi</b></div><div class="side-link active">▦ &nbsp; Overview</div><div class="side-link">↗ &nbsp; Recharge</div><div class="side-link">▤ &nbsp; Bill pay</div><div class="side-link">⇄ &nbsp; Transfer</div><div class="side-link">◷ &nbsp; History</div><div class="side-link">☏ &nbsp; Support</div></aside><div class="dash-main"><div class="dash-head">Good morning! <span class="avatar">PS</span></div><div class="welcome">Welcome back to your PaySaathi dashboard</div><div class="stats"><div class="stat"><small>Wallet balance</small><b>₹ 0.00</b></div><div class="stat"><small>Transactions</small><b>0</b></div><div class="stat"><small>Quick services</small><b>09</b></div></div><div class="dash-lower"><div class="panel"><strong>Quick services</strong><div class="service-mini"><i class="mini-ico">📱</i> Mobile recharge</div><div class="service-mini"><i class="mini-ico">⚡</i> Electricity bill</div><div class="service-mini"><i class="mini-ico">🌐</i> Broadband</div></div><div class="panel"><strong>Activity overview</strong><div class="bars"><i style="height:35%"></i><i style="height:55%"></i><i style="height:42%"></i><i style="height:80%"></i><i style="height:63%"></i><i style="height:95%"></i></div></div></div></div></div></div>
+<div class="float-card float-b">🔔 &nbsp; Helpful updates<small>Stay on top of your account</small></div></div></div></section>
+<section id="services"><div class="wrap"><div class="section-head reveal"><div class="kicker">What you can do</div><h2>Everyday services, beautifully organised.</h2><p>Find the service you need without digging through complicated menus. Actual availability depends on active provider integrations.</p></div><div class="service-tools"><label class="service-search"><input id="serviceSearch" type="search" placeholder="Search services..." aria-label="Search services"></label><span class="service-count" id="serviceCount">9 service categories</span></div><div class="services" id="serviceGrid">
+<div class="service reveal" role="button" tabindex="0" data-service="Mobile Recharge" aria-label="Explore Mobile Recharge"><div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10 18h4"/></svg></div><h3>Mobile Recharge</h3><p>Access supported mobile recharge options with a simple flow.</p><span class="arrow">↗</span></div>
+<div class="service reveal" role="button" tabindex="0" data-service="DTH Recharge" aria-label="Explore DTH Recharge"><div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="m8 6 2-3h4l2 3M8 12h8"/></svg></div><h3>DTH Recharge</h3><p>Find your DTH recharge service in just a few steps.</p><span class="arrow">↗</span></div>
+<div class="service reveal" role="button" tabindex="0" data-service="Electricity Bills" aria-label="Explore Electricity Bills"><div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 10-13h-7z"/></svg></div><h3>Electricity Bills</h3><p>Navigate to electricity bill services with clarity.</p><span class="arrow">↗</span></div>
+<div class="service reveal" role="button" tabindex="0" data-service="Gas Bills" aria-label="Explore Gas Bills"><div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c-3 4-6 7-6 11a6 6 0 0 0 12 0c0-4-3-7-6-11Z"/><path d="M9 15a3 3 0 0 0 3 3"/></svg></div><h3>Gas Bills</h3><p>Keep essential gas bill services easy to discover.</p><span class="arrow">↗</span></div>
+<div class="service reveal" role="button" tabindex="0" data-service="Water Bills" aria-label="Explore Water Bills"><div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c-3 4-6 7-6 11a6 6 0 0 0 12 0c0-4-3-7-6-11Z"/></svg></div><h3>Water Bills</h3><p>Access water bill service information in one place.</p><span class="arrow">↗</span></div>
+<div class="service reveal" role="button" tabindex="0" data-service="Broadband" aria-label="Explore Broadband"><div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg></div><h3>Broadband</h3><p>Find broadband and internet bill payment options.</p><span class="arrow">↗</span></div>
+<div class="service reveal" role="button" tabindex="0" data-service="Money Transfer" aria-label="Explore Money Transfer"><div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h14a3 3 0 0 1 0 6H7a3 3 0 0 0 0 6h13"/><path d="m15 3 4 4-4 4M9 15l-4 4 4 4"/></svg></div><h3>Money Transfer</h3><p>Discover available money transfer services.</p><span class="arrow">↗</span></div>
+<div class="service reveal" role="button" tabindex="0" data-service="AEPS & UTI" aria-label="Explore AEPS & UTI"><div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h4M16 13h1"/></svg></div><h3>AEPS & UTI</h3><p>Explore supported assisted-service options.</p><span class="arrow">↗</span></div>
+<div class="service reveal" role="button" tabindex="0" data-service="Postpaid & Payout" aria-label="Explore Postpaid & Payout"><div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M3 10h18M7 15h3"/></svg></div><h3>Postpaid & Payout</h3><p>Discover additional payment service options.</p><span class="arrow">↗</span></div>
+</div></div></section>
+<section class="preview-section" id="preview"><div class="wrap"><div class="section-head reveal"><div class="kicker">A closer look</div><h2>Made for every screen.</h2><p>Switch between phone and desktop to preview how the PaySaathi dashboard can look.</p></div>
+<div class="preview-shell reveal"><div class="preview-top"><div><h3>Dashboard experience</h3><p>Illustrative interface preview — not a live account.</p></div><div class="switcher" role="group" aria-label="Choose dashboard preview"><button class="active" id="phoneTab" type="button" aria-pressed="true">▯ &nbsp; Phone</button><button id="desktopTab" type="button" aria-pressed="false">▣ &nbsp; Desktop</button></div></div>
+<div class="preview-stage" id="previewStage" data-mode="phone">
+<div class="phone-preview"><div class="phone-screen"><div class="phone-notch"></div><div class="phone-head"><span>PaySaathi</span><span>●●●</span></div><div class="phone-welcome">Hello, welcome back 👋</div><div class="phone-balance"><small>Available wallet balance</small><b>₹ 0.00</b><small>Your account at a glance</small></div><div class="phone-grid"><div><i>📱</i>Recharge</div><div><i>⚡</i>Electricity</div><div><i>⇄</i>Transfer</div><div><i>📺</i>DTH</div><div><i>💧</i>Water</div><div><i>🌐</i>Broadband</div></div><div class="phone-list"><b>Recent activity</b><div><span>Mobile recharge</span><b>›</b></div><div><span>Bill payments</span><b>›</b></div><div><span>Transaction history</span><b>›</b></div></div></div></div>
+<div class="desktop-preview"><div class="desktop-bar"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span class="desktop-label">PaySaathi · Dashboard</span></div><div class="dash"><aside class="side"><div class="side-brand">Pay<b>Saathi</b></div><div class="side-link active">▦ &nbsp; Dashboard</div><div class="side-link">↗ &nbsp; Recharge</div><div class="side-link">▤ &nbsp; Bill payments</div><div class="side-link">⇄ &nbsp; Money transfer</div><div class="side-link">◷ &nbsp; Transactions</div><div class="side-link">☏ &nbsp; Support centre</div></aside><div class="dash-main"><div class="dash-head">Your dashboard <span class="avatar">PS</span></div><div class="welcome">Everything you need, right at your fingertips.</div><div class="stats"><div class="stat"><small>Wallet balance</small><b>₹ 0.00</b></div><div class="stat"><small>Total transactions</small><b>0</b></div><div class="stat"><small>Available services</small><b>09</b></div></div><div class="dash-lower"><div class="panel"><strong>Popular services</strong><div class="service-mini"><i class="mini-ico">📱</i> Mobile recharge</div><div class="service-mini"><i class="mini-ico">⚡</i> Electricity bill</div><div class="service-mini"><i class="mini-ico">🏦</i> AEPS services</div></div><div class="panel"><strong>Account activity</strong><div class="bars"><i style="height:30%"></i><i style="height:58%"></i><i style="height:45%"></i><i style="height:75%"></i><i style="height:62%"></i><i style="height:90%"></i></div></div></div></div></div></div>
+</div><div class="preview-caption">Interactive design preview · Phone shows the mobile layout · Desktop shows the full dashboard layout · Sample data only</div></div></div></section>
+<section class="benefits" id="why"><div class="wrap"><div class="section-head reveal"><div class="kicker">Why PaySaathi</div><h2>A smoother experience, at every step.</h2><p>Thoughtful design that helps people find what they need and understand what happens next.</p></div><div class="benefit-grid">
+<div class="benefit reveal"><div class="benefit-num">01 / SIMPLE</div><b>Clear navigation</b><p>Organised sections make important services easy to find.</p></div>
+<div class="benefit reveal"><div class="benefit-num">02 / CONNECTED</div><b>Services in one place</b><p>Bring supported everyday digital services together.</p></div>
+<div class="benefit reveal"><div class="benefit-num">03 / TRANSPARENT</div><b>Transaction records</b><p>Review available transaction details from your account.</p></div>
+<div class="benefit reveal"><div class="benefit-num">04 / PERSONAL</div><b>Your own dashboard</b><p>Sign in to access your PaySaathi account experience.</p></div>
+<div class="benefit reveal"><div class="benefit-num">05 / INFORMED</div><b>Useful updates</b><p>Find account announcements and updates where available.</p></div>
+<div class="benefit reveal"><div class="benefit-num">06 / SUPPORTED</div><b>Help when you need it</b><p>Reach support through the contact options configured for the website.</p></div>
+</div></div></section>
+<section id="how"><div class="wrap"><div class="section-head reveal"><div class="kicker">Get started</div><h2>Your PaySaathi journey, step by step.</h2><p>Complete each step at your pace. Once your account is verified and activated, you can add funds and use the services enabled for you.</p></div><div class="steps">
+<div class="step reveal"><div class="step-num">01</div><h3>Create your account</h3><p>Register with your details to create your PaySaathi account.</p></div>
+<div class="step reveal"><div class="step-num">02</div><h3>Complete your KYC</h3><p>Submit the required information and documents for verification.</p></div>
+<div class="step reveal"><div class="step-num">03</div><h3>Get account approval</h3><p>Our admin team reviews your details and activates your account when approved.</p></div>
+<div class="step reveal"><div class="step-num">04</div><h3>Add funds</h3><p>After activation, add balance using the funding options available in your dashboard.</p></div>
+<div class="step reveal"><div class="step-num">05</div><h3>Start using services</h3><p>Choose an enabled service and follow its steps from your dashboard.</p></div>
+</div></div></section>
+<section id="help" style="padding-top:15px"><div class="wrap"><div class="banner reveal"><div class="banner-content"><h2>Need a hand? Your Saathi is here.</h2><p id="supportMessage">Reach PaySaathi support using your preferred contact method.</p><div id="supportActions" style="display:flex;gap:9px;flex-wrap:wrap;margin-top:17px"><a class="btn" href="mailto:support@paysaathi.in">Email support</a></div><div id="supportStatus" style="font-size:10px;color:#d0e9f7;margin-top:9px">Support contact details are loaded from website settings.</div></div><a class="btn" href="login.html">Access PaySaathi&nbsp; →</a></div></div></section>
+</main>
+
+<div class="service-modal" id="serviceModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-hidden="true">
+ <div class="modal-card">
+  <button class="modal-close" id="modalClose" type="button" aria-label="Close dialog">×</button>
+  <div class="modal-icon" id="modalIcon"></div>
+  <h3 id="modalTitle">Explore service</h3>
+  <p id="modalDescription">Choose a service to continue.</p>
+  <div class="modal-note">Service access depends on your account and active provider integrations. Sign in to check the options available to you.</div>
+  <div class="modal-actions"><a class="btn primary" href="login.html">Continue to login <span>→</span></a><button class="btn ghost" id="modalBack" type="button">Maybe later</button></div>
+ </div>
+</div>
+
+<footer><div class="wrap"><div class="foot"><div><a class="brand" href="#" style="color:#fff"><span class="logo">PS</span><span class="brand-name">Pay<span>Saathi</span></span></a><p style="max-width:380px;margin-top:14px">A convenient digital platform for discovering everyday financial and utility services.</p></div><div><h4>Quick links</h4><div class="footlinks"><a href="#services">Services</a><a href="#preview">Dashboard preview</a><a href="login.html">Login</a><a href="signup.html">Register</a></div></div><div><h4>Information</h4><div class="footlinks"><a href="privacy-policy.html">Privacy Policy</a><a href="terms.html">Terms & Conditions</a><a href="refund-policy.html">Refund Policy</a><a id="footerSupportLink" href="contact-support.html">Contact support</a></div></div></div><div class="copy">© <span id="year"></span> PaySaathi. All rights reserved. Service availability is subject to provider integration.</div></div></footer>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+const SUPABASE_URL='https://hhqcycwfvxoxjizlbivv.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_NdrUA-ubf67oW5hiS-Yw4A_-r2xbJRV';
+const supabase=createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
+document.getElementById('year').textContent=new Date().getFullYear();
+const menuBtn=document.getElementById('menuBtn'),mobileNav=document.getElementById('mobileNav');
+menuBtn.addEventListener('click',()=>{const open=mobileNav.classList.toggle('open');menuBtn.setAttribute('aria-expanded',String(open));menuBtn.setAttribute('aria-label',open?'Close menu':'Open menu');menuBtn.textContent=open?'✕':'☰';});
+mobileNav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{mobileNav.classList.remove('open');menuBtn.setAttribute('aria-expanded','false');menuBtn.setAttribute('aria-label','Open menu');menuBtn.textContent='☰';}));
+// Reveal every authored reveal element (including the preview shell itself).
+// The old selector observed only section wrappers, leaving nested .reveal cards invisible.
+const revealTargets=document.querySelectorAll('.reveal,main section,.service,.benefit,.step,footer .foot>div');
+if('IntersectionObserver' in window){
+ const io=new IntersectionObserver(entries=>entries.forEach(entry=>{
+  if(entry.isIntersecting){entry.target.classList.add('visible');io.unobserve(entry.target);}
+ }),{threshold:.04,rootMargin:'0px 0px -12px 0px'});
+ revealTargets.forEach(el=>{el.classList.add('reveal');io.observe(el);});
+}else revealTargets.forEach(el=>el.classList.add('visible'));
+
+const stage=document.getElementById('previewStage');
+const phoneTab=document.getElementById('phoneTab');
+const desktopTab=document.getElementById('desktopTab');
+function setPreview(mode){
+ if(!stage||!phoneTab||!desktopTab)return;
+ stage.classList.remove('swap');
+ stage.dataset.mode=mode;
+ phoneTab.classList.toggle('active',mode==='phone');
+ desktopTab.classList.toggle('active',mode==='desktop');
+ phoneTab.setAttribute('aria-pressed',String(mode==='phone'));
+ desktopTab.setAttribute('aria-pressed',String(mode==='desktop'));
+ void stage.offsetWidth;
+ stage.classList.add('swap');
+}
+phoneTab?.addEventListener('click',()=>setPreview('phone'));
+desktopTab?.addEventListener('click',()=>setPreview('desktop'));
+setPreview('phone');
+const cleanPhone=v=>String(v||'').replace(/[^0-9]/g,'');
+function setSupport(c={}){const email=String(c.support_email||'').trim(),phone=cleanPhone(c.support_phone),wa=cleanPhone(c.support_whatsapp||c.support_phone),message=String(c.support_message||'Reach PaySaathi support using your preferred contact method.').trim();document.getElementById('supportMessage').textContent=message;const actions=document.getElementById('supportActions');actions.replaceChildren();const add=(label,href)=>{const a=document.createElement('a');a.className='btn';a.style.cssText='background:#fff;color:#075b8c';a.href=href;a.textContent=label;actions.appendChild(a);};if(email)add('Email support','mailto:'+email);if(phone)add('Call support','tel:+'+phone);if(wa)add('WhatsApp','https://wa.me/'+wa);add('Open support centre','contact-support.html');document.getElementById('footerSupportLink').href='contact-support.html';}
+// Keep the visual UI independent from the optional remote branding request.
+setSupport({support_email:'support@paysaathi.in'});
+try{const {data,error}=await supabase.rpc('paysaathi_get_public_branding');if(error)throw error;setSupport(data||{support_email:'support@paysaathi.in'});}catch(e){console.warn('Public support details could not be loaded:',e.message);}
+
+// Premium service discovery: searchable cards, accessible detail modal and tap feedback.
+const serviceGrid=document.getElementById('serviceGrid');
+const serviceSearch=document.getElementById('serviceSearch');
+const serviceCount=document.getElementById('serviceCount');
+const serviceModal=document.getElementById('serviceModal');
+const modalClose=document.getElementById('modalClose');
+const modalBack=document.getElementById('modalBack');
+const modalTitle=document.getElementById('modalTitle');
+const modalDescription=document.getElementById('modalDescription');
+const modalIcon=document.getElementById('modalIcon');
+const serviceDescriptions={
+ 'Mobile Recharge':'Recharge supported prepaid mobile connections through the options available in your PaySaathi account.',
+ 'DTH Recharge':'Explore supported DTH operators and available recharge options.',
+ 'Electricity Bills':'Find supported electricity billers and review the available bill payment journey.',
+ 'Gas Bills':'Explore available gas bill payment options for supported providers.',
+ 'Water Bills':'Find supported water billers and available payment options.',
+ 'Broadband':'Explore supported broadband and internet bill payment services.',
+ 'Money Transfer':'Check the money transfer services enabled for your account.',
+ 'AEPS & UTI':'Explore assisted banking and related services where enabled for your account.',
+ 'Postpaid & Payout':'Find supported postpaid payment and payout options.'
+};
+function openService(card){
+ const title=card.dataset.service||card.querySelector('h3')?.textContent?.trim()||'PaySaathi service';
+ modalTitle.textContent=title;
+ modalDescription.textContent=serviceDescriptions[title]||'Explore the options available for this service in your PaySaathi account.';
+ const icon=card.querySelector('.ico');
+ modalIcon.innerHTML=icon?icon.innerHTML:'<span>✦</span>';
+ serviceModal.classList.add('open');
+ serviceModal.setAttribute('aria-hidden','false');
+ document.body.style.overflow='hidden';
+ modalClose.focus();
+}
+function closeService(){
+ serviceModal.classList.remove('open');
+ serviceModal.setAttribute('aria-hidden','true');
+ document.body.style.overflow='';
+}
+serviceGrid?.addEventListener('click',e=>{
+ const card=e.target.closest('.service');
+ if(!card)return;
+ const ripple=document.createElement('span');ripple.className='ripple';
+ const rect=card.getBoundingClientRect(),size=Math.max(rect.width,rect.height);
+ ripple.style.width=ripple.style.height=size+'px';
+ ripple.style.left=(e.clientX-rect.left-size/2)+'px';
+ ripple.style.top=(e.clientY-rect.top-size/2)+'px';
+ card.appendChild(ripple);setTimeout(()=>ripple.remove(),600);
+ openService(card);
+});
+serviceGrid?.addEventListener('keydown',e=>{
+ if((e.key==='Enter'||e.key===' ')&&e.target.matches('.service')){e.preventDefault();openService(e.target);}
+});
+serviceSearch?.addEventListener('input',()=>{
+ const q=serviceSearch.value.trim().toLowerCase();let count=0;
+ serviceGrid.querySelectorAll('.service').forEach(card=>{
+  const show=(card.textContent+' '+card.dataset.service).toLowerCase().includes(q);
+  card.hidden=!show;if(show)count++;
+ });
+ let empty=serviceGrid.querySelector('.no-services');
+ if(!count&&!empty){empty=document.createElement('div');empty.className='no-services';empty.textContent='No services found. Try another search.';serviceGrid.appendChild(empty);}
+ if(count&&empty)empty.remove();
+ serviceCount.textContent=count+' categor'+(count===1?'y':'ies')+' found';
+});
+modalClose?.addEventListener('click',closeService);
+modalBack?.addEventListener('click',closeService);
+serviceModal?.addEventListener('click',e=>{if(e.target===serviceModal)closeService();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&serviceModal?.classList.contains('open'))closeService();});
+
+</script>
+</body></html>
