@@ -204,19 +204,40 @@ async function routeAuthenticatedUser(session) {
 }
 
 async function requestPasswordOtp() {
-  const { data, error } = await supabase.functions.invoke('password-email-otp', {
-    body: { action: 'request', email: pendingEmail, password: lastPassword }
+  // Validate the password in an isolated, non-persistent client. This avoids
+  // creating a browser session before the email OTP has been verified.
+  const passwordCheck = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+    auth: {
+      storageKey: 'paysaathi.password-check.' + crypto.randomUUID(),
+      persistSession: false,
+      autoRefreshToken: false,
+      detectSessionInUrl: false
+    }
   });
-  if (error) throw new Error(data?.error || error.message || 'Could not verify password or send OTP.');
-  if (data?.error) throw new Error(data.error);
-  if (!data?.challengeId) throw new Error('OTP challenge was not created. Please try again.');
-  challengeId = data.challengeId;
+  const { data: checked, error: passwordError } = await passwordCheck.auth.signInWithPassword({
+    email: pendingEmail,
+    password: lastPassword
+  });
+  await passwordCheck.auth.signOut({ scope: 'local' }).catch(() => {});
+  if (passwordError || !checked?.user) {
+    throw new Error(passwordError?.message || 'Email or password is incorrect.');
+  }
+
+  // Use the existing Supabase Auth SMTP provider (the Gmail SMTP already
+  // configured in the project). The email template must contain {{ .Token }}.
+  const { error } = await supabase.auth.signInWithOtp({
+    email: pendingEmail,
+    options: { shouldCreateUser: false }
+  });
+  if (error) throw error;
+
   passwordForm.style.display = 'none';
   otpPanel.classList.add('show');
-  document.getElementById('otpHint').textContent = `Password verified. Enter the 6-digit OTP sent to ${data.maskedEmail || pendingEmail}.`;
+  document.getElementById('otpHint').textContent =
+    `Password verified. Enter the 6-digit OTP sent to ${pendingEmail}.`;
   otpCode.value = '';
   otpCode.focus();
-  showMessage('Password correct. OTP sent to your email.', 'ok');
+  showMessage('Password correct. OTP sent using PaySaathi email verification.', 'ok');
   startResendCountdown();
 }
 
@@ -274,22 +295,18 @@ passwordForm.addEventListener('submit', async (event) => {
 
 verifyButton.addEventListener('click', async () => {
   const token = otpCode.value.trim();
-  if (!/^\d{6}$/.test(token)) return showMessage('Enter the 6-digit OTP from your email.');
+  if (!/^\\d{6}$/.test(token)) return showMessage('Enter the 6-digit OTP from your email.');
   setBusy(verifyButton, true, 'Verifying OTP…', 'Verify OTP and login');
   try {
-    const { data, error } = await supabase.functions.invoke('password-email-otp', {
-      body: { action: 'verify', email: pendingEmail, password: lastPassword, challengeId, code: token }
+    const { data, error } = await supabase.auth.verifyOtp({
+      email: pendingEmail,
+      token,
+      type: 'email'
     });
-    if (error) throw new Error(data?.error || error.message || 'OTP verification failed.');
-    if (data?.error) throw new Error(data.error);
-    if (!data?.session?.access_token || !data?.session?.refresh_token) throw new Error('Verified login session was not returned.');
-    const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
-      access_token: data.session.access_token,
-      refresh_token: data.session.refresh_token
-    });
-    if (sessionError) throw sessionError;
+    if (error) throw error;
+    if (!data.session) throw new Error('OTP verified, but no login session was returned.');
     lastPassword = '';
-    await routeAuthenticatedUser(sessionData.session);
+    await routeAuthenticatedUser(data.session);
   } catch (error) {
     console.error('OTP verification error:', error);
     showMessage(error?.message || 'OTP could not be verified. Please try again.');
