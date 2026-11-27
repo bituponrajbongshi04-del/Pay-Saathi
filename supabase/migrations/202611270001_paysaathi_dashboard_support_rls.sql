@@ -69,6 +69,20 @@ for insert to authenticated
 with check (sender_id=auth.uid() and exists(select 1 from public.ps_tickets t where t.id=ticket_id and
  (t.user_id=auth.uid() or t.assigned_agent=auth.uid() or public.ps_is_admin())));
 
+-- Personal and global notifications. A null user_id represents a site-wide message.
+create table if not exists public.ps_notifications (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users(id) on delete cascade,
+  title text not null,
+  message text not null,
+  is_read boolean not null default false,
+  created_at timestamptz not null default now()
+);
+create index if not exists ps_notifications_user_created_idx
+  on public.ps_notifications(user_id, created_at desc);
+alter table public.ps_notifications enable row level security;
+grant select, insert, update on public.ps_notifications to authenticated;
+
 -- Personal/global notification read and admin-only send.
 drop policy if exists ps_notification_read on public.ps_notifications;
 create policy ps_notification_read on public.ps_notifications
