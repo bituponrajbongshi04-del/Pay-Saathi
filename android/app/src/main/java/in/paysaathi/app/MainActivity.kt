@@ -1,8 +1,13 @@
 package `in`.paysaathi.app
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
+import androidx.core.content.FileProvider
+import java.io.File
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -51,7 +56,10 @@ private val Muted=Color(0xFFB9D4E7)
 class MainActivity:ComponentActivity(){
  override fun onCreate(savedInstanceState:Bundle?){super.onCreate(savedInstanceState);setContent{PaySaathiApp(this)}}
 }
+data class AppUpdate(val version:String,val notes:String,val apkUrl:String,val mandatory:Boolean)
+
 class Api(context:Context){
+ private val appContext=context.applicationContext
  private val http=OkHttpClient.Builder().callTimeout(35,TimeUnit.SECONDS).build()
  private val prefs=EncryptedSharedPreferences.create(context,"paysaathi_secure_session",MasterKey.Builder(context).setKeyScheme(MasterKey.KeyScheme.AES256_GCM).build(),EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM)
  private suspend fun raw(path:String,method:String="GET",body:String?=null,token:String?=prefs.getString("access",null),mime:String="application/json"):String=withContext(Dispatchers.IO){
@@ -73,6 +81,26 @@ class Api(context:Context){
    }
   }
   response.use{res->val text=res.body?.string().orEmpty();if(!res.isSuccessful){val j=runCatching{JSONObject(text)}.getOrDefault(JSONObject());throw IOException(j.optString("msg",j.optString("message","Request failed ("+res.code+")")))};text}
+ }
+ suspend fun checkUpdate():AppUpdate?=withContext(Dispatchers.IO){
+  val request=Request.Builder().url("https://api.github.com/repos/bituponrajbongshi04-del/Pay-Saathi/releases/latest").header("Accept","application/vnd.github+json").header("X-GitHub-Api-Version","2022-11-28").build()
+  http.newCall(request).execute().use{response->
+   if(!response.isSuccessful)return@withContext null
+   val release=JSONObject(response.body?.string().orEmpty())
+   val tag=release.optString("tag_name").removePrefix("v")
+   fun parts(v:String)=v.split(".","-").take(3).map{it.toIntOrNull()?:0}
+   val remote=parts(tag);val local=parts(BuildConfig.VERSION_NAME)
+   val newer=(0..2).firstNotNullOfOrNull{if(remote.getOrElse(it){0}!=local.getOrElse(it){0}) remote.getOrElse(it){0}>local.getOrElse(it){0} else null}?:false
+   if(!newer)return@withContext null
+   val assets=release.optJSONArray("assets")?:JSONArray()
+   val apk=(0 until assets.length()).mapNotNull{assets.optJSONObject(it)}.firstOrNull{it.optString("name").endsWith(".apk",true)}?:return@withContext null
+   val notes=release.optString("body","A newer version of PaySaathi is available.")
+   AppUpdate(tag,notes,apk.optString("browser_download_url"),notes.contains("[MANDATORY]",ignoreCase=true))
+  }
+ }
+ suspend fun downloadUpdate(url:String):File=withContext(Dispatchers.IO){
+  val request=Request.Builder().url(url).header("Accept","application/octet-stream").build()
+  http.newCall(request).execute().use{response->if(!response.isSuccessful)throw IOException("Update download failed ("+response.code+")");val bytes=response.body?.bytes()?:throw IOException("Empty update file");if(bytes.size<1024)throw IOException("Downloaded update is invalid");val dir=File(appContext.cacheDir,"updates").apply{mkdirs()};File(dir,"PaySaathi-update.apk").apply{writeBytes(bytes)}}
  }
  private suspend fun obj(path:String,method:String="GET",body:String?=null,token:String?=prefs.getString("access",null))=JSONObject(raw(path,method,body,token).ifBlank{"{}"})
  suspend fun password(email:String,pw:String){obj("/auth/v1/token?grant_type=password","POST",JSONObject().put("email",email).put("password",pw).toString(),null)}
@@ -106,16 +134,34 @@ class Api(context:Context){
  fun goBack(){if(pageHistory.isNotEmpty())page=pageHistory.removeAt(pageHistory.lastIndex)}
  var email by remember{mutableStateOf("")};var password by remember{mutableStateOf("")};var name by remember{mutableStateOf("")};var phone by remember{mutableStateOf("")};var code by remember{mutableStateOf("")}
  var signup by remember{mutableStateOf(false)};var waiting by remember{mutableStateOf(false)};var error by remember{mutableStateOf("")}
+ var updateInfo by remember{mutableStateOf<AppUpdate?>(null)};var updateBusy by remember{mutableStateOf(false)};var updateMessage by remember{mutableStateOf("")};var downloadedApk by remember{mutableStateOf<File?>(null)}
  var status by remember{mutableStateOf("not_started")};var balance by remember{mutableStateOf("0.00")};var legalName by remember{mutableStateOf("")};var docType by remember{mutableStateOf("pan")};var picked by remember{mutableStateOf<Uri?>(null)}
  val picker=rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()){picked=it}
  fun runTask(block:suspend()->Unit){scope.launch{waiting=true;error="";try{block()}catch(e:Exception){error=e.message?: "Something went wrong"}finally{waiting=false}}}
+ LaunchedEffect(Unit){runCatching{api.checkUpdate()}.onSuccess{updateInfo=it}}
+ fun installDownloaded(){val file=downloadedApk?:return
+  if(Build.VERSION.SDK_INT>=26 && !ctx.packageManager.canRequestPackageInstalls()){
+   (ctx as? android.app.Activity)?.startActivity(Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,Uri.parse("package:"+ctx.packageName)))
+   updateMessage="Allow PaySaathi to install this update, then tap Install update again."
+   return
+  }
+  val uri=FileProvider.getUriForFile(ctx,ctx.packageName+".fileprovider",file)
+  ctx.startActivity(Intent(Intent.ACTION_VIEW).setDataAndType(uri,"application/vnd.android.package-archive").addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK))
+ }
  LaunchedEffect(page){if(page=="home"){runTask{balance=api.wallet();val k=api.kyc();status=k.optString("status","not_started");legalName=k.optString("legal_name","")}}}
  BackHandler(enabled=pageHistory.isNotEmpty()){goBack()}
  MaterialTheme(colorScheme=darkColorScheme(primary=Cyan,background=Navy,surface=Color(0xFF102E49),onSurface=Color.White)){
   Box(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Navy,Color(0xFF0A3558),Navy)))){
    Column(Modifier.fillMaxSize().padding(20.dp).verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(13.dp)){
     Row(verticalAlignment=Alignment.CenterVertically){if(pageHistory.isNotEmpty())IconButton(onClick={goBack()}){Icon(Icons.Default.ArrowBack,null,tint=Color.White)};Surface(shape=RoundedCornerShape(14.dp),color=Blue){Text("P",Modifier.padding(horizontal=15.dp,vertical=9.dp),fontWeight=FontWeight.Black,color=Color.White,fontSize=22.sp)};Spacer(Modifier.width(10.dp));Column{Text("PaySaathi",fontSize=23.sp,fontWeight=FontWeight.Black,color=Color.White);Text("YOUR MONEY. YOUR SERVICES. ONE SAATHI.",fontSize=8.sp,color=Cyan,fontWeight=FontWeight.Bold)};Spacer(Modifier.weight(1f));if(page=="home")IconButton(onClick={runTask{api.signout();pageHistory.clear();page="login"}}){Icon(Icons.Default.Logout,null,tint=Color.White)}}
-    if(page=="login"||page=="signup"||page=="otp"){
+    if(updateInfo!=null){Card(colors=CardDefaults.cardColors(containerColor=Color(0xFF174A68)),shape=RoundedCornerShape(16.dp)){Column(Modifier.padding(15.dp),verticalArrangement=Arrangement.spacedBy(8.dp)){Text("PaySaathi update available · v"+updateInfo!!.version,color=Color.White,fontWeight=FontWeight.Bold);Text("Get the latest features and improvements directly here.",color=Muted,fontSize=12.sp);Button(onClick={runTask{downloadedApk=api.downloadUpdate(updateInfo!!.apkUrl);updateMessage="Update downloaded. Tap Install update to continue."}},enabled=!waiting){Text(if(waiting)"Downloading…" else "Download update")};if(downloadedApk!=null)Button(onClick={installDownloaded()}){Text("Install update")};if(updateMessage.isNotBlank())Text(updateMessage,color=Cyan,fontSize=11.sp)}}}
+    if(updateInfo?.mandatory==true){
+     Text("Required PaySaathi update",fontSize=27.sp,fontWeight=FontWeight.ExtraBold,color=Color.White)
+     Text("This version must be updated before you can continue using PaySaathi.",color=Muted,fontSize=13.sp)
+     Button(onClick={runTask{downloadedApk=api.downloadUpdate(updateInfo!!.apkUrl);updateMessage="Update downloaded. Install it to continue."}},enabled=!waiting,modifier=Modifier.fillMaxWidth()){Text(if(waiting)"Downloading…" else "Download required update")}
+     if(downloadedApk!=null)Button(onClick={installDownloaded()},modifier=Modifier.fillMaxWidth()){Text("Install and continue")}
+     if(updateMessage.isNotBlank())Text(updateMessage,color=Cyan,fontSize=12.sp)
+    }else if(page=="login"||page=="signup"||page=="otp"){
      Text(if(page=="signup")"Create your account" else if(page=="otp")"Verify your email" else "Welcome back",fontSize=28.sp,fontWeight=FontWeight.ExtraBold,color=Color.White)
      Text(if(page=="otp")"Enter the six-digit code sent to "+email else "Secure access to your PaySaathi services",color=Muted,fontSize=12.sp)
      if(page=="signup"){Field("Full name",name,{name=it});Field("Mobile number",phone,{phone=it},KeyboardType.Phone)}
