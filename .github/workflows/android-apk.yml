@@ -10,7 +10,7 @@ jobs:
     permissions:
       contents: write
     env:
-      PAYSAATHI_HAS_SIGNING_KEY: ${{ secrets.PAYSAATHI_KEYSTORE_BASE64 != '' && secrets.PAYSAATHI_KEYSTORE_PASSWORD != '' && secrets.PAYSAATHI_KEY_ALIAS != '' && secrets.PAYSAATHI_KEY_PASSWORD != '' }}
+      PAYSAATHI_HAS_SIGNING_KEY: ${{ secrets.PAYSAATHI_KEYSTORE_BASE64 != '' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,7 +21,6 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: 8.9
-      - name: Validate release signing secrets
       - name: Decode release signing key
         if: ${{ env.PAYSAATHI_HAS_SIGNING_KEY == 'true' }}
         run: |
