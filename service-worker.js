@@ -41,10 +41,10 @@ self.addEventListener("fetch", event => {
     const cache = await caches.open(CACHE_NAME);
     try {
       const response = await fetch(request);
-      if (response && response.ok) await cache.put(request, response.clone());
+      if (response && response.ok) await cache.put(new URL(request.url).href, response.clone());
       return response;
     } catch (_) {
-      return (await cache.match(request)) || (await cache.match(new URL("./index.html", BASE_URL).href));
+      return (await cache.match(new URL(request.url).href)) || (await cache.match(new URL("./index.html", BASE_URL).href));
     }
   })());
 });
