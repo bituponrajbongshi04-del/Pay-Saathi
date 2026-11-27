@@ -7,6 +7,8 @@ on:
   workflow_dispatch:
 jobs:
   build:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -17,8 +19,18 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: 8.9
-      - name: Build debug APK and release bundle
+      - name: Decode release signing key
+        if: ${{ secrets.PAYSAATHI_KEYSTORE_BASE64 != '' }}
+        env:
+          KEYSTORE_BASE64: ${{ secrets.PAYSAATHI_KEYSTORE_BASE64 }}
+        run: echo "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/paysaathi-release.jks"
+      - name: Build Android packages
         working-directory: android
+        env:
+          PAYSAATHI_KEYSTORE_PATH: ${{ runner.temp }}/paysaathi-release.jks
+          PAYSAATHI_KEYSTORE_PASSWORD: ${{ secrets.PAYSAATHI_KEYSTORE_PASSWORD }}
+          PAYSAATHI_KEY_ALIAS: ${{ secrets.PAYSAATHI_KEY_ALIAS }}
+          PAYSAATHI_KEY_PASSWORD: ${{ secrets.PAYSAATHI_KEY_PASSWORD }}
         run: gradle assembleDebug bundleRelease
       - uses: actions/upload-artifact@v4
         with:
@@ -26,3 +38,21 @@ jobs:
           path: |
             android/app/build/outputs/apk/debug/app-debug.apk
             android/app/build/outputs/bundle/release/app-release.aab
+      - name: Build signed release APK
+        if: ${{ secrets.PAYSAATHI_KEYSTORE_BASE64 != '' }}
+        working-directory: android
+        env:
+          PAYSAATHI_KEYSTORE_PATH: ${{ runner.temp }}/paysaathi-release.jks
+          PAYSAATHI_KEYSTORE_PASSWORD: ${{ secrets.PAYSAATHI_KEYSTORE_PASSWORD }}
+          PAYSAATHI_KEY_ALIAS: ${{ secrets.PAYSAATHI_KEY_ALIAS }}
+          PAYSAATHI_KEY_PASSWORD: ${{ secrets.PAYSAATHI_KEY_PASSWORD }}
+        run: gradle assembleRelease
+      - name: Publish signed APK update
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.PAYSAATHI_KEYSTORE_BASE64 != '' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.2
+          name: PaySaathi v1.0.2
+          target_commitish: main
+          files: android/app/build/outputs/apk/release/app-release.apk
+          generate_release_notes: true
