@@ -1,12 +1,13 @@
 {
-  "version": "1.0.3",
-  "title": "Original homepage restored and app experience refined",
+  "version": "1.1.0",
+  "title": "Native Android app foundation and secure KYC workflow",
   "date": "2026-11-27",
   "notes": [
-    "The original PaySaathi homepage layout, wording, and visual style are kept fixed.",
-    "Homepage Builder has been removed from the admin panel to prevent accidental redesigns.",
-    "Admin still manages maintenance mode, announcements, support contacts, and service availability.",
-    "Installed PaySaathi continues to open directly to the customer dashboard in standalone app mode."
+    "Added native Kotlin Android application source and APK/AAB build workflow.",
+    "Added private KYC document uploads, customer KYC status and admin review desk.",
+    "KYC-protected services use a server-side access check; manual review is active until an authorised verification provider is connected.",
+    "Original public homepage design and wording remain unchanged.",
+    "Live financial services remain in preview mode until real provider integrations and signed transaction verification are complete."
   ],
-  "minimumVersion": "1.0.3"
+  "minimumVersion": "1.1.0"
 }
