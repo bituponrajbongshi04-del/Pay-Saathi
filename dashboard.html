@@ -1240,10 +1240,8 @@ body{font-family:"Plus Jakarta Sans",system-ui,sans-serif!important;color:var(--
           const date=document.createElement('p');date.className='text-[10px] text-slate-400 mt-2';date.textContent=n.created_at?new Date(n.created_at).toLocaleString('en-IN'):'';
           card.append(heading,message,date);box.appendChild(card);
         });
-        const unread=rows.filter(n=>!n.is_read).map(n=>n.id).filter(Boolean);
-        if(unread.length){const {error:updateError}=await supabase.from('ps_notifications').update({is_read:true}).in('id',unread);if(updateError)console.warn('Could not mark notifications read:',updateError.message);}
-        const bell=document.querySelector('button[onclick="openModal(\\'modal-notifications\\')"]');
-        if(bell){const badge=bell.querySelector('[data-update-count]');if(badge){const publicCount=Number(badge.textContent)||0;badge.textContent=String(publicCount);}}
+        const unread=rows.filter(n=>!n.is_read&&n.user_id===user.id).map(n=>n.id).filter(Boolean);
+        if(unread.length){const {error:updateError}=await supabase.from('ps_notifications').update({is_read:true}).in('id',unread);if(updateError)console.warn('Could not mark personal notifications read:',updateError.message);}
       }catch(error){console.warn('Personal notifications are unavailable:',error.message);}
     }
 
