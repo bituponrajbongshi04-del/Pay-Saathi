@@ -1,12 +1,12 @@
 {
-  "version": "1.0.2",
-  "title": "PaySaathi now opens directly to your dashboard",
+  "version": "1.0.3",
+  "title": "Original homepage restored and app experience refined",
   "date": "2026-11-27",
   "notes": [
-    "Installed PaySaathi opens in its own standalone app window.",
-    "The app launches directly into the customer dashboard; signed-out users are sent to login.",
-    "The original PaySaathi homepage design and wording are preserved.",
-    "Dashboard and login pages are included in the app shell for improved loading."
+    "The original PaySaathi homepage layout, wording, and visual style are kept fixed.",
+    "Homepage Builder has been removed from the admin panel to prevent accidental redesigns.",
+    "Admin still manages maintenance mode, announcements, support contacts, and service availability.",
+    "Installed PaySaathi continues to open directly to the customer dashboard in standalone app mode."
   ],
-  "minimumVersion": "1.0.2"
+  "minimumVersion": "1.0.3"
 }
