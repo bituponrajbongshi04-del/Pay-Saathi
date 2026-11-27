@@ -67,7 +67,8 @@ Deno.serve(async (req) => {
         return json({ error: "Email or password is incorrect, or this account cannot sign in." }, 401);
       }
       const userId = verified.user.id;
-      await authClient.auth.signOut();
+      // The temporary server-side auth client does not persist its session.
+      // Do not call signOut here: Supabase's default signOut scope can revoke other devices.
 
       // Supabase-side rate limiting: at most five challenges per email in 15 minutes.
       const since = new Date(Date.now() - 15 * 60 * 1000).toISOString();
@@ -124,16 +125,16 @@ Deno.serve(async (req) => {
       if (attemptError) return json({ error: "Could not verify this code. Please try again." }, 503);
       if (expected !== challenge.code_hash) return json({ error: "The verification code is incorrect." }, 400);
 
+      // Atomically consume the code before issuing a session so it cannot be replayed.
+      const { data: consumed, error: consumeError } = await adminClient.from("ps_login_otp_challenges")
+        .update({ consumed_at: new Date().toISOString() }).eq("id", challengeId).is("consumed_at", null)
+        .select("id").maybeSingle();
+      if (consumeError || !consumed) return json({ error: "This verification code has already been used. Request a new code." }, 400);
+
       // Re-check the password at verification time and only then issue a session.
       const { data: signedIn, error: signInError } = await authClient.auth.signInWithPassword({ email, password });
       if (signInError || !signedIn.session || signedIn.user?.id !== challenge.user_id) {
         return json({ error: "Password verification failed. Start login again." }, 401);
-      }
-      const { error: consumeError } = await adminClient.from("ps_login_otp_challenges")
-        .update({ consumed_at: new Date().toISOString() }).eq("id", challengeId).is("consumed_at", null);
-      if (consumeError) {
-        await authClient.auth.signOut();
-        return json({ error: "Could not complete verification. Please try again." }, 503);
       }
       return json({ session: signedIn.session });
     }
