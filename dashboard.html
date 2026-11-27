@@ -413,6 +413,12 @@ body{font-family:"Plus Jakarta Sans",system-ui,sans-serif!important;color:var(--
  #tab-support .ps-support-hero p{font-size:13px!important}
 }
 </style>
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PaySaathi">
+<link rel="icon" type="image/svg+xml" href="./assets/paysaathi-app.svg">
 </head>
 <body class="bg-slate-100 min-h-screen font-sans text-gray-800">
 <div id="site-maintenance-screen" style="display:none;position:fixed;inset:0;z-index:99999;background:#f4f7fc;padding:24px;align-items:center;justify-content:center;text-align:center">
@@ -1731,5 +1737,6 @@ body{font-family:"Plus Jakarta Sans",system-ui,sans-serif!important;color:var(--
     window.loadProfile();
   </script>
 
+<script src="./pwa.js" defer></script>
 </body>
 </html>
