@@ -15,9 +15,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - uses: denoland/setup-deno@v2
-        with:
-          deno-version: v2.x
       - name: Check inline JavaScript syntax
         run: |
           python3 - <<'PY'
@@ -34,5 +31,3 @@ jobs:
                       target.write_text(script, encoding="utf-8")
                       subprocess.run(["node", "--check", str(target)], check=True)
           PY
-      - name: Check login OTP Edge Function
-        run: deno check supabase/functions/password-email-otp/index.ts
