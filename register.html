@@ -36,7 +36,7 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 
 const SUPABASE_URL = 'https://hhqcycwfvxoxjizlbivv.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_NdrUA-ubf67oW5hiS-Yw4A_-r2xbJRV';
-const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, { auth: { storageKey: 'paysaathi.auth.v1', persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
 
 const form = document.getElementById('registerForm');
 const message = document.getElementById('message');
