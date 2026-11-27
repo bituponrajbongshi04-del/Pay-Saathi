@@ -27,7 +27,7 @@ jobs:
       - name: Build Android packages
         working-directory: android
         env:
-          PAYSAATHI_KEYSTORE_PATH: ${{ runner.temp }}/paysaathi-release.jks
+          PAYSAATHI_KEYSTORE_PATH: ${{ secrets.PAYSAATHI_KEYSTORE_BASE64 != '' && format('{0}/paysaathi-release.jks', runner.temp) || '' }}
           PAYSAATHI_KEYSTORE_PASSWORD: ${{ secrets.PAYSAATHI_KEYSTORE_PASSWORD }}
           PAYSAATHI_KEY_ALIAS: ${{ secrets.PAYSAATHI_KEY_ALIAS }}
           PAYSAATHI_KEY_PASSWORD: ${{ secrets.PAYSAATHI_KEY_PASSWORD }}
@@ -42,7 +42,7 @@ jobs:
         if: ${{ secrets.PAYSAATHI_KEYSTORE_BASE64 != '' }}
         working-directory: android
         env:
-          PAYSAATHI_KEYSTORE_PATH: ${{ runner.temp }}/paysaathi-release.jks
+          PAYSAATHI_KEYSTORE_PATH: ${{ secrets.PAYSAATHI_KEYSTORE_BASE64 != '' && format('{0}/paysaathi-release.jks', runner.temp) || '' }}
           PAYSAATHI_KEYSTORE_PASSWORD: ${{ secrets.PAYSAATHI_KEYSTORE_PASSWORD }}
           PAYSAATHI_KEY_ALIAS: ${{ secrets.PAYSAATHI_KEY_ALIAS }}
           PAYSAATHI_KEY_PASSWORD: ${{ secrets.PAYSAATHI_KEY_PASSWORD }}
