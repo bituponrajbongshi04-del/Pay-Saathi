@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
  <uses-permission android:name="android.permission.INTERNET"/>
+ <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
  <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
  <application android:allowBackup="false" android:label="PaySaathi" android:icon="@drawable/ic_launcher" android:theme="@style/PaySaathiTheme" android:usesCleartextTraffic="false">
   <provider android:name="androidx.core.content.FileProvider" android:authorities="${applicationId}.fileprovider" android:exported="false" android:grantUriPermissions="true">
