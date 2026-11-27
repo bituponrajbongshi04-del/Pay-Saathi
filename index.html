@@ -256,6 +256,8 @@ function applyHomeBranding(c={}){
  const fontMap={system:'Inter,system-ui,sans-serif',modern:'Arial,Helvetica,sans-serif',serif:'Georgia,serif'},font=fontMap[c.font]||fontMap.system;
  const widthMap={compact:'900px',standard:'1180px',wide:'1380px',full:'100%'},width=widthMap[c.layout_width]||'1180px';
  const shadowMap={none:'none',soft:'0 12px 32px rgba(11,57,91,.07)',strong:'0 18px 42px rgba(11,57,91,.16)'},shadow=shadowMap[c.card_shadow]||shadowMap.soft;
+ const buttonRadius=c.button_style==='pill'?'999px':c.button_style==='square'?'8px':radius;
+ const navRadius=c.nav_style==='pill'?'999px':c.nav_style==='compact'?'8px':radius;
  let style=document.getElementById('paysaathi-home-admin-style');
  if(!style){style=document.createElement('style');style.id='paysaathi-home-admin-style';document.head.appendChild(style);}
  const bgOk=typeof c.background_image==='string'&&/^https?:\/\//i.test(c.background_image.trim());
@@ -264,7 +266,7 @@ function applyHomeBranding(c={}){
  ':root{--ps-home-primary:'+primary+';--ps-home-secondary:'+secondary+';--ps-home-bg:'+background+';--ps-home-card:'+card+';--ps-home-ink:'+ink+';--ps-home-radius:'+radius+'}'+
  'body{font-family:'+font+'!important;background-color:'+background+'!important;color:'+ink+'!important;'+(bgOk?'background-image:linear-gradient(145deg,rgba(248,252,255,.88),rgba(238,247,253,.88)),'+bgImage+'!important;background-size:cover;background-position:center;background-attachment:fixed;':'')+'}'+
  '.wrap{max-width:'+width+'!important}.service,.benefit,.step,.device,.banner{border-radius:'+radius+'!important;box-shadow:'+shadow+'!important}'+
- '.service{background:'+card+'!important;color:'+ink+'!important}.btn.primary,.cta .primary{background:linear-gradient(120deg,'+secondary+','+primary+')!important;border-color:'+primary+'!important}'+
+ '.service{background:'+card+'!important;color:'+ink+'!important}.btn,.cta .primary{border-radius:'+buttonRadius+'!important}.links a{border-radius:'+navRadius+'!important}.btn.primary,.cta .primary{background:linear-gradient(120deg,'+secondary+','+primary+')!important;border-color:'+primary+'!important}'+
  '.brand .logo{background:linear-gradient(135deg,'+secondary+','+primary+')!important}.banner{background:linear-gradient(115deg,'+secondary+','+primary+' 65%,#0c9bcf)!important}.links a:hover{color:'+primary+'!important}';
  const name=homeText(c.brand_name||'PaySaathi');
  document.querySelectorAll('.brand-name').forEach(el=>{el.textContent=name;});
@@ -274,6 +276,8 @@ function applyHomeBranding(c={}){
  const hero=document.getElementById('homeHero');if(hero)hero.hidden=c.show_hero===false;
  const heroTitle=hero?.querySelector('h1');if(heroTitle&&c.hero_title){heroTitle.replaceChildren(document.createTextNode(homeText(c.hero_title)));const em=document.createElement('em');em.textContent=homeText(c.brand_tagline||'One smart Saathi.');heroTitle.append(document.createElement('br'),em);}
  const lead=hero?.querySelector('.lead');if(lead&&c.hero_subtitle)lead.textContent=homeText(c.hero_subtitle);
+ if(hero&&c.hero_image_url&&/^https?:\/\//i.test(c.hero_image_url)){hero.style.backgroundImage='linear-gradient(120deg,rgba(248,252,255,.92),rgba(238,247,253,.86)),url("'+c.hero_image_url.replace(/["\\]/g,'')+'")';hero.style.backgroundSize='cover';hero.style.backgroundPosition='center';}
+ if(hero&&c.hero_align==='center'){const copy=hero.querySelector('.hero-copy');if(copy)copy.style.textAlign='center';}
  const heroButton=hero?.querySelector('.cta .primary');if(heroButton){if(c.hero_button){const arrow=heroButton.querySelector('span');heroButton.textContent=homeText(c.hero_button)+' ';if(arrow)heroButton.append(arrow);}if(c.hero_button_url&&/^https?:\/\//i.test(c.hero_button_url))heroButton.href=c.hero_button_url;}
  const setVisible=(id,visible)=>{const el=document.getElementById(id);if(el)el.hidden=!visible;};
  setVisible('services',c.show_quick_actions!==false);setVisible('why',c.show_benefits!==false);setVisible('how',c.show_how!==false);setVisible('help',c.show_help!==false);
