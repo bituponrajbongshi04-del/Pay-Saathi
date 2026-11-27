@@ -1,11 +1,17 @@
 package `in`.paysaathi.app
 
+import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import java.io.File
 import androidx.activity.ComponentActivity
@@ -35,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -54,7 +61,7 @@ private val Cyan=Color(0xFF55D7E8)
 private val Muted=Color(0xFFB9D4E7)
 
 class MainActivity:ComponentActivity(){
- override fun onCreate(savedInstanceState:Bundle?){super.onCreate(savedInstanceState);setContent{PaySaathiApp(this)}}
+ override fun onCreate(savedInstanceState:Bundle?){super.onCreate(savedInstanceState);if(Build.VERSION.SDK_INT>=26){val manager=getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager;manager.createNotificationChannel(NotificationChannel("paysaathi_updates","PaySaathi updates",NotificationManager.IMPORTANCE_DEFAULT).apply{description="Recharge, account and service updates"})};setContent{PaySaathiApp(this)}}
 }
 data class AppUpdate(val version:String,val notes:String,val apkUrl:String,val mandatory:Boolean)
 
@@ -124,6 +131,8 @@ class Api(context:Context){
  suspend fun documents():JSONArray=JSONArray(raw("/rest/v1/paysaathi_kyc_documents?select=document_type,status&user_id=eq."+uid()))
  suspend fun submitKyc(name:String){val list=documents();val pan=(0 until list.length()).any{list.optJSONObject(it)?.optString("document_type")=="pan"&&list.optJSONObject(it)?.optString("status")!="rejected"};val identity=(0 until list.length()).any{list.optJSONObject(it)?.optString("document_type")=="identity_proof"&&list.optJSONObject(it)?.optString("status")!="rejected"};if(!pan||!identity)throw IOException("Upload PAN and one identity proof before submitting.");raw("/rest/v1/paysaathi_kyc_profiles?user_id=eq."+uid(),"PATCH",JSONObject().put("status","submitted").put("legal_name",name).put("submitted_at",java.time.Instant.now().toString()).toString())}
  suspend fun access(service:String):Boolean{val o=obj("/rest/v1/rpc/paysaathi_kyc_access","POST",JSONObject().put("p_service_key",service).toString());return o.optBoolean("allowed",false)}
+ suspend fun notifications():JSONArray=JSONArray(raw("/rest/v1/ps_notifications?select=id,title,message,is_read,created_at&or=(user_id.eq."+uid()+",user_id.is.null)&order=created_at.desc&limit=30"))
+ suspend fun markNotificationRead(id:String){raw("/rest/v1/ps_notifications?id=eq."+id,"PATCH",JSONObject().put("is_read",true).toString())}
  suspend fun signout(){prefs.edit().clear().apply()}
 }
 @Composable fun PaySaathiApp(ctx:Context){
@@ -137,7 +146,11 @@ class Api(context:Context){
  var updateInfo by remember{mutableStateOf<AppUpdate?>(null)};var updateBusy by remember{mutableStateOf(false)};var updateMessage by remember{mutableStateOf("")};var downloadedApk by remember{mutableStateOf<File?>(null)}
  var status by remember{mutableStateOf("not_started")};var balance by remember{mutableStateOf("0.00")};var legalName by remember{mutableStateOf("")};var docType by remember{mutableStateOf("pan")};var picked by remember{mutableStateOf<Uri?>(null)}
  var serviceKey by remember{mutableStateOf("")};var serviceLabel by remember{mutableStateOf("")};var serviceInput by remember{mutableStateOf("")};var serviceAmount by remember{mutableStateOf("")};var serviceNotice by remember{mutableStateOf("")}
+ var notificationItems by remember{mutableStateOf(JSONArray())};var notificationCount by remember{mutableIntStateOf(0)};var lastNotifiedId by remember{mutableStateOf("")};var permissionMessage by remember{mutableStateOf("")}
+ val notificationPermission=rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()){granted->permissionMessage=if(granted)"Notifications enabled." else "Notifications are off. You can enable them in Android Settings."}
  val picker=rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()){picked=it}
+ fun requestNotifications(){if(Build.VERSION.SDK_INT>=33&&ContextCompat.checkSelfPermission(ctx,Manifest.permission.POST_NOTIFICATIONS)!=PackageManager.PERMISSION_GRANTED)notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)else permissionMessage="Notifications are already enabled."}
+ fun showDeviceNotification(title:String,message:String){if(Build.VERSION.SDK_INT>=33&&ContextCompat.checkSelfPermission(ctx,Manifest.permission.POST_NOTIFICATIONS)!=PackageManager.PERMISSION_GRANTED)return;val n=NotificationCompat.Builder(ctx,"paysaathi_updates").setSmallIcon(android.R.drawable.ic_dialog_info).setContentTitle(title).setContentText(message).setStyle(NotificationCompat.BigTextStyle().bigText(message)).setAutoCancel(true).setPriority(NotificationCompat.PRIORITY_DEFAULT).build();(ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).notify((System.currentTimeMillis()%100000).toInt(),n)}
  fun runTask(block:suspend()->Unit){scope.launch{waiting=true;error="";try{block()}catch(e:Exception){error=e.message?: "Something went wrong"}finally{waiting=false}}}
  LaunchedEffect(Unit){runCatching{api.checkUpdate()}.onSuccess{updateInfo=it}}
  fun installDownloaded(){val file=downloadedApk?:return
@@ -149,12 +162,13 @@ class Api(context:Context){
   val uri=FileProvider.getUriForFile(ctx,ctx.packageName+".fileprovider",file)
   ctx.startActivity(Intent(Intent.ACTION_VIEW).setDataAndType(uri,"application/vnd.android.package-archive").addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK))
  }
- LaunchedEffect(page){if(page=="home"){runTask{balance=api.wallet();val k=api.kyc();status=k.optString("status","not_started");legalName=k.optString("legal_name","")}}}
+ LaunchedEffect(page){if(page=="home"){runTask{balance=api.wallet();val k=api.kyc();status=k.optString("status","not_started");legalName=k.optString("legal_name","");notificationItems=api.notifications();notificationCount=(0 until notificationItems.length()).count{!notificationItems.optJSONObject(it).optBoolean("is_read",false)};if(notificationItems.length()>0){val latest=notificationItems.optJSONObject(0);val id=latest.optString("id");if(id.isNotBlank()&&id!=lastNotifiedId&&lastNotifiedId.isNotBlank()){showDeviceNotification(latest.optString("title","PaySaathi update"),latest.optString("message","You have a new update."))};if(id.isNotBlank())lastNotifiedId=id}}}}
+ LaunchedEffect(page){if(page=="home"&&api.hasSession()){while(true){delay(60000);runCatching{val fresh=api.notifications();notificationItems=fresh;notificationCount=(0 until fresh.length()).count{!fresh.optJSONObject(it).optBoolean("is_read",false)};if(fresh.length()>0){val latest=fresh.optJSONObject(0);val id=latest.optString("id");if(id.isNotBlank()&&id!=lastNotifiedId){showDeviceNotification(latest.optString("title","PaySaathi update"),latest.optString("message","You have a new update."));lastNotifiedId=id}}}}}}
  BackHandler(enabled=pageHistory.isNotEmpty()){goBack()}
  MaterialTheme(colorScheme=darkColorScheme(primary=Cyan,background=Navy,surface=Color(0xFF102E49),onSurface=Color.White)){
   Box(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Navy,Color(0xFF0A3558),Navy)))){
    Column(Modifier.fillMaxSize().padding(20.dp).verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(13.dp)){
-    Row(verticalAlignment=Alignment.CenterVertically){if(pageHistory.isNotEmpty())IconButton(onClick={goBack()}){Icon(Icons.Default.ArrowBack,null,tint=Color.White)};Surface(shape=RoundedCornerShape(14.dp),color=Blue){Text("P",Modifier.padding(horizontal=15.dp,vertical=9.dp),fontWeight=FontWeight.Black,color=Color.White,fontSize=22.sp)};Spacer(Modifier.width(10.dp));Column{Text("PaySaathi",fontSize=23.sp,fontWeight=FontWeight.Black,color=Color.White);Text("YOUR MONEY. YOUR SERVICES. ONE SAATHI.",fontSize=8.sp,color=Cyan,fontWeight=FontWeight.Bold)};Spacer(Modifier.weight(1f));if(page=="home")IconButton(onClick={runTask{api.signout();pageHistory.clear();page="login"}}){Icon(Icons.Default.Logout,null,tint=Color.White)}}
+    Row(verticalAlignment=Alignment.CenterVertically){if(pageHistory.isNotEmpty())IconButton(onClick={goBack()}){Icon(Icons.Default.ArrowBack,null,tint=Color.White)};Surface(shape=RoundedCornerShape(14.dp),color=Blue){Text("P",Modifier.padding(horizontal=15.dp,vertical=9.dp),fontWeight=FontWeight.Black,color=Color.White,fontSize=22.sp)};Spacer(Modifier.width(10.dp));Column{Text("PaySaathi",fontSize=23.sp,fontWeight=FontWeight.Black,color=Color.White);Text("YOUR MONEY. YOUR SERVICES. ONE SAATHI.",fontSize=8.sp,color=Cyan,fontWeight=FontWeight.Bold)};Spacer(Modifier.weight(1f));if(page=="home"){IconButton(onClick={navigate("notifications")}){BadgedBox(badge={if(notificationCount>0)Badge{Text(if(notificationCount>9)"9+" else notificationCount.toString())}}){Icon(Icons.Default.Notifications,null,tint=Color.White)}};IconButton(onClick={runTask{api.signout();pageHistory.clear();page="login"}}){Icon(Icons.Default.Logout,null,tint=Color.White)}}}
     if(updateInfo!=null){Card(colors=CardDefaults.cardColors(containerColor=Color(0xFF174A68)),shape=RoundedCornerShape(16.dp)){Column(Modifier.padding(15.dp),verticalArrangement=Arrangement.spacedBy(8.dp)){Text("PaySaathi update available · v"+updateInfo!!.version,color=Color.White,fontWeight=FontWeight.Bold);Text("Get the latest features and improvements directly here.",color=Muted,fontSize=12.sp);Button(onClick={runTask{downloadedApk=api.downloadUpdate(updateInfo!!.apkUrl);updateMessage="Update downloaded. Tap Install update to continue."}},enabled=!waiting){Text(if(waiting)"Downloading…" else "Download update")};if(downloadedApk!=null)Button(onClick={installDownloaded()}){Text("Install update")};if(updateMessage.isNotBlank())Text(updateMessage,color=Cyan,fontSize=11.sp)}}}
     if(updateInfo?.mandatory==true){
      Text("Required PaySaathi update",fontSize=27.sp,fontWeight=FontWeight.ExtraBold,color=Color.White)
@@ -172,7 +186,14 @@ class Api(context:Context){
      TextButton(onClick={val target=if(page=="login")"signup" else "login";signup=target=="signup";navigate(target)}){Text(if(page=="login")"New to PaySaathi? Create account" else "Already registered? Log in",color=Cyan)}
     }else if(page=="home"){
      Text("Good to see you",fontSize=25.sp,fontWeight=FontWeight.Bold,color=Color.White)
-     Card(colors=CardDefaults.cardColors(containerColor=Blue),shape=RoundedCornerShape(22.dp)){Column(Modifier.padding(20.dp)){Text("WALLET BALANCE",fontSize=10.sp,color=Color.White.copy(.75f));Text("₹ "+balance,fontSize=30.sp,fontWeight=FontWeight.Black,color=Color.White);Text("Preview mode · Live transactions are not active",fontSize=10.sp,color=Color.White.copy(.8f))}}
+     Card(colors=CardDefaults.cardColors(containerColor=Blue),shape=RoundedCornerShape(22.dp)){Column(Modifier.fillMaxWidth().background(Brush.linearGradient(listOf(Color(0xFF087FCA),Color(0xFF123A75)))).padding(20.dp)){Row(verticalAlignment=Alignment.CenterVertically){Column(Modifier.weight(1f)){Text("PAYSAATHI WALLET",fontSize=10.sp,color=Color.White.copy(.78f),fontWeight=FontWeight.Bold);Text("₹ "+balance,fontSize=31.sp,fontWeight=FontWeight.Black,color=Color.White);Text("Available balance",fontSize=10.sp,color=Color.White.copy(.8f))};Surface(color=Color.White.copy(.15f),shape=RoundedCornerShape(16.dp)){Icon(Icons.Default.AccountBalanceWallet,null,Modifier.padding(15.dp),tint=Color.White)}};Spacer(Modifier.height(15.dp));Row(horizontalArrangement=Arrangement.spacedBy(9.dp)){Button(onClick={error="Wallet funding is in preview mode. Payment gateway is not connected."},colors=ButtonDefaults.buttonColors(containerColor=Color.White,contentColor=Blue)){Text("Add money")};OutlinedButton(onClick={navigate("notifications")},colors=ButtonDefaults.outlinedButtonColors(contentColor=Color.White)){Text("Notifications")}}}}
+     Card(colors=CardDefaults.cardColors(containerColor=Color(0xFF164568)),shape=RoundedCornerShape(18.dp)){Row(Modifier.fillMaxWidth().padding(16.dp),verticalAlignment=Alignment.CenterVertically){Column(Modifier.weight(1f)){Text("PAY BILLS. RECHARGE. STAY IN CONTROL.",fontSize=10.sp,fontWeight=FontWeight.ExtraBold,color=Cyan);Text("Everyday services, all in one place.",fontSize=13.sp,fontWeight=FontWeight.Bold,color=Color.White);Text("Simple, secure and convenient.",fontSize=10.sp,color=Muted)};Icon(Icons.Default.VerifiedUser,null,tint=Cyan,modifier=Modifier.size(34.dp))}}
+     if(Build.VERSION.SDK_INT>=33&&ContextCompat.checkSelfPermission(ctx,Manifest.permission.POST_NOTIFICATIONS)!=PackageManager.PERMISSION_GRANTED){Card(colors=CardDefaults.cardColors(containerColor=Color(0xFF193B58)),shape=RoundedCornerShape(14.dp)){Row(Modifier.padding(13.dp),verticalAlignment=Alignment.CenterVertically){Column(Modifier.weight(1f)){Text("Get important updates",color=Color.White,fontWeight=FontWeight.Bold,fontSize=12.sp);Text("Recharge, account and service notifications.",color=Muted,fontSize=10.sp)};TextButton(onClick={requestNotifications()}){Text("Enable",color=Cyan)}}}}
+     Text("Recharge & bill payments",fontWeight=FontWeight.Bold,color=Color.White,fontSize=17.sp)
+     listOf(listOf("Mobile Recharge" to "📱","DTH Recharge" to "📺","Electricity Bills" to "⚡"),listOf("Gas Bills" to "🔥","Water Bills" to "💧","Broadband" to "🌐"),listOf("Postpaid Bills" to "📞","Money Transfer" to "↗","AEPS Banking" to "🏦")).forEach{group->Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.spacedBy(9.dp)){group.forEach{(label,emoji)->Card(Modifier.weight(1f).clickable{val key=when(label){"Money Transfer"->"money_transfer";"AEPS Banking"->"aeps";"Mobile Recharge"->"mobile_recharge";"DTH Recharge"->"dth_recharge";"Electricity Bills"->"electricity";"Gas Bills"->"gas";"Water Bills"->"water";"Broadband"->"broadband";else->"postpaid"};runTask{if(api.access(key)){serviceKey=key;serviceLabel=label;serviceInput="";serviceAmount="";serviceNotice="";navigate("service")}else if(key in listOf("money_transfer","aeps")){error="KYC approval is required for "+label;navigate("kyc")}else error="This service is currently unavailable."}},colors=CardDefaults.cardColors(containerColor=Color(0xFF123451)),shape=RoundedCornerShape(15.dp)){Column(Modifier.fillMaxWidth().padding(vertical=14.dp,horizontal=5.dp),horizontalAlignment=Alignment.CenterHorizontally){Text(emoji,fontSize=22.sp);Text(label,fontSize=9.sp,fontWeight=FontWeight.Bold,color=Color.White,textAlign=androidx.compose.ui.text.style.TextAlign.Center,minLines=2)}}}}}
+     Text("Your account",fontWeight=FontWeight.Bold,color=Color.White,fontSize=17.sp)
+     Card(colors=CardDefaults.cardColors(containerColor=Color(0xFF123451)),shape=RoundedCornerShape(17.dp)){Row(Modifier.fillMaxWidth().clickable{navigate("kyc")}.padding(15.dp),verticalAlignment=Alignment.CenterVertically){Icon(Icons.Default.VerifiedUser,null,tint=Cyan);Spacer(Modifier.width(12.dp));Column(Modifier.weight(1f)){Text("Identity verification",fontWeight=FontWeight.Bold,color=Color.White);Text("KYC status: "+status,color=Cyan,fontSize=11.sp)};Icon(Icons.Default.ChevronRight,null,tint=Cyan)}}
+     Row(horizontalArrangement=Arrangement.spacedBy(9.dp)){OutlinedButton(onClick={navigate("notifications")},modifier=Modifier.weight(1f)){Text("Notifications")};OutlinedButton(onClick={error="Support centre is available on the PaySaathi website dashboard."},modifier=Modifier.weight(1f)){Text("Help & support")}}
      Card(colors=CardDefaults.cardColors(containerColor=Color(0xFF123451)),shape=RoundedCornerShape(18.dp)){Column(Modifier.padding(17.dp)){Text("Identity verification",fontWeight=FontWeight.Bold,color=Color.White);Text("KYC status: "+status,color=Cyan,fontSize=12.sp);TextButton(onClick={navigate("kyc")}){Text("Open KYC centre",color=Cyan)}}}
      Text("Your services",fontWeight=FontWeight.Bold,color=Color.White,fontSize=17.sp)
      Text("Available without KYC",fontSize=13.sp,fontWeight=FontWeight.Bold,color=Cyan)
@@ -180,6 +201,13 @@ class Api(context:Context){
      Text("KYC required services",fontSize=13.sp,fontWeight=FontWeight.Bold,color=Cyan)
      listOf("Money Transfer" to "money_transfer","AEPS & Assisted Banking" to "aeps","Payout" to "payout","Wallet Top-up" to "wallet_topup","UTI Services" to "uti").forEach{(label,key)->ServiceCard(label,"KYC approval required",false){runTask{if(api.access(key)){serviceKey=key;serviceLabel=label;serviceInput="";serviceAmount="";serviceNotice="";navigate("service")}else{error="Complete KYC and wait for approval to unlock "+label+".";navigate("kyc")}}}}
      Text("Your account remains open while KYC is being reviewed.",fontSize=10.sp,color=Muted)
+    }else if(page=="notifications"){
+     Text("Notifications",fontSize=26.sp,fontWeight=FontWeight.Bold,color=Color.White)
+     Text("Account, service and important PaySaathi updates.",fontSize=12.sp,color=Muted)
+     Button(onClick={runTask{notificationItems=api.notifications();notificationCount=(0 until notificationItems.length()).count{!notificationItems.optJSONObject(it).optBoolean("is_read",false)}}},enabled=!waiting){Text("Refresh notifications")}
+     if(Build.VERSION.SDK_INT>=33&&ContextCompat.checkSelfPermission(ctx,Manifest.permission.POST_NOTIFICATIONS)!=PackageManager.PERMISSION_GRANTED){OutlinedButton(onClick={requestNotifications()}){Text("Enable phone notifications")}}
+     if(notificationItems.length()==0)Text("No notifications yet.",color=Muted,fontSize=12.sp) else (0 until notificationItems.length()).forEach{index->val item=notificationItems.optJSONObject(index);Card(colors=CardDefaults.cardColors(containerColor=Color(0xFF123451)),shape=RoundedCornerShape(15.dp)){Column(Modifier.fillMaxWidth().clickable{val id=item.optString("id");runTask{if(id.isNotBlank())api.markNotificationRead(id);notificationItems=api.notifications();notificationCount=(0 until notificationItems.length()).count{!notificationItems.optJSONObject(it).optBoolean("is_read",false)}}}.padding(14.dp),verticalArrangement=Arrangement.spacedBy(5.dp)){Row(verticalAlignment=Alignment.CenterVertically){Text(item.optString("title","PaySaathi update"),Modifier.weight(1f),fontWeight=FontWeight.Bold,color=Color.White);if(!item.optBoolean("is_read",false))Badge{Text("NEW")}};Text(item.optString("message",""),color=Muted,fontSize=12.sp);Text(if(item.optBoolean("is_read",false))"Read" else "Tap to mark as read",color=Cyan,fontSize=9.sp)}}}
+     if(permissionMessage.isNotBlank())Text(permissionMessage,color=Cyan,fontSize=11.sp)
     }else if(page=="service"){
      Text(serviceLabel,fontSize=26.sp,fontWeight=FontWeight.Bold,color=Color.White)
      Text(if(serviceKey in listOf("mobile_recharge","dth_recharge","electricity","gas","water","broadband","postpaid"))"Available to all signed-in users · No KYC required" else "KYC-approved service",fontSize=11.sp,color=Cyan,fontWeight=FontWeight.Bold)
