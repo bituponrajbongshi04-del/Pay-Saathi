@@ -145,7 +145,7 @@ header{background:rgba(255,255,255,.76);backdrop-filter:blur(24px) saturate(160%
 <div class="actions"><a class="btn ghost" href="login.html">Log in</a><a class="btn primary" href="signup.html">Get started <span>↗</span></a><button class="menu" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNav">☰</button></div></div>
 <div class="wrap mobile-nav" id="mobileNav"><a href="#services">Services</a><a href="#preview">Dashboard preview</a><a href="#why">Why PaySaathi</a><a href="#how">How it works</a><a href="contact-support.html">Support</a><a href="login.html">Log in</a><a href="signup.html">Register</a></div></header>
 <main>
-<section class="hero"><div class="wrap hero-grid"><div class="hero-copy">
+<section class="hero" id="homeHero"><div class="wrap hero-grid"><div class="hero-copy">
 <div class="eyebrow"><i class="pulse"></i> Your trusted digital service companion</div>
 <h1>Your everyday services.<br><em>One smart Saathi.</em></h1>
 <p class="lead">Create your account, complete KYC and get verified. Once your account is activated, add funds and access supported recharges, bill payments and other digital services — all from one simple dashboard.</p>
@@ -155,7 +155,7 @@ header{background:rgba(255,255,255,.76);backdrop-filter:blur(24px) saturate(160%
 <div class="visual"><div class="halo"></div><div class="float-card float-a"><span class="float-icon">✓</span>Easy service access<small>Everything in one place</small></div>
 <div class="device"><div class="desktop-bar"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span class="desktop-label">paysaathi.in / dashboard</span></div><div class="dash"><aside class="side"><div class="side-brand">Pay<b>Saathi</b></div><div class="side-link active">▦ &nbsp; Overview</div><div class="side-link">↗ &nbsp; Recharge</div><div class="side-link">▤ &nbsp; Bill pay</div><div class="side-link">⇄ &nbsp; Transfer</div><div class="side-link">◷ &nbsp; History</div><div class="side-link">☏ &nbsp; Support</div></aside><div class="dash-main"><div class="dash-head">Good morning! <span class="avatar">PS</span></div><div class="welcome">Welcome back to your PaySaathi dashboard</div><div class="stats"><div class="stat"><small>Wallet balance</small><b>₹ 0.00</b></div><div class="stat"><small>Transactions</small><b>0</b></div><div class="stat"><small>Quick services</small><b>09</b></div></div><div class="dash-lower"><div class="panel"><strong>Quick services</strong><div class="service-mini"><i class="mini-ico">📱</i> Mobile recharge</div><div class="service-mini"><i class="mini-ico">⚡</i> Electricity bill</div><div class="service-mini"><i class="mini-ico">🌐</i> Broadband</div></div><div class="panel"><strong>Activity overview</strong><div class="bars"><i style="height:35%"></i><i style="height:55%"></i><i style="height:42%"></i><i style="height:80%"></i><i style="height:63%"></i><i style="height:95%"></i></div></div></div></div></div></div>
 <div class="float-card float-b">🔔 &nbsp; Helpful updates<small>Stay on top of your account</small></div></div></div></section>
-<section id="services"><div class="wrap"><div class="section-head reveal"><div class="kicker">What you can do</div><h2>Everyday services, beautifully organised.</h2><p>Find the service you need without digging through complicated menus. Actual availability depends on active provider integrations.</p></div><div class="service-tools"><label class="service-search"><input id="serviceSearch" type="search" placeholder="Search services..." aria-label="Search services"></label><span class="service-count" id="serviceCount">9 service categories</span></div><div class="services" id="serviceGrid">
+<section id="services"><div class="wrap"><div class="section-head reveal"><div class="kicker">What you can do</div><h2 id="homeServicesTitle">Everyday services, beautifully organised.</h2><p id="homeServicesDescription">Find the service you need without digging through complicated menus. Actual availability depends on active provider integrations.</p></div><div class="service-tools"><label class="service-search"><input id="serviceSearch" type="search" placeholder="Search services..." aria-label="Search services"></label><span class="service-count" id="serviceCount">9 service categories</span></div><div class="services" id="serviceGrid">
 <div class="service reveal" role="button" tabindex="0" data-service="Mobile Recharge" aria-label="Explore Mobile Recharge"><div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10 18h4"/></svg></div><h3>Mobile Recharge</h3><p>Access supported mobile recharge options with a simple flow.</p><span class="arrow">↗</span></div>
 <div class="service reveal" role="button" tabindex="0" data-service="DTH Recharge" aria-label="Explore DTH Recharge"><div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="m8 6 2-3h4l2 3M8 12h8"/></svg></div><h3>DTH Recharge</h3><p>Find your DTH recharge service in just a few steps.</p><span class="arrow">↗</span></div>
 <div class="service reveal" role="button" tabindex="0" data-service="Electricity Bills" aria-label="Explore Electricity Bills"><div class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 10-13h-7z"/></svg></div><h3>Electricity Bills</h3><p>Navigate to electricity bill services with clarity.</p><span class="arrow">↗</span></div>
@@ -172,7 +172,7 @@ header{background:rgba(255,255,255,.76);backdrop-filter:blur(24px) saturate(160%
 <div class="phone-preview"><div class="phone-screen"><div class="phone-notch"></div><div class="phone-head"><span>PaySaathi</span><span>●●●</span></div><div class="phone-welcome">Hello, welcome back 👋</div><div class="phone-balance"><small>Available wallet balance</small><b>₹ 0.00</b><small>Your account at a glance</small></div><div class="phone-grid"><div><i>📱</i>Recharge</div><div><i>⚡</i>Electricity</div><div><i>⇄</i>Transfer</div><div><i>📺</i>DTH</div><div><i>💧</i>Water</div><div><i>🌐</i>Broadband</div></div><div class="phone-list"><b>Recent activity</b><div><span>Mobile recharge</span><b>›</b></div><div><span>Bill payments</span><b>›</b></div><div><span>Transaction history</span><b>›</b></div></div></div></div>
 <div class="desktop-preview"><div class="desktop-bar"><i class="dot"></i><i class="dot"></i><i class="dot"></i><span class="desktop-label">PaySaathi · Dashboard</span></div><div class="dash"><aside class="side"><div class="side-brand">Pay<b>Saathi</b></div><div class="side-link active">▦ &nbsp; Dashboard</div><div class="side-link">↗ &nbsp; Recharge</div><div class="side-link">▤ &nbsp; Bill payments</div><div class="side-link">⇄ &nbsp; Money transfer</div><div class="side-link">◷ &nbsp; Transactions</div><div class="side-link">☏ &nbsp; Support centre</div></aside><div class="dash-main"><div class="dash-head">Your dashboard <span class="avatar">PS</span></div><div class="welcome">Everything you need, right at your fingertips.</div><div class="stats"><div class="stat"><small>Wallet balance</small><b>₹ 0.00</b></div><div class="stat"><small>Total transactions</small><b>0</b></div><div class="stat"><small>Available services</small><b>09</b></div></div><div class="dash-lower"><div class="panel"><strong>Popular services</strong><div class="service-mini"><i class="mini-ico">📱</i> Mobile recharge</div><div class="service-mini"><i class="mini-ico">⚡</i> Electricity bill</div><div class="service-mini"><i class="mini-ico">🏦</i> AEPS services</div></div><div class="panel"><strong>Account activity</strong><div class="bars"><i style="height:30%"></i><i style="height:58%"></i><i style="height:45%"></i><i style="height:75%"></i><i style="height:62%"></i><i style="height:90%"></i></div></div></div></div></div></div>
 </div><div class="preview-caption">Interactive design preview · Phone shows the mobile layout · Desktop shows the full dashboard layout · Sample data only</div></div></div></section>
-<section class="benefits" id="why"><div class="wrap"><div class="section-head reveal"><div class="kicker">Why PaySaathi</div><h2>A smoother experience, at every step.</h2><p>Thoughtful design that helps people find what they need and understand what happens next.</p></div><div class="benefit-grid">
+<section class="benefits" id="why"><div class="wrap"><div class="section-head reveal"><div class="kicker">Why PaySaathi</div><h2 id="homeWhyTitle">A smoother experience, at every step.</h2><p id="homeWhyDescription">Thoughtful design that helps people find what they need and understand what happens next.</p></div><div class="benefit-grid">
 <div class="benefit reveal"><div class="benefit-num">01 / SIMPLE</div><b>Clear navigation</b><p>Organised sections make important services easy to find.</p></div>
 <div class="benefit reveal"><div class="benefit-num">02 / CONNECTED</div><b>Services in one place</b><p>Bring supported everyday digital services together.</p></div>
 <div class="benefit reveal"><div class="benefit-num">03 / TRANSPARENT</div><b>Transaction records</b><p>Review available transaction details from your account.</p></div>
@@ -180,14 +180,14 @@ header{background:rgba(255,255,255,.76);backdrop-filter:blur(24px) saturate(160%
 <div class="benefit reveal"><div class="benefit-num">05 / INFORMED</div><b>Useful updates</b><p>Find account announcements and updates where available.</p></div>
 <div class="benefit reveal"><div class="benefit-num">06 / SUPPORTED</div><b>Help when you need it</b><p>Reach support through the contact options configured for the website.</p></div>
 </div></div></section>
-<section id="how"><div class="wrap"><div class="section-head reveal"><div class="kicker">Get started</div><h2>Your PaySaathi journey, step by step.</h2><p>Complete each step at your pace. Once your account is verified and activated, you can add funds and use the services enabled for you.</p></div><div class="steps">
+<section id="how"><div class="wrap"><div class="section-head reveal"><div class="kicker">Get started</div><h2 id="homeHowTitle">Your PaySaathi journey, step by step.</h2><p id="homeHowDescription">Complete each step at your pace. Once your account is verified and activated, you can add funds and use the services enabled for you.</p></div><div class="steps">
 <div class="step reveal"><div class="step-num">01</div><h3>Create your account</h3><p>Register with your details to create your PaySaathi account.</p></div>
 <div class="step reveal"><div class="step-num">02</div><h3>Complete your KYC</h3><p>Submit the required information and documents for verification.</p></div>
 <div class="step reveal"><div class="step-num">03</div><h3>Get account approval</h3><p>Our admin team reviews your details and activates your account when approved.</p></div>
 <div class="step reveal"><div class="step-num">04</div><h3>Add funds</h3><p>After activation, add balance using the funding options available in your dashboard.</p></div>
 <div class="step reveal"><div class="step-num">05</div><h3>Start using services</h3><p>Choose an enabled service and follow its steps from your dashboard.</p></div>
 </div></div></section>
-<section id="help" style="padding-top:15px"><div class="wrap"><div class="banner reveal"><div class="banner-content"><h2>Need a hand? Your Saathi is here.</h2><p id="supportMessage">Reach PaySaathi support using your preferred contact method.</p><div id="supportActions" style="display:flex;gap:9px;flex-wrap:wrap;margin-top:17px"><a class="btn" href="mailto:support@paysaathi.in">Email support</a></div><div id="supportStatus" style="font-size:10px;color:#d0e9f7;margin-top:9px">Support contact details are loaded from website settings.</div></div><a class="btn" href="login.html">Access PaySaathi&nbsp; →</a></div></div></section>
+<section id="help" style="padding-top:15px"><div class="wrap"><div class="banner reveal"><div class="banner-content"><h2 id="homeHelpTitle">Need a hand? Your Saathi is here.</h2><p id="supportMessage">Reach PaySaathi support using your preferred contact method.</p><div id="supportActions" style="display:flex;gap:9px;flex-wrap:wrap;margin-top:17px"><a class="btn" href="mailto:support@paysaathi.in">Email support</a></div><div id="supportStatus" style="font-size:10px;color:#d0e9f7;margin-top:9px">Support contact details are loaded from website settings.</div></div><a class="btn" href="login.html">Access PaySaathi&nbsp; →</a></div></div></section>
 </main>
 
 <div class="service-modal" id="serviceModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-hidden="true">
@@ -243,6 +243,78 @@ function setSupport(c={}){const email=String(c.support_email||'').trim(),phone=c
 // Keep the visual UI independent from the optional remote branding request.
 setSupport({support_email:'support@paysaathi.in'});
 try{const {data,error}=await supabase.rpc('paysaathi_get_public_branding');if(error)throw error;setSupport(data||{support_email:'support@paysaathi.in'});}catch(e){console.warn('Public support details could not be loaded:',e.message);}
+
+
+// Apply the same published configuration used by the Admin Website Builder.
+// Existing homepage sections, styles, search and modal interactions are retained.
+const homeText=v=>String(v??'').trim().slice(0,500);
+const homeColor=(v,f)=>/^#[0-9a-f]{6}$/i.test(String(v||''))?String(v):f;
+function applyHomeBranding(c={}){
+ const primary=homeColor(c.primary,'#087fca'),secondary=homeColor(c.secondary,'#0d3154');
+ const background=homeColor(c.background,'#f3f8fc'),card=homeColor(c.card,'#ffffff'),ink=homeColor(c.text,'#10243a');
+ const radiusMap={sharp:'8px',soft:'16px',rounded:'16px',round:'26px'},radius=radiusMap[c.radius]||'16px';
+ const fontMap={system:'Inter,system-ui,sans-serif',modern:'Arial,Helvetica,sans-serif',serif:'Georgia,serif'},font=fontMap[c.font]||fontMap.system;
+ const widthMap={compact:'900px',standard:'1180px',wide:'1380px',full:'100%'},width=widthMap[c.layout_width]||'1180px';
+ const shadowMap={none:'none',soft:'0 12px 32px rgba(11,57,91,.07)',strong:'0 18px 42px rgba(11,57,91,.16)'},shadow=shadowMap[c.card_shadow]||shadowMap.soft;
+ let style=document.getElementById('paysaathi-home-admin-style');
+ if(!style){style=document.createElement('style');style.id='paysaathi-home-admin-style';document.head.appendChild(style);}
+ const bgOk=typeof c.background_image==='string'&&/^https?:\/\//i.test(c.background_image.trim());
+ const bgImage=bgOk?'url("'+c.background_image.trim().replace(/["\\]/g,'')+'")':'none';
+ style.textContent=
+ ':root{--ps-home-primary:'+primary+';--ps-home-secondary:'+secondary+';--ps-home-bg:'+background+';--ps-home-card:'+card+';--ps-home-ink:'+ink+';--ps-home-radius:'+radius+'}'+
+ 'body{font-family:'+font+'!important;background-color:'+background+'!important;color:'+ink+'!important;'+(bgOk?'background-image:linear-gradient(145deg,rgba(248,252,255,.88),rgba(238,247,253,.88)),'+bgImage+'!important;background-size:cover;background-position:center;background-attachment:fixed;':'')+'}'+
+ '.wrap{max-width:'+width+'!important}.service,.benefit,.step,.device,.banner{border-radius:'+radius+'!important;box-shadow:'+shadow+'!important}'+
+ '.service{background:'+card+'!important;color:'+ink+'!important}.btn.primary,.cta .primary{background:linear-gradient(120deg,'+secondary+','+primary+')!important;border-color:'+primary+'!important}'+
+ '.brand .logo{background:linear-gradient(135deg,'+secondary+','+primary+')!important}.banner{background:linear-gradient(115deg,'+secondary+','+primary+' 65%,#0c9bcf)!important}.links a:hover{color:'+primary+'!important}';
+ const name=homeText(c.brand_name||'PaySaathi');
+ document.querySelectorAll('.brand-name').forEach(el=>{el.textContent=name;});
+ document.title=name+' | Everyday Services';
+ if(c.logo_url&&/^https?:\/\//i.test(c.logo_url)){document.querySelectorAll('.brand .logo').forEach(el=>{const img=document.createElement('img');img.src=c.logo_url;img.alt=name;img.style.cssText='width:100%;height:100%;object-fit:contain;border-radius:inherit';el.replaceChildren(img);});}
+ if(c.favicon_url&&/^https?:\/\//i.test(c.favicon_url)){let f=document.querySelector('link[rel~="icon"]');if(!f){f=document.createElement('link');f.rel='icon';document.head.appendChild(f);}f.href=c.favicon_url;}
+ const hero=document.getElementById('homeHero');if(hero)hero.hidden=c.show_hero===false;
+ const heroTitle=hero?.querySelector('h1');if(heroTitle&&c.hero_title){heroTitle.replaceChildren(document.createTextNode(homeText(c.hero_title)));const em=document.createElement('em');em.textContent=homeText(c.brand_tagline||'One smart Saathi.');heroTitle.append(document.createElement('br'),em);}
+ const lead=hero?.querySelector('.lead');if(lead&&c.hero_subtitle)lead.textContent=homeText(c.hero_subtitle);
+ const heroButton=hero?.querySelector('.cta .primary');if(heroButton){if(c.hero_button){const arrow=heroButton.querySelector('span');heroButton.textContent=homeText(c.hero_button)+' ';if(arrow)heroButton.append(arrow);}if(c.hero_button_url&&/^https?:\/\//i.test(c.hero_button_url))heroButton.href=c.hero_button_url;}
+ const setVisible=(id,visible)=>{const el=document.getElementById(id);if(el)el.hidden=!visible;};
+ setVisible('services',c.show_quick_actions!==false);setVisible('why',c.show_benefits!==false);setVisible('how',c.show_how!==false);setVisible('help',c.show_help!==false);
+ const setText=(id,value)=>{const el=document.getElementById(id);if(el&&value)el.textContent=homeText(value);};
+ setText('homeServicesTitle',c.home_services_title);setText('homeServicesDescription',c.home_services_description);
+ setText('homeWhyTitle',c.home_why_title);setText('homeWhyDescription',c.home_why_description);
+ setText('homeHowTitle',c.home_how_title);setText('homeHowDescription',c.home_how_description);setText('homeHelpTitle',c.home_help_title);
+ const foot=document.querySelector('footer');if(foot){foot.hidden=c.show_footer===false;if(c.footer_text){const p=foot.querySelector('.foot>div:first-child p');if(p)p.textContent=homeText(c.footer_text);}}
+ if(c.show_brand_mark===false)document.querySelectorAll('.brand .logo').forEach(el=>el.hidden=true);
+ let custom=document.getElementById('paysaathi-home-custom-sections');
+ if(!custom){custom=document.createElement('section');custom.id='paysaathi-home-custom-sections';custom.className='wrap';const f=document.querySelector('footer');(f?.parentNode||document.body).insertBefore(custom,f||null);}
+ custom.replaceChildren();
+ (Array.isArray(c.custom_sections)?c.custom_sections:[]).slice(0,6).forEach(item=>{const article=document.createElement('article');article.className='benefit';article.style.margin='14px 0';const h=document.createElement('h3');h.textContent=homeText(item.title);const p=document.createElement('p');p.textContent=homeText(item.body);article.append(h,p);custom.appendChild(article);});
+}
+async function loadHomeDynamicServices(){
+ try{const {data,error}=await supabase.rpc('paysaathi_get_public_services');if(error)throw error;
+  const grid=document.getElementById('serviceGrid');if(!grid)return;
+  const existing=new Set([...grid.querySelectorAll('.service')].map(x=>(x.dataset.service||'').toLowerCase()));
+  (Array.isArray(data)?data:[]).forEach(item=>{const title=homeText(item.title||'Service');if(existing.has(title.toLowerCase()))return;
+   const card=document.createElement('div');card.className='service reveal visible';card.tabIndex=0;card.setAttribute('role','button');card.dataset.service=title;
+   const ico=document.createElement('div');ico.className='ico';ico.textContent=item.icon||'⚙';const h=document.createElement('h3');h.textContent=title;
+   const p=document.createElement('p');p.textContent=homeText(item.description||'Explore this service in your PaySaathi account.');const arrow=document.createElement('span');arrow.className='arrow';arrow.textContent='→';card.append(ico,h,p,arrow);grid.appendChild(card);existing.add(title.toLowerCase());
+  });
+ }catch(e){console.warn('Dynamic homepage services unavailable:',e.message);}
+}
+async function loadHomeSiteUpdates(){
+ try{const {data,error}=await supabase.rpc('paysaathi_get_public_site_status');if(error)throw error;const status=data||{};
+  const show=document.getElementById('homeHero')?.hidden!==true;
+  const addBar=(id,message,bg,fg,border)=>{let bar=document.getElementById(id);if(!message){bar?.remove();return;}if(!bar){bar=document.createElement('aside');bar.id=id;bar.className='wrap';bar.style.cssText='margin:14px auto;padding:14px 18px;border-radius:14px;font-weight:650';const hero=document.getElementById('homeHero');(hero||document.querySelector('main'))?.insertAdjacentElement('afterend',bar);}bar.textContent=message;bar.style.background=bg;bar.style.color=fg;bar.style.border='1px solid '+border;};
+  if(status.maintenance_mode===true)addBar('paysaathi-home-maintenance',status.maintenance_message||'PaySaathi is under maintenance. Please check back shortly.','#fff0ef','#8b1e18','#f2c9c5');
+  else document.getElementById('paysaathi-home-maintenance')?.remove();
+  const enabled=window.__paysaathiHomeShowAnnouncements!==false;
+  addBar('paysaathi-home-announcement',enabled?String(status.site_announcement||'').trim():'','#eaf7ff','#123d5c','#c9e9fb');
+  addBar('paysaathi-home-notification',enabled?String(status.site_notification||'').trim():'','#fff7e6','#805300','#f4dfb1');
+ }catch(e){console.warn('Public homepage updates unavailable:',e.message);}
+}
+async function loadHomeControlSettings(){
+ try{const {data,error}=await supabase.rpc('paysaathi_get_public_branding');if(error)throw error;const c=data||{};window.__paysaathiHomeShowAnnouncements=c.show_announcements!==false;applyHomeBranding(c);setSupport(c);}
+ catch(e){console.warn('Homepage design settings unavailable; showing the original design:',e.message);}
+ await Promise.all([loadHomeSiteUpdates(),loadHomeDynamicServices()]);
+}
 
 // Premium service discovery: searchable cards, accessible detail modal and tap feedback.
 const serviceGrid=document.getElementById('serviceGrid');
@@ -310,6 +382,7 @@ modalClose?.addEventListener('click',closeService);
 modalBack?.addEventListener('click',closeService);
 serviceModal?.addEventListener('click',e=>{if(e.target===serviceModal)closeService();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&serviceModal?.classList.contains('open'))closeService();});
+await loadHomeControlSettings();
 
 </script>
 </body></html>
