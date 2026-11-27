@@ -19,7 +19,7 @@ jobs:
         run: |
           python3 - <<'PY'
           import pathlib, re, subprocess, tempfile
-          files = ["index.html", "login.html", "signup.html", "dashboard.html", "admin.html", "support.html"]
+          files = ["index.html", "login.html", "signup.html", "register.html", "forgot-password.html", "reset-password.html", "dashboard.html", "admin.html", "support.html", "contact-support.html"]
           with tempfile.TemporaryDirectory() as tmp:
               for filename in files:
                   source = pathlib.Path(filename).read_text(encoding="utf-8")
