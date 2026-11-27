@@ -1,6 +1,6 @@
 {
-  "version": "1.1.2",
-  "title": "PaySaathi 1.1.2 — Admin updates and promotional images",
+  "version": "1.1.3",
+  "title": "PaySaathi 1.1.3 — Automatic app updates",
   "date": "2026-11-27",
   "notes": [
     "Rebuilt the Android customer experience with a clean white theme and refreshed navigation.",
@@ -14,7 +14,8 @@
     "Restored the customer-facing announcement and support contact management flow.",
     "Admin can publish customer-wide or individual updates with optional promotional image uploads.",
     "Promotional images are stored in the public branding bucket and shown in customer dashboard updates and notification inbox.",
-    "Restored admin settings, staff and activity sections; removed the blocking admin startup overlay."
+    "Restored admin settings, staff and activity sections; removed the blocking admin startup overlay.",
+    "Fixed installed-app update delivery: new service workers activate automatically and refresh the app when the updated worker takes control."
   ],
   "minimumVersion": "1.1.0"
 }
