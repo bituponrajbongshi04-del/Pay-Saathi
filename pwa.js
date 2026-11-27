@@ -7,6 +7,7 @@
   let installPrompt = null;
   let registration = null;
   let reloading = false;
+  const hadController = !!navigator.serviceWorker?.controller;
 
   const style = document.createElement("style");
   style.textContent = `
@@ -131,6 +132,11 @@
   window.addEventListener("appinstalled", () => { installPrompt = null; dock.hidden = true; });
 
   if ("serviceWorker" in navigator && location.protocol === "https:") {
+    if (hadController) {
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        if (!reloading) { reloading = true; location.reload(); }
+      });
+    }
     navigator.serviceWorker.register(url("service-worker.js"), {scope:base.pathname})
       .then(async reg => {
         registration = reg;
