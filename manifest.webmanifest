@@ -3,14 +3,14 @@
   "short_name": "PaySaathi",
   "description": "PaySaathi digital services platform",
   "id": "./",
-  "start_url": "./index.html?source=pwa",
+  "start_url": "./dashboard.html?source=pwa",
   "scope": "./",
   "display": "standalone",
   "display_override": [
     "standalone",
     "minimal-ui"
   ],
-  "orientation": "portrait-primary",
+  "orientation": "any",
   "background_color": "#f4f9fd",
   "theme_color": "#071d35",
   "categories": [
