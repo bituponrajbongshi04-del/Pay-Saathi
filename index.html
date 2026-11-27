@@ -274,7 +274,7 @@ function applyHomeBranding(c={}){
  if(c.logo_url&&/^https?:\/\//i.test(c.logo_url)){document.querySelectorAll('.brand .logo').forEach(el=>{const img=document.createElement('img');img.src=c.logo_url;img.alt=name;img.style.cssText='width:100%;height:100%;object-fit:contain;border-radius:inherit';el.replaceChildren(img);});}
  if(c.favicon_url&&/^https?:\/\//i.test(c.favicon_url)){let f=document.querySelector('link[rel~="icon"]');if(!f){f=document.createElement('link');f.rel='icon';document.head.appendChild(f);}f.href=c.favicon_url;}
  const hero=document.getElementById('homeHero');if(hero)hero.hidden=c.show_hero===false;
- const heroTitle=hero?.querySelector('h1');if(heroTitle&&c.hero_title){heroTitle.replaceChildren(document.createTextNode(homeText(c.hero_title)));const em=document.createElement('em');em.textContent=homeText(c.brand_tagline||'One smart Saathi.');heroTitle.append(document.createElement('br'),em);}
+ const heroTitle=hero?.querySelector('h1');if(heroTitle&&c.hero_title){heroTitle.replaceChildren(document.createTextNode(homeText(c.hero_title)));const em=document.createElement('em');em.textContent=homeText(c.hero_highlight||'One smart Saathi.');heroTitle.append(document.createElement('br'),em);}
  const lead=hero?.querySelector('.lead');if(lead&&c.hero_subtitle)lead.textContent=homeText(c.hero_subtitle);
  if(hero&&c.hero_image_url&&/^https?:\/\//i.test(c.hero_image_url)){hero.style.backgroundImage='linear-gradient(120deg,rgba(248,252,255,.92),rgba(238,247,253,.86)),url("'+c.hero_image_url.replace(/["\\]/g,'')+'")';hero.style.backgroundSize='cover';hero.style.backgroundPosition='center';}
  if(hero&&c.hero_align==='center'){const copy=hero.querySelector('.hero-copy');if(copy)copy.style.textAlign='center';}
@@ -285,6 +285,14 @@ function applyHomeBranding(c={}){
  setText('homeServicesTitle',c.home_services_title);setText('homeServicesDescription',c.home_services_description);
  setText('homeWhyTitle',c.home_why_title);setText('homeWhyDescription',c.home_why_description);
  setText('homeHowTitle',c.home_how_title);setText('homeHowDescription',c.home_how_description);setText('homeHelpTitle',c.home_help_title);
+ const setNav=(selector,value)=>{const el=document.querySelector(selector);if(el&&value)el.textContent=homeText(value);};
+ setNav('header .links a[href="#services"]',c.home_nav_services);setNav('#mobileNav a[href="#services"]',c.home_nav_services);
+ setNav('header .links a[href="#preview"]',c.home_nav_preview);setNav('#mobileNav a[href="#preview"]',c.home_nav_preview);
+ setNav('header .links a[href="#why"]',c.home_nav_why);setNav('#mobileNav a[href="#why"]',c.home_nav_why);
+ setNav('header .links a[href="#how"]',c.home_nav_how);setNav('#mobileNav a[href="#how"]',c.home_nav_how);
+ setNav('header .links a[href="contact-support.html"]',c.home_nav_support);setNav('#mobileNav a[href="contact-support.html"]',c.home_nav_support);
+ const navVisibility=[['#services',c.show_quick_actions!==false],['#why',c.show_benefits!==false],['#how',c.show_how!==false],['contact-support.html',c.show_help!==false]];
+ navVisibility.forEach(([target,visible])=>{document.querySelectorAll('header .links a,.mobile-nav a').forEach(a=>{if(a.getAttribute('href')===target)a.hidden=!visible;});});
  const renderHomeCards=(selector,items,type)=>{const host=document.querySelector(selector);if(!host||!Array.isArray(items)||!items.length)return;host.replaceChildren();items.slice(0,6).forEach((item,i)=>{const card=document.createElement('article');card.className=type==='step'?'step':'benefit';const number=document.createElement('div');number.className=type==='step'?'step-num':'benefit-num';number.textContent=type==='step'?String(i+1).padStart(2,'0'):String(i+1).padStart(2,'0')+' / PAYSAATHI';const title=document.createElement(type==='step'?'h3':'b');title.textContent=homeText(item.title);const body=document.createElement('p');body.textContent=homeText(item.body);card.append(number,title,body);host.appendChild(card);});};
  renderHomeCards('#why .benefit-grid',c.home_benefits,'benefit');renderHomeCards('#how .steps',c.home_steps,'step');
  const foot=document.querySelector('footer');if(foot){foot.hidden=c.show_footer===false;if(c.footer_text){const p=foot.querySelector('.foot>div:first-child p');if(p)p.textContent=homeText(c.footer_text);}}
