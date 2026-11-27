@@ -29,6 +29,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -135,6 +136,7 @@ class Api(context:Context){
  suspend fun markNotificationRead(id:String){raw("/rest/v1/ps_notifications?id=eq."+id,"PATCH",JSONObject().put("is_read",true).toString())}
  suspend fun signout(){prefs.edit().clear().apply()}
 }
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable fun PaySaathiApp(ctx:Context){
  val api=remember{Api(ctx)};val scope=rememberCoroutineScope()
  var page by remember{mutableStateOf(if(api.hasSession())"home" else "welcome")}
