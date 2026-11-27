@@ -292,7 +292,7 @@ mobileNav?.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{mobi
 <script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 const supabase=createClient('https://hhqcycwfvxoxjizlbivv.supabase.co','sb_publishable_NdrUA-ubf67oW5hiS-Yw4A_-r2xbJRV',{
-  auth:{storageKey:'paysaathi.customer.auth',persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}
+  auth:{storageKey:'paysaathi.auth.v1',persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}
 });
 const $=id=>document.getElementById(id);
 const clean=v=>String(v||'').replace(/[^0-9]/g,'');
