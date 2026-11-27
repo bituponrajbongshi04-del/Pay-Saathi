@@ -1029,6 +1029,7 @@ body{font-family:"Plus Jakarta Sans",system-ui,sans-serif!important;color:var(--
       document.body.style.overflow = 'hidden';
       const firstField = modal.querySelector('input, select, button');
       if (firstField) firstField.focus();
+      if(modalId==='modal-notifications')loadPersonalNotifications();
     }
 
     function closeModals() {
@@ -1217,6 +1218,34 @@ body{font-family:"Plus Jakarta Sans",system-ui,sans-serif!important;color:var(--
       }
     }
 
+
+    // Personal and global notifications sent from the Admin Panel.
+    async function loadPersonalNotifications(){
+      const box=document.getElementById('notification-modal-content');if(!box)return;
+      try{
+        const user=await getCurrentUser();
+        const {data,error}=await supabase.from('ps_notifications')
+          .select('id,user_id,title,message,is_read,created_at')
+          .or('user_id.eq.'+user.id+',user_id.is.null')
+          .order('created_at',{ascending:false}).limit(40);
+        if(error)throw error;
+        box.querySelectorAll('[data-personal-notification]').forEach(el=>el.remove());
+        const rows=Array.isArray(data)?data:[];
+        rows.forEach(n=>{
+          const card=document.createElement('article');card.dataset.personalNotification='true';
+          card.className='rounded-xl border border-slate-200 bg-white p-3 shadow-sm';
+          const heading=document.createElement('p');heading.className='text-sm font-bold text-slate-900';
+          heading.textContent=String(n.title||'PaySaathi update')+(n.is_read?'':' · New');
+          const message=document.createElement('p');message.className='text-sm text-slate-600 mt-1 whitespace-pre-wrap break-words';message.textContent=String(n.message||'');
+          const date=document.createElement('p');date.className='text-[10px] text-slate-400 mt-2';date.textContent=n.created_at?new Date(n.created_at).toLocaleString('en-IN'):'';
+          card.append(heading,message,date);box.appendChild(card);
+        });
+        const unread=rows.filter(n=>!n.is_read).map(n=>n.id).filter(Boolean);
+        if(unread.length){const {error:updateError}=await supabase.from('ps_notifications').update({is_read:true}).in('id',unread);if(updateError)console.warn('Could not mark notifications read:',updateError.message);}
+        const bell=document.querySelector('button[onclick="openModal(\\'modal-notifications\\')"]');
+        if(bell){const badge=bell.querySelector('[data-update-count]');if(badge){const publicCount=Number(badge.textContent)||0;badge.textContent=String(publicCount);}}
+      }catch(error){console.warn('Personal notifications are unavailable:',error.message);}
+    }
 
     async function loadPublicServiceCatalogue(){const host=document.getElementById('paysaathi-dynamic-services');if(!host)return;const {data,error}=await supabase.rpc('paysaathi_get_public_services');if(error){console.warn('Service catalogue unavailable:',error.message);return;}host.replaceChildren();const rows=Array.isArray(data)?data:[];if(!rows.length)return;const heading=document.createElement('h2');heading.className='text-xs font-bold text-gray-500 uppercase tracking-wider';heading.textContent='More services';host.appendChild(heading);const grid=document.createElement('div');grid.className='bg-white p-3 sm:p-4 rounded-2xl shadow-sm border border-gray-100 grid grid-cols-2 min-[380px]:grid-cols-4 gap-3 sm:gap-4 text-center';host.appendChild(grid);rows.forEach(item=>{const b=document.createElement('button');b.type='button';b.className='flex flex-col items-center space-y-2 cursor-pointer group min-w-0';const i=document.createElement('span');i.className='w-12 h-12 bg-gray-50 text-blue-600 rounded-xl flex items-center justify-center text-xl';i.textContent=item.icon||'⚙';const n=document.createElement('span');n.className='text-xs text-gray-600 font-medium';n.textContent=item.title||'Service';const desc=document.createElement('span');desc.className='text-[10px] text-gray-400';desc.textContent=item.description||'';b.append(i,n,desc);b.onclick=()=>{if(item.action_key==='mobile_recharge')openModal('modal-recharge');else if(item.action_key==='utility_bill')openModal('modal-bill');else{const status=document.getElementById('addfund-status');if(status)status.textContent='This service is listed but its provider integration is not connected yet. No transaction was started.';}};grid.appendChild(b);});}
 
