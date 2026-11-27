@@ -1435,11 +1435,29 @@ body{font-family:"Plus Jakarta Sans",system-ui,sans-serif!important;color:var(--
             if(warning){warning.textContent='Website status could not be refreshed. Your login is still active; refresh this page to retry.';warning.classList.remove('hidden');}
           }
         }
+        const { data: accountProfile, error: accountProfileError } = await supabase
+          .from('ps_profiles').select('role,status').eq('id', userData.user.id).maybeSingle();
+        if (accountProfileError) throw new Error('Your account role could not be verified. Your saved login remains active; please refresh and retry.');
+        if (!accountProfile) throw new Error('Your PaySaathi profile is missing. Please contact support to link your account.');
+
         if (isAdmin) {
+          if (accountProfile.role !== 'admin' || accountProfile.status !== 'active') {
+            throw new Error('Admin permissions and account profile do not match. Access has been blocked for safety.');
+          }
           window.location.replace('admin.html');
           throw new Error('Opening Admin Panel.');
         }
-        // Record authenticated staff/customer active time for payroll and audit.
+        if (accountProfile.status !== 'active') {
+          throw new Error('Your account is currently ' + String(accountProfile.status || 'inactive') + '. Please contact PaySaathi support.');
+        }
+        if (accountProfile.role === 'agent') {
+          window.location.replace('support.html');
+          throw new Error('Opening Support Desk.');
+        }
+        if (accountProfile.role !== 'customer') {
+          throw new Error('This account does not have customer dashboard access.');
+        }
+        // Record authenticated customer activity only after role verification.
         await startStaffSession(userData.user.id);
         await loadPaySaathiWallet().catch(error => console.warn('Wallet data unavailable:', error.message));
         // Agent presence heartbeat: only records activity inside PaySaathi.
