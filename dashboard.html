@@ -1098,7 +1098,7 @@ body{font-family:"Plus Jakarta Sans",system-ui,sans-serif!important;color:var(--
     const SUPABASE_URL = 'https://hhqcycwfvxoxjizlbivv.supabase.co';
     const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_NdrUA-ubf67oW5hiS-Yw4A_-r2xbJRV';
     const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-      auth: { storageKey: 'paysaathi.customer.auth', persistSession: true, autoRefreshToken: true, detectSessionInUrl: false }
+      auth: { storageKey: 'paysaathi.auth.v1', persistSession: true, autoRefreshToken: true, detectSessionInUrl: false }
     });
     function safeRpc(...args) { return Promise.resolve().then(() => supabase.rpc(...args)); }
     const formatINR = value => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(Number(value) || 0);
