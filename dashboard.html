@@ -1025,6 +1025,11 @@ body{background:linear-gradient(145deg,#f8fcff 0%,#eef8ff 48%,#fff 100%)!importa
     }
 
     function switchTab(tab) {
+      if (!['home', 'reports', 'profile', 'support'].includes(tab)) tab = 'home';
+      try {
+        const uid = window.__paysaathiDashboardUserId;
+        if (uid) localStorage.setItem('paysaathi.dashboard.activeTab.' + uid, tab);
+      } catch (error) { console.warn('Dashboard tab preference could not be saved:', error); }
       ['home', 'reports', 'profile', 'support'].forEach(t => {
         document.getElementById(`tab-${t}`).classList.add('hidden');
         
@@ -1421,11 +1426,21 @@ body{background:linear-gradient(145deg,#f8fcff 0%,#eef8ff 48%,#fff 100%)!importa
       try {
         // First restore the role-specific session from local storage. A temporary
         // network/auth verification error must not be mistaken for a missing login.
-        const { data: localSessionData, error: localSessionError } = await supabase.auth.getSession();
+        let localSessionData = null;
+        let localSessionError = null;
+        // A just-refreshed mobile browser may need a brief moment to restore
+        // Supabase's persisted token. Retry before treating the account as signed out.
+        for (let attempt = 0; attempt < 3; attempt++) {
+          const restored = await supabase.auth.getSession();
+          localSessionData = restored.data;
+          localSessionError = restored.error;
+          if (localSessionError || localSessionData?.session) break;
+          if (attempt < 2) await new Promise(resolve => setTimeout(resolve, 350));
+        }
         if (localSessionError) throw localSessionError;
-        if (!localSessionData.session) {
-          window.location.replace('login.html');
-          throw new Error('Sign-in required.');
+        if (!localSessionData?.session) {
+          window.location.replace('login.html?reason=session-missing');
+          throw new Error('No saved sign-in session was found on this device.');
         }
         const { data: userData, error: userError } = await supabase.auth.getUser();
         if (userError) {
@@ -1522,6 +1537,16 @@ body{background:linear-gradient(145deg,#f8fcff 0%,#eef8ff 48%,#fff 100%)!importa
             document.addEventListener('visibilitychange', sendAgentHeartbeat);
           }
         } catch (presenceError) { console.warn('Agent presence setup skipped:', presenceError); }
+        window.__paysaathiDashboardUserId = userData.user.id;
+        // Restore the customer's last open dashboard section after refresh.
+        try {
+          const savedTab = localStorage.getItem('paysaathi.dashboard.activeTab.' + userData.user.id);
+          if (['home', 'reports', 'profile', 'support'].includes(savedTab)) switchTab(savedTab);
+          const savedScroll = Number(localStorage.getItem('paysaathi.dashboard.scroll.' + userData.user.id) || 0);
+          if (Number.isFinite(savedScroll) && savedScroll > 0) {
+            requestAnimationFrame(() => window.scrollTo({ top: savedScroll, behavior: 'instant' }));
+          }
+        } catch (restoreError) { console.warn('Dashboard progress restore skipped:', restoreError); }
         return userData.user;
       } catch (error) {
         console.error('Dashboard access check failed:', error);
@@ -1533,6 +1558,25 @@ body{background:linear-gradient(145deg,#f8fcff 0%,#eef8ff 48%,#fff 100%)!importa
     })();
     window.setInterval(() => { if (document.visibilityState === 'visible') applyPublicSiteStatus().catch(error => console.warn('Public updates refresh:', error)); }, 25000);
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') applyPublicSiteStatus().catch(() => {}); });
+
+    // Remember reading/navigation position only; never persist passwords, OTPs,
+    // payment details, or other sensitive form contents in browser storage.
+    let psScrollSaveTimer = null;
+    window.addEventListener('scroll', () => {
+      const uid = window.__paysaathiDashboardUserId;
+      if (!uid) return;
+      window.clearTimeout(psScrollSaveTimer);
+      psScrollSaveTimer = window.setTimeout(() => {
+        try { localStorage.setItem('paysaathi.dashboard.scroll.' + uid, String(Math.max(0, window.scrollY || 0))); }
+        catch (error) { console.warn('Dashboard position could not be saved:', error); }
+      }, 180);
+    }, { passive: true });
+    window.addEventListener('pagehide', () => {
+      const uid = window.__paysaathiDashboardUserId;
+      if (!uid) return;
+      try { localStorage.setItem('paysaathi.dashboard.scroll.' + uid, String(Math.max(0, window.scrollY || 0))); }
+      catch (_) {}
+    });
 
     async function signOutPaySaathi() {
       const button = document.getElementById('dashboard-logout');
