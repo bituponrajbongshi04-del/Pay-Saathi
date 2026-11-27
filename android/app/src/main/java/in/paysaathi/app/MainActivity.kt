@@ -1,4 +1,4 @@
-package in.paysaathi.app
+package `in`.paysaathi.app
 
 import android.content.Context
 import android.net.Uri
@@ -56,7 +56,7 @@ class Api(context:Context){
  private suspend fun raw(path:String,method:String="GET",body:String?=null,token:String?=prefs.getString("access",null),mime:String="application/json"):String=withContext(Dispatchers.IO){
   fun send(auth:String?):okhttp3.Response{
    val rb=body?.toRequestBody(mime.toMediaType())
-   val req=Request.Builder().url(BuildConfig.SUPABASE_URL+path).addHeader("apikey",BuildConfig.SUPABASE_KEY).addHeader("Accept","application/json").apply{if(auth!=null)addHeader("Authorization","Bearer "+auth);if(rb!=null)method(method,rb)else method(method,null)}.build()
+   val req=Request.Builder().url(BuildConfig.SUPABASE_URL+path).addHeader("apikey",BuildConfig.SUPABASE_KEY).addHeader("Accept","application/json").apply{if(auth!=null)addHeader("Authorization","Bearer "+auth);if(rb!=null)this.method(method,rb)else this.method(method,null)}.build()
    return http.newCall(req).execute()
   }
   var response=send(token)
@@ -130,8 +130,8 @@ class Api(context:Context){
      Field("Full legal name",legalName,{legalName=it})
      Row(horizontalArrangement=Arrangement.spacedBy(8.dp)){FilterChip(selected=docType=="pan",onClick={docType="pan"},label={Text("PAN")});FilterChip(selected=docType=="identity_proof",onClick={docType="identity_proof"},label={Text("Identity proof")})}
      OutlinedButton(onClick={picker.launch(arrayOf("application/pdf","image/jpeg","image/png"))}){Icon(Icons.Default.UploadFile,null);Spacer(Modifier.width(8.dp));Text(if(picked==null)"Choose PDF / JPG / PNG" else "Document selected")}
-     Button(onClick={runTask{val file=picked?:throw IOException("Choose a document first");api.upload(file,ctx,docType);picked=null},enabled=!waiting,modifier=Modifier.fillMaxWidth()){Text("Upload securely")}
-     Button(onClick={runTask{api.submitKyc(legalName);status="submitted";page="home"},enabled=!waiting,modifier=Modifier.fillMaxWidth()){Text("Submit KYC for review")}
+     Button(onClick={runTask{val file=picked?:throw IOException("Choose a document first");api.upload(file,ctx,docType);picked=null}},enabled=!waiting,modifier=Modifier.fillMaxWidth()){Text("Upload securely")}
+     Button(onClick={runTask{api.submitKyc(legalName);status="submitted";page="home"}},enabled=!waiting,modifier=Modifier.fillMaxWidth()){Text("Submit KYC for review")}
      TextButton(onClick={page="home"}){Text("Back to dashboard",color=Cyan)}
     }
     if(error.isNotBlank())Text(error,color=Color(0xFFFFB4AB),fontSize=11.sp)
