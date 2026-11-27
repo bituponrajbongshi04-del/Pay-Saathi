@@ -1,13 +1,13 @@
 {
   "version": "1.1.0",
-  "title": "Native Android app foundation and secure KYC workflow",
+  "title": "PaySaathi white UI redesign and demo transaction receipts",
   "date": "2026-11-27",
   "notes": [
-    "Added native Kotlin Android application source and APK/AAB build workflow.",
-    "Added private KYC document uploads, customer KYC status and admin review desk.",
-    "KYC-protected services use a server-side access check; manual review is active until an authorised verification provider is connected.",
-    "Original public homepage design and wording remain unchanged.",
-    "Live financial services remain in preview mode until real provider integrations and signed transaction verification are complete."
+    "Rebuilt the Android customer experience with a clean white theme and refreshed navigation.",
+    "Added a welcome/onboarding screen before sign-in and account creation.",
+    "Redesigned login, sign-up, OTP, dashboard, service forms, profile and notifications.",
+    "Added local demo transaction confirmation with a success animation-style receipt and clearly marked TEST ONLY transaction reference.",
+    "Demo receipts are not real payments or operator confirmations; live provider integration is still required."
   ],
   "minimumVersion": "1.1.0"
 }
