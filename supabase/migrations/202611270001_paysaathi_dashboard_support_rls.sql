@@ -69,6 +69,23 @@ for insert to authenticated
 with check (sender_id=auth.uid() and exists(select 1 from public.ps_tickets t where t.id=ticket_id and
  (t.user_id=auth.uid() or t.assigned_agent=auth.uid() or public.ps_is_admin())));
 
+-- Short-lived password + email OTP challenges. Plaintext passwords and OTPs are never stored.
+create table if not exists public.ps_login_otp_challenges (
+  id uuid primary key,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  email text not null,
+  code_hash text not null,
+  attempts integer not null default 0 check (attempts between 0 and 5),
+  expires_at timestamptz not null,
+  consumed_at timestamptz,
+  created_at timestamptz not null default now()
+);
+create index if not exists ps_login_otp_email_created_idx
+  on public.ps_login_otp_challenges(email, created_at desc);
+alter table public.ps_login_otp_challenges enable row level security;
+revoke all on public.ps_login_otp_challenges from anon, authenticated;
+grant all on public.ps_login_otp_challenges to service_role;
+
 -- Personal and global notifications. A null user_id represents a site-wide message.
 create table if not exists public.ps_notifications (
   id uuid primary key default gen_random_uuid(),
