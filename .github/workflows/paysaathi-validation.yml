@@ -15,12 +15,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Check inline JavaScript syntax
+      - name: Check inline and PWA JavaScript syntax
         run: |
           python3 - <<'PY'
-          import pathlib, re, subprocess, tempfile
-          files = ["index.html", "login.html", "signup.html", "register.html", "forgot-password.html", "reset-password.html", "dashboard.html", "admin.html", "support.html", "contact-support.html"]
+          import json, pathlib, re, subprocess, tempfile
+          files = ["index.html", "login.html", "signup.html", "register.html", "forgot-password.html", "reset-password.html", "dashboard.html", "admin.html", "support.html", "contact-support.html", "privacy-policy.html", "refund-policy.html", "terms.html"]
           with tempfile.TemporaryDirectory() as tmp:
+              targets = []
               for filename in files:
                   source = pathlib.Path(filename).read_text(encoding="utf-8")
                   scripts = re.findall(r"<script[^>]*>(.*?)</script>", source, re.I | re.S)
@@ -29,5 +30,13 @@ jobs:
                           continue
                       target = pathlib.Path(tmp) / f"{pathlib.Path(filename).stem}-{number}.mjs"
                       target.write_text(script, encoding="utf-8")
-                      subprocess.run(["node", "--check", str(target)], check=True)
+                      targets.append(target)
+              for filename in ["pwa.js", "service-worker.js"]:
+                  target = pathlib.Path(tmp) / filename
+                  target.write_text(pathlib.Path(filename).read_text(encoding="utf-8"), encoding="utf-8")
+                  targets.append(target)
+              for target in targets:
+                  subprocess.run(["node", "--check", str(target)], check=True)
+          for filename in ["manifest.webmanifest", "release.json"]:
+              json.loads(pathlib.Path(filename).read_text(encoding="utf-8"))
           PY
