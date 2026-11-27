@@ -86,6 +86,25 @@ alter table public.ps_login_otp_challenges enable row level security;
 revoke all on public.ps_login_otp_challenges from anon, authenticated;
 grant all on public.ps_login_otp_challenges to service_role;
 
+-- Public read for branding assets; only verified admins may upload or change them.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('paysaathi-branding','paysaathi-branding',true,3145728,array['image/png','image/jpeg','image/webp','image/svg+xml'])
+on conflict (id) do update set public=true, file_size_limit=3145728,
+  allowed_mime_types=array['image/png','image/jpeg','image/webp','image/svg+xml'];
+drop policy if exists paysaathi_branding_public_read on storage.objects;
+create policy paysaathi_branding_public_read on storage.objects
+for select to public using (bucket_id='paysaathi-branding');
+drop policy if exists paysaathi_branding_admin_insert on storage.objects;
+create policy paysaathi_branding_admin_insert on storage.objects
+for insert to authenticated with check (bucket_id='paysaathi-branding' and public.is_paysaathi_admin());
+drop policy if exists paysaathi_branding_admin_update on storage.objects;
+create policy paysaathi_branding_admin_update on storage.objects
+for update to authenticated using (bucket_id='paysaathi-branding' and public.is_paysaathi_admin())
+with check (bucket_id='paysaathi-branding' and public.is_paysaathi_admin());
+drop policy if exists paysaathi_branding_admin_delete on storage.objects;
+create policy paysaathi_branding_admin_delete on storage.objects
+for delete to authenticated using (bucket_id='paysaathi-branding' and public.is_paysaathi_admin());
+
 -- Personal and global notifications. A null user_id represents a site-wide message.
 create table if not exists public.ps_notifications (
   id uuid primary key default gen_random_uuid(),
