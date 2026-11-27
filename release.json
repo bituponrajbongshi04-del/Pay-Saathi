@@ -1,11 +1,12 @@
 {
-  "version": "1.0.1",
-  "title": "PaySaathi App is ready to install",
+  "version": "1.0.2",
+  "title": "PaySaathi now opens directly to your dashboard",
   "date": "2026-11-27",
   "notes": [
-    "Install PaySaathi on Android and use it like an app.",
-    "The desktop and laptop website experience remains available.",
-    "App updates now show a prompt with release notes before applying."
+    "Installed PaySaathi opens in its own standalone app window.",
+    "The app launches directly into the customer dashboard; signed-out users are sent to login.",
+    "The original PaySaathi homepage design and wording are preserved.",
+    "Dashboard and login pages are included in the app shell for improved loading."
   ],
-  "minimumVersion": "1.0.1"
+  "minimumVersion": "1.0.2"
 }
