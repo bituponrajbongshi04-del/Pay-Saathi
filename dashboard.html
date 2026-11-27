@@ -1232,7 +1232,7 @@ body{font-family:"Plus Jakarta Sans",system-ui,sans-serif!important;color:var(--
       try{
         const user=await getCurrentUser();
         const {data,error}=await supabase.from('ps_notifications')
-          .select('id,user_id,title,message,is_read,created_at')
+          .select('id,user_id,title,message,image_url,is_read,created_at')
           .or('user_id.eq.'+user.id+',user_id.is.null')
           .order('created_at',{ascending:false}).limit(40);
         if(error)throw error;
@@ -1246,6 +1246,7 @@ body{font-family:"Plus Jakarta Sans",system-ui,sans-serif!important;color:var(--
             card.className='rounded-2xl border border-blue-100 bg-gradient-to-r from-blue-50 via-white to-cyan-50 p-3 shadow-sm';
             const heading=document.createElement('p');heading.className='text-sm font-extrabold text-blue-950';heading.textContent=String(n.title||'PaySaathi update');
             const message=document.createElement('p');message.className='mt-1 text-xs leading-relaxed text-slate-700 whitespace-pre-wrap break-words';message.textContent=String(n.message||'');
+            if(n.image_url){const image=document.createElement('img');image.src=n.image_url;image.alt='PaySaathi promotion';image.loading='lazy';image.className='mt-2 w-full max-h-48 object-cover rounded-xl border border-blue-100';card.appendChild(image);}
             const stamp=document.createElement('p');stamp.className='mt-2 text-[10px] font-semibold text-blue-600';stamp.textContent='PAYSAATHI UPDATE'+(n.created_at?' · '+new Date(n.created_at).toLocaleDateString('en-IN'):'');
             card.append(heading,message,stamp);feed.appendChild(card);
           });
@@ -1256,6 +1257,7 @@ body{font-family:"Plus Jakarta Sans",system-ui,sans-serif!important;color:var(--
           const heading=document.createElement('p');heading.className='text-sm font-bold text-slate-900';
           heading.textContent=String(n.title||'PaySaathi update')+(n.is_read?'':' · New');
           const message=document.createElement('p');message.className='text-sm text-slate-600 mt-1 whitespace-pre-wrap break-words';message.textContent=String(n.message||'');
+          if(n.image_url){const image=document.createElement('img');image.src=n.image_url;image.alt='PaySaathi promotion';image.loading='lazy';image.className='mt-2 w-full max-h-56 object-cover rounded-xl border border-slate-100';card.appendChild(image);}
           const date=document.createElement('p');date.className='text-[10px] text-slate-400 mt-2';date.textContent=n.created_at?new Date(n.created_at).toLocaleString('en-IN'):'';
           card.append(heading,message,date);box.appendChild(card);
         });
