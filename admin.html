@@ -220,11 +220,12 @@ function setSection(name){document.querySelectorAll('.section').forEach(x=>x.cla
 document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>setSection(b.dataset.section)));
 $('adminNavSearch')?.addEventListener('input',()=>{const q=$('adminNavSearch').value.trim().toLowerCase();document.querySelectorAll('.nav button').forEach(b=>{b.hidden=!!q&&!b.textContent.toLowerCase().includes(q);});document.querySelectorAll('.nav-group-label').forEach(label=>{let n=label.nextElementSibling,visible=false;while(n&&!n.classList.contains('nav-group-label')){if(n.matches('button')&&!n.hidden)visible=true;n=n.nextElementSibling;}label.hidden=!!q&&!visible;});});
 $('menuBtn').addEventListener('click',()=>{$('sidebar').classList.add('open');$('overlay').classList.add('show')});$('overlay').addEventListener('click',()=>{$('sidebar').classList.remove('open');$('overlay').classList.remove('show')});
+function adminWait(promise,label,ms=12000){let timer;return Promise.race([promise,new Promise((_,reject)=>{timer=window.setTimeout(()=>reject(new Error(label+' timed out. Check your internet connection and retry.')),ms);})]).finally(()=>window.clearTimeout(timer));}
 async function requireAdmin(){
-  const {data:sessionData,error:sessionError}=await supabase.auth.getSession();
+  const {data:sessionData,error:sessionError}=await adminWait(supabase.auth.getSession(),'Admin session restore');
   if(sessionError)throw new Error('Could not restore the saved admin session. Check your connection and refresh. '+sessionError.message);
   if(!sessionData.session){location.replace('login.html?next=admin.html');return false;}
-  const {data:userData,error:userError}=await supabase.auth.getUser();
+  const {data:userData,error:userError}=await adminWait(supabase.auth.getUser(),'Admin account verification');
   if(userError)throw new Error('Your admin login is saved, but account verification is temporarily unavailable. Check your connection and refresh. '+userError.message);
   if(!userData.user){
     const {data:retrySession}=await supabase.auth.getSession();
@@ -235,7 +236,7 @@ async function requireAdmin(){
   $('adminEmail').textContent=currentUser.email||'Admin';
   $('avatar').textContent=(currentUser.email||'A').slice(0,1).toUpperCase();
   $('authStatus').textContent='Authenticated';
-  const {data:allowed,error:adminError}=await supabase.rpc('is_paysaathi_admin');
+  const {data:allowed,error:adminError}=await adminWait(supabase.rpc('is_paysaathi_admin'),'Admin permission check');
   if(adminError)throw new Error('Admin permission check is temporarily unavailable. Your saved login has not been cleared. '+adminError.message);
   if(!allowed){
     $('adminStatus').textContent='Access denied';
@@ -248,7 +249,7 @@ async function requireAdmin(){
   $('projectState').textContent='Supabase connected · Admin verified';
   return true;
 }
-async function rpc(name,args={}){const {data,error}=await supabase.rpc(name,args);if(error)throw error;return data;}
+async function rpc(name,args={}){const {data,error}=await adminWait(supabase.rpc(name,args),'Database request ('+name+')');if(error)throw error;return data;}
 async function loadOverview(){const s=await rpc('admin_dashboard_stats');$('statUsers').textContent=Number(s.total_users||0).toLocaleString('en-IN');$('statTransactions').textContent=Number(s.total_transactions||0).toLocaleString('en-IN');$('statSuccess').textContent=Number(s.successful_transactions||0).toLocaleString('en-IN');$('statValue').textContent=money(s.successful_value||0);$('newUsers7').textContent=Number(s.new_users_7d||0).toLocaleString('en-IN');$('pendingTx').textContent=Number(s.pending_transactions||0).toLocaleString('en-IN');$('failedTx').textContent=Number(s.failed_transactions||0).toLocaleString('en-IN');const total=Number(s.total_transactions||0);$('successRate').textContent=(total?((Number(s.successful_transactions||0)/total)*100).toFixed(1):'0.0')+'%';await loadTransactions();renderChart($('overviewChart'),transactions);renderChart($('analyticsChart'),transactions);$('transactionStatus').textContent=total+' records available';}
 async function loadUsers(){const data=await rpc('admin_list_users');users=Array.isArray(data)?data:[];renderUsers();renderTestCreditUsers();}
 function renderTestCreditUsers(){const el=$('testCreditUser');if(!el)return;const prior=el.value;el.innerHTML='<option value="">Select customer account…</option>'+users.map(u=>`<option value="${esc(u.user_id)}">${esc(u.email||u.user_id)} · ${esc(u.user_id)}</option>`).join('');if(prior&&users.some(u=>u.user_id===prior))el.value=prior;}
@@ -661,8 +662,23 @@ $('testCreditCreate')?.addEventListener('click',()=>createTestCredit().catch(e=>
 $('saveSupportContacts').addEventListener('click',async()=>{const b=$('saveSupportContacts');b.disabled=true;b.textContent='Saving…';try{await saveSupportBranding();}catch(e){notify('Could not publish support contacts: '+e.message,'error','settingsNotice');}finally{b.disabled=false;b.textContent='Save & publish support contacts';}});$('userSearch').addEventListener('input',renderUsers);$('walletAdjustSubmit')?.addEventListener('click',()=>submitWalletAdjustment().catch(e=>notify(e.message,'error','walletAdjustNotice')));$('walletAdjustHistoryRefresh')?.addEventListener('click',()=>loadWalletAdjustmentHistory().catch(e=>notify(e.message,'error','walletAdjustNotice')));$('txSearch').addEventListener('input',renderTransactions);$('txStatus').addEventListener('change',renderTransactions);$('exportBtn').addEventListener('click',exportCsv);document.querySelectorAll('[data-save]').forEach(b=>b.addEventListener('click',()=>saveSetting(b.dataset.save)));
 $('archiveRefresh')?.addEventListener('click',()=>loadArchivedTickets().catch(e=>notify(e.message,'error','supportNotice')));$('archiveSearch')?.addEventListener('input',renderArchivedTickets);
 $('todayLabel').textContent=new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-try{if(await requireAdmin()){await startStaffSession();await refreshAll();await loadUsers();await loadSettings();initControlManagers();await loadSupport();await loadAgentActivity();let activityRefreshBusy=false;window.setInterval(async()=>{if(document.visibilityState!=='visible'||activityRefreshBusy)return;activityRefreshBusy=true;try{await loadAgentActivity();if($('section-support')?.classList.contains('active'))await loadSupport();}catch(e){console.warn('Support live refresh failed:',e);}finally{activityRefreshBusy=false;}},20000);}}catch(e){console.error(e);$('projectState').textContent='Setup required';notify(e.message,'error');$('adminStatus').textContent='Setup required';}
-finally{window.setTimeout(()=>document.getElementById('psBootScreen')?.classList.add('is-hidden'),220);}
+try{
+  if(await adminWait(requireAdmin(),'Admin workspace startup',18000)){
+    adminWait(startStaffSession(),'Staff session setup',6000).catch(e=>console.warn(e));
+    initControlManagers();
+    // Unlock the workspace as soon as the admin role is verified. Load panels independently
+    // so one slow optional table cannot trap the entire app behind the boot screen.
+    window.setTimeout(()=>Promise.allSettled([
+      refreshAll().catch(e=>notify('Overview: '+e.message,'error')),
+      loadUsers().catch(e=>notify('Users: '+e.message,'error')),
+      loadSettings().catch(e=>notify('Settings: '+e.message,'error','settingsNotice')),
+      loadSupport().catch(e=>notify('Support: '+e.message,'error','supportNotice')),
+      loadAgentActivity().catch(e=>notify('Activity: '+e.message,'error'))
+    ]),0);
+    let activityRefreshBusy=false;window.setInterval(async()=>{if(document.visibilityState!=='visible'||activityRefreshBusy)return;activityRefreshBusy=true;try{await loadAgentActivity();if($('section-support')?.classList.contains('active'))await loadSupport();}catch(e){console.warn('Support live refresh failed:',e);}finally{activityRefreshBusy=false;}},20000);
+  }
+}catch(e){console.error(e);$('projectState').textContent='Connection issue · retry available';notify(e.message,'error');$('adminStatus').textContent='Could not verify access';}
+finally{window.setTimeout(()=>document.getElementById('psBootScreen')?.classList.add('is-hidden'),180);}
 supabase.auth.onAuthStateChange((event)=>{if(event==='SIGNED_OUT'&&currentUser&&!window.__paysaathiLoggingOut){currentUser=null;location.replace('login.html?next=admin.html');}});
 </script>
 <script src="./pwa.js" defer></script>
