@@ -1,5 +1,5 @@
 /* PaySaathi PWA service worker. Bump APP_VERSION for every app release. */
-const APP_VERSION = "1.1.2";
+const APP_VERSION = "1.1.3";
 const CACHE_NAME = "paysaathi-shell-" + APP_VERSION;
 const BASE_URL = new URL("./", self.location.href);
 const HOME_URL = new URL("./index.html", BASE_URL).href;
@@ -28,7 +28,8 @@ self.addEventListener("install", event => {
       } catch (_) {}
     }));
   })());
-  // Wait for the user to approve the update in the app.
+  // Activate the new app shell immediately so installed phones receive updates automatically.
+  self.skipWaiting();
 });
 
 self.addEventListener("activate", event => {
