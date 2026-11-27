@@ -54,9 +54,24 @@ class Api(context:Context){
  private val http=OkHttpClient.Builder().callTimeout(35,TimeUnit.SECONDS).build()
  private val prefs=EncryptedSharedPreferences.create(context,"paysaathi_secure_session",MasterKey.Builder(context).setKeyScheme(MasterKey.KeyScheme.AES256_GCM).build(),EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM)
  private suspend fun raw(path:String,method:String="GET",body:String?=null,token:String?=prefs.getString("access",null),mime:String="application/json"):String=withContext(Dispatchers.IO){
-  val rb=body?.toRequestBody(mime.toMediaType())
-  val req=Request.Builder().url(BuildConfig.SUPABASE_URL+path).addHeader("apikey",BuildConfig.SUPABASE_KEY).addHeader("Accept","application/json").apply{if(token!=null)addHeader("Authorization","Bearer "+token);if(rb!=null)method(method,rb)else method(method,null)}.build()
-  http.newCall(req).execute().use{response->val text=response.body?.string().orEmpty();if(!response.isSuccessful){val j=runCatching{JSONObject(text)}.getOrDefault(JSONObject());throw IOException(j.optString("msg",j.optString("message","Request failed ("+response.code+")")))};text}
+  fun send(auth:String?):okhttp3.Response{
+   val rb=body?.toRequestBody(mime.toMediaType())
+   val req=Request.Builder().url(BuildConfig.SUPABASE_URL+path).addHeader("apikey",BuildConfig.SUPABASE_KEY).addHeader("Accept","application/json").apply{if(auth!=null)addHeader("Authorization","Bearer "+auth);if(rb!=null)method(method,rb)else method(method,null)}.build()
+   return http.newCall(req).execute()
+  }
+  var response=send(token)
+  if(response.code==401 && token!=null){
+   response.close()
+   val refresh=prefs.getString("refresh",null)
+   if(!refresh.isNullOrBlank()){
+    val refreshBody=JSONObject().put("refresh_token",refresh).toString().toRequestBody("application/json".toMediaType())
+    val refreshReq=Request.Builder().url(BuildConfig.SUPABASE_URL+"/auth/v1/token?grant_type=refresh_token").addHeader("apikey",BuildConfig.SUPABASE_KEY).post(refreshBody).build()
+    http.newCall(refreshReq).execute().use{rr->
+     if(rr.isSuccessful){val payload=JSONObject(rr.body?.string().orEmpty());val access=payload.optString("access_token");if(access.isNotBlank()){prefs.edit().putString("access",access).putString("refresh",payload.optString("refresh_token",refresh)).apply();response=send(access)}}
+    }
+   }
+  }
+  response.use{res->val text=res.body?.string().orEmpty();if(!res.isSuccessful){val j=runCatching{JSONObject(text)}.getOrDefault(JSONObject());throw IOException(j.optString("msg",j.optString("message","Request failed ("+res.code+")")))};text}
  }
  private suspend fun obj(path:String,method:String="GET",body:String?=null,token:String?=prefs.getString("access",null))=JSONObject(raw(path,method,body,token).ifBlank{"{}"})
  suspend fun password(email:String,pw:String){obj("/auth/v1/token?grant_type=password","POST",JSONObject().put("email",email).put("password",pw).toString(),null)}
@@ -77,7 +92,8 @@ class Api(context:Context){
   withContext(Dispatchers.IO){val req=Request.Builder().url(BuildConfig.SUPABASE_URL+"/storage/v1/object/paysaathi-kyc/"+path).addHeader("apikey",BuildConfig.SUPABASE_KEY).addHeader("Authorization","Bearer "+prefs.getString("access",null)).addHeader("Content-Type",mime).post(bytes.toRequestBody(mime.toMediaType())).build();http.newCall(req).execute().use{if(!it.isSuccessful)throw IOException("Secure upload failed ("+it.code+")")}}
   raw("/rest/v1/paysaathi_kyc_documents","POST",JSONObject().put("user_id",uid()).put("document_type",doc).put("storage_path",path).put("original_file_name","Android upload."+ext).put("mime_type",mime).put("file_size_bytes",bytes.size).toString())
  }
- suspend fun submitKyc(name:String){kyc();raw("/rest/v1/paysaathi_kyc_profiles?user_id=eq."+uid(),"PATCH",JSONObject().put("status","submitted").put("legal_name",name).put("submitted_at",java.time.Instant.now().toString()).toString())}
+ suspend fun documents():JSONArray=JSONArray(raw("/rest/v1/paysaathi_kyc_documents?select=document_type,status&user_id=eq."+uid()))
+ suspend fun submitKyc(name:String){val list=documents();val pan=(0 until list.length()).any{list.optJSONObject(it)?.optString("document_type")=="pan"&&list.optJSONObject(it)?.optString("status")!="rejected"};val identity=(0 until list.length()).any{list.optJSONObject(it)?.optString("document_type")=="identity_proof"&&list.optJSONObject(it)?.optString("status")!="rejected"};if(!pan||!identity)throw IOException("Upload PAN and one identity proof before submitting.");raw("/rest/v1/paysaathi_kyc_profiles?user_id=eq."+uid(),"PATCH",JSONObject().put("status","submitted").put("legal_name",name).put("submitted_at",java.time.Instant.now().toString()).toString())}
  suspend fun access(service:String):Boolean{val o=obj("/rest/v1/rpc/paysaathi_kyc_access","POST",JSONObject().put("p_service_key",service).toString());return o.optBoolean("allowed",false)}
  suspend fun signout(){prefs.edit().clear().apply()}
 }
