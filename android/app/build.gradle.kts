@@ -10,8 +10,8 @@ android {
         applicationId = "in.paysaathi.app"
         minSdk = 26
         targetSdk = 35
-        versionCode = 3
-        versionName = "1.0.2"
+        versionCode = 4
+        versionName = "1.0.3"
         buildConfigField("String", "SUPABASE_URL", "\"https://hhqcycwfvxoxjizlbivv.supabase.co\"")
         buildConfigField("String", "SUPABASE_KEY", "\"sb_publishable_NdrUA-ubf67oW5hiS-Yw4A_-r2xbJRV\"")
     }
