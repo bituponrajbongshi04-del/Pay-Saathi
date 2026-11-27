@@ -10,6 +10,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -90,7 +92,7 @@ class Api(context:Context){
  LaunchedEffect(page){if(page=="home"){runTask{balance=api.wallet();val k=api.kyc();status=k.optString("status","not_started");legalName=k.optString("legal_name","")}}}
  MaterialTheme(colorScheme=darkColorScheme(primary=Cyan,background=Navy,surface=Color(0xFF102E49),onSurface=Color.White)){
   Box(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Navy,Color(0xFF0A3558),Navy)))){
-   Column(Modifier.fillMaxSize().padding(20.dp),verticalArrangement=Arrangement.spacedBy(13.dp)){
+   Column(Modifier.fillMaxSize().padding(20.dp).verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(13.dp)){
     Row(verticalAlignment=Alignment.CenterVertically){Surface(shape=RoundedCornerShape(14.dp),color=Blue){Text("P",Modifier.padding(horizontal=15.dp,vertical=9.dp),fontWeight=FontWeight.Black,color=Color.White,fontSize=22.sp)};Spacer(Modifier.width(10.dp));Column{Text("PaySaathi",fontSize=23.sp,fontWeight=FontWeight.Black,color=Color.White);Text("YOUR MONEY. YOUR SERVICES. ONE SAATHI.",fontSize=8.sp,color=Cyan,fontWeight=FontWeight.Bold)};Spacer(Modifier.weight(1f));if(page=="home")IconButton(onClick={runTask{api.signout();page="login"}}){Icon(Icons.Default.Logout,null,tint=Color.White)}}
     if(page=="login"||page=="signup"||page=="otp"){
      Text(if(page=="signup")"Create your account" else if(page=="otp")"Verify your email" else "Welcome back",fontSize=28.sp,fontWeight=FontWeight.ExtraBold,color=Color.White)
@@ -117,7 +119,7 @@ class Api(context:Context){
      TextButton(onClick={page="home"}){Text("Back to dashboard",color=Cyan)}
     }
     if(error.isNotBlank())Text(error,color=Color(0xFFFFB4AB),fontSize=11.sp)
-    Spacer(Modifier.weight(1f));Text("PaySaathi · Secure access · India",color=Color(0xFF8BAFC8),fontSize=10.sp)
+    Spacer(Modifier.height(8.dp));Text("PaySaathi · Secure access · India",color=Color(0xFF8BAFC8),fontSize=10.sp)
    }
   }
  }
