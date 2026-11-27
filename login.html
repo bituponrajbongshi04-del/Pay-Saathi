@@ -278,7 +278,7 @@ verifyButton.addEventListener('click', async () => {
   setBusy(verifyButton, true, 'Verifying OTP…', 'Verify OTP and login');
   try {
     const { data, error } = await supabase.functions.invoke('password-email-otp', {
-      body: { action: 'verify', challengeId, code: token }
+      body: { action: 'verify', email: pendingEmail, password: lastPassword, challengeId, code: token }
     });
     if (error) throw new Error(data?.error || error.message || 'OTP verification failed.');
     if (data?.error) throw new Error(data.error);
