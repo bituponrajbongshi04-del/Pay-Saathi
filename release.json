@@ -1,0 +1,11 @@
+{
+  "version": "1.0.1",
+  "title": "PaySaathi App is ready to install",
+  "date": "2026-11-27",
+  "notes": [
+    "Install PaySaathi on Android and use it like an app.",
+    "The desktop and laptop website experience remains available.",
+    "App updates now show a prompt with release notes before applying."
+  ],
+  "minimumVersion": "1.0.1"
+}
