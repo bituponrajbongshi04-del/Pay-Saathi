@@ -2,15 +2,18 @@
 
 This branch preserves the existing page structures and connects the homepage to the already-present PaySaathi CMS, service catalogue, support system and notifications. It adds a dedicated six-digit password-plus-email-OTP login challenge table and tightens profile update permissions.
 
-## 1. Required provider setup
+## 1. Existing email provider
 
-The new login OTP Edge Function sends mail through Resend. Before deploying it:
+This branch uses the existing Supabase Auth email provider configured for PaySaathi (the Gmail SMTP setup already used by the project). No Resend account, Resend API key, custom sender domain or custom login-OTP Edge Function is required.
 
-1. Create or use a Resend account.
-2. Verify a domain you control and create an API key.
-3. Choose a sender address on that verified domain, e.g. PaySaathi <no-reply@your-domain.example>.
-4. Add RESEND_API_KEY and OTP_FROM_EMAIL as Supabase Edge Function secrets in Project Settings → Edge Functions → Secrets.
-5. Never put the Resend key or Supabase service-role key in HTML, GitHub Pages, or browser JavaScript. Do not paste secrets into chat.
+Keep the existing Gmail SMTP host, port, username and Google App Password in Supabase Authentication → SMTP Settings. Do not paste the SMTP password into the website, GitHub or chat.
+
+The login page checks the password in a temporary non-persistent Supabase client, then requests a six-digit email OTP through Supabase Auth. The OTP is verified with Supabase Auth before the shared persistent browser session is established. Signup continues to use Supabase Auth signup OTP.
+
+In Supabase Dashboard → Authentication → Email:
+- Set OTP length to 6.
+- Ensure the signup/login email template displays the numeric token using `{{ .Token }}` (not only a confirmation link).
+- Keep the existing SMTP configuration unchanged.
 
 ## 2. Apply the database migration
 
