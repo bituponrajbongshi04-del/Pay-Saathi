@@ -295,7 +295,7 @@ passwordForm.addEventListener('submit', async (event) => {
 
 verifyButton.addEventListener('click', async () => {
   const token = otpCode.value.trim();
-  if (!/^\\d{6}$/.test(token)) return showMessage('Enter the 6-digit OTP from your email.');
+  if (!/^\d{6}$/.test(token)) return showMessage('Enter the 6-digit OTP from your email.');
   setBusy(verifyButton, true, 'Verifying OTP…', 'Verify OTP and login');
   try {
     const { data, error } = await supabase.auth.verifyOtp({
