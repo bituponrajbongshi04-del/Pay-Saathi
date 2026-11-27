@@ -285,6 +285,8 @@ function applyHomeBranding(c={}){
  setText('homeServicesTitle',c.home_services_title);setText('homeServicesDescription',c.home_services_description);
  setText('homeWhyTitle',c.home_why_title);setText('homeWhyDescription',c.home_why_description);
  setText('homeHowTitle',c.home_how_title);setText('homeHowDescription',c.home_how_description);setText('homeHelpTitle',c.home_help_title);
+ const renderHomeCards=(selector,items,type)=>{const host=document.querySelector(selector);if(!host||!Array.isArray(items)||!items.length)return;host.replaceChildren();items.slice(0,6).forEach((item,i)=>{const card=document.createElement('article');card.className=type==='step'?'step':'benefit';const number=document.createElement('div');number.className=type==='step'?'step-num':'benefit-num';number.textContent=type==='step'?String(i+1).padStart(2,'0'):String(i+1).padStart(2,'0')+' / PAYSAATHI';const title=document.createElement(type==='step'?'h3':'b');title.textContent=homeText(item.title);const body=document.createElement('p');body.textContent=homeText(item.body);card.append(number,title,body);host.appendChild(card);});};
+ renderHomeCards('#why .benefit-grid',c.home_benefits,'benefit');renderHomeCards('#how .steps',c.home_steps,'step');
  const foot=document.querySelector('footer');if(foot){foot.hidden=c.show_footer===false;if(c.footer_text){const p=foot.querySelector('.foot>div:first-child p');if(p)p.textContent=homeText(c.footer_text);}}
  if(c.show_brand_mark===false)document.querySelectorAll('.brand .logo').forEach(el=>el.hidden=true);
  let custom=document.getElementById('paysaathi-home-custom-sections');
