@@ -149,6 +149,12 @@ header{background:rgba(255,255,255,.76);backdrop-filter:blur(24px) saturate(160%
 @media(max-width:760px){.info-layout{grid-template-columns:1fr}.info-aside{position:static;display:flex;gap:5px;overflow-x:auto;white-space:nowrap;padding:10px}.info-aside b{display:none}.info-aside a{flex:0 0 auto}.info-hero{padding:48px 0 36px}.info-main{padding:28px 0 60px}}
 @media(max-width:520px){.contact-grid{grid-template-columns:1fr}.info-wrap{width:calc(100% - 30px)}}
 </style>
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PaySaathi">
+<link rel="icon" type="image/svg+xml" href="./assets/paysaathi-app.svg">
 </head>
 <body>
 
@@ -198,4 +204,5 @@ const menuBtn=document.getElementById('menuBtn'),mobileNav=document.getElementBy
 menuBtn?.addEventListener('click',()=>{const open=mobileNav.classList.toggle('open');menuBtn.setAttribute('aria-expanded',String(open));menuBtn.textContent=open?'✕':'☰';});
 mobileNav?.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{mobileNav.classList.remove('open');menuBtn.setAttribute('aria-expanded','false');menuBtn.textContent='☰';}));
 </script>
+<script src="./pwa.js" defer></script>
 </body></html>
