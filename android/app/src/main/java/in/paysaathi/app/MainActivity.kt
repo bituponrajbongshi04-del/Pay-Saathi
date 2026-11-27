@@ -56,7 +56,7 @@ private val Muted=Color(0xFFB9D4E7)
 class MainActivity:ComponentActivity(){
  override fun onCreate(savedInstanceState:Bundle?){super.onCreate(savedInstanceState);setContent{PaySaathiApp(this)}}
 }
-data class AppUpdate(val version:String,val notes:String,val apkUrl:String)
+data class AppUpdate(val version:String,val notes:String,val apkUrl:String,val mandatory:Boolean)
 
 class Api(context:Context){
  private val appContext=context.applicationContext
@@ -94,7 +94,7 @@ class Api(context:Context){
    if(!newer)return@withContext null
    val assets=release.optJSONArray("assets")?:JSONArray()
    val apk=(0 until assets.length()).mapNotNull{assets.optJSONObject(it)}.firstOrNull{it.optString("name").endsWith(".apk",true)}?:return@withContext null
-   AppUpdate(tag,release.optString("body","A newer version of PaySaathi is available."),apk.optString("browser_download_url"))
+   val notes=release.optString("body","A newer version of PaySaathi is available.")\n   AppUpdate(tag,notes,apk.optString("browser_download_url"),notes.contains("[MANDATORY]",ignoreCase=true))
   }
  }
  suspend fun downloadUpdate(url:String):File=withContext(Dispatchers.IO){
@@ -153,8 +153,8 @@ class Api(context:Context){
   Box(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Navy,Color(0xFF0A3558),Navy)))){
    Column(Modifier.fillMaxSize().padding(20.dp).verticalScroll(rememberScrollState()),verticalArrangement=Arrangement.spacedBy(13.dp)){
     Row(verticalAlignment=Alignment.CenterVertically){if(pageHistory.isNotEmpty())IconButton(onClick={goBack()}){Icon(Icons.Default.ArrowBack,null,tint=Color.White)};Surface(shape=RoundedCornerShape(14.dp),color=Blue){Text("P",Modifier.padding(horizontal=15.dp,vertical=9.dp),fontWeight=FontWeight.Black,color=Color.White,fontSize=22.sp)};Spacer(Modifier.width(10.dp));Column{Text("PaySaathi",fontSize=23.sp,fontWeight=FontWeight.Black,color=Color.White);Text("YOUR MONEY. YOUR SERVICES. ONE SAATHI.",fontSize=8.sp,color=Cyan,fontWeight=FontWeight.Bold)};Spacer(Modifier.weight(1f));if(page=="home")IconButton(onClick={runTask{api.signout();pageHistory.clear();page="login"}}){Icon(Icons.Default.Logout,null,tint=Color.White)}}
-    if(updateInfo!=null){Card(colors=CardDefaults.cardColors(containerColor=Color(0xFF174A68)),shape=RoundedCornerShape(16.dp)){Column(Modifier.padding(15.dp),verticalArrangement=Arrangement.spacedBy(8.dp)){Text("PaySaathi update available · v"+updateInfo!!.version,color=Color.White,fontWeight=FontWeight.Bold);Text("Get the latest features and improvements directly here.",color=Muted,fontSize=12.sp);Button(onClick={runTask{downloadedApk=api.downloadUpdate(updateInfo!!.apkUrl);updateMessage="Update downloaded. Tap Install update to continue."}},enabled=!waiting){Text(if(waiting)"Downloading…" else "Download update")};if(downloadedApk!=null)Button(onClick={installDownloaded}){Text("Install update")};if(updateMessage.isNotBlank())Text(updateMessage,color=Cyan,fontSize=11.sp)}}}
-    if(page=="login"||page=="signup"||page=="otp"){
+    if(updateInfo!=null){Card(colors=CardDefaults.cardColors(containerColor=Color(0xFF174A68)),shape=RoundedCornerShape(16.dp)){Column(Modifier.padding(15.dp),verticalArrangement=Arrangement.spacedBy(8.dp)){Text("PaySaathi update available · v"+updateInfo!!.version,color=Color.White,fontWeight=FontWeight.Bold);Text("Get the latest features and improvements directly here.",color=Muted,fontSize=12.sp);Button(onClick={runTask{downloadedApk=api.downloadUpdate(updateInfo!!.apkUrl);updateMessage="Update downloaded. Tap Install update to continue."}},enabled=!waiting){Text(if(waiting)"Downloading…" else "Download update")};if(downloadedApk!=null)Button(onClick={installDownloaded()}){Text("Install update")};if(updateMessage.isNotBlank())Text(updateMessage,color=Cyan,fontSize=11.sp)}}}
+    if(updateInfo?.mandatory==true){\n     Text("Required PaySaathi update",fontSize=27.sp,fontWeight=FontWeight.ExtraBold,color=Color.White)\n     Text("This version must be updated before you can continue using PaySaathi.",color=Muted,fontSize=13.sp)\n     Button(onClick={runTask{downloadedApk=api.downloadUpdate(updateInfo!!.apkUrl);updateMessage="Update downloaded. Install it to continue."}},enabled=!waiting,modifier=Modifier.fillMaxWidth()){Text(if(waiting)"Downloading…" else "Download required update")}\n     if(downloadedApk!=null)Button(onClick={installDownloaded()},modifier=Modifier.fillMaxWidth()){Text("Install and continue")}\n     if(updateMessage.isNotBlank())Text(updateMessage,color=Cyan,fontSize=12.sp)\n    }else if(page=="login"||page=="signup"||page=="otp"){
      Text(if(page=="signup")"Create your account" else if(page=="otp")"Verify your email" else "Welcome back",fontSize=28.sp,fontWeight=FontWeight.ExtraBold,color=Color.White)
      Text(if(page=="otp")"Enter the six-digit code sent to "+email else "Secure access to your PaySaathi services",color=Muted,fontSize=12.sp)
      if(page=="signup"){Field("Full name",name,{name=it});Field("Mobile number",phone,{phone=it},KeyboardType.Phone)}
