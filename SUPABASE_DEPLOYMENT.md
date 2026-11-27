@@ -1,0 +1,62 @@
+# PaySaathi Supabase deployment and final verification
+
+This branch preserves the existing page structures and connects the homepage to the already-present PaySaathi CMS, service catalogue, support system and notifications. It adds a dedicated six-digit password-plus-email-OTP login challenge table and tightens profile update permissions.
+
+## 1. Existing email provider
+
+This branch uses the existing Supabase Auth email provider configured for PaySaathi (the Gmail SMTP setup already used by the project). No Resend account, Resend API key, custom sender domain or custom login-OTP Edge Function is required.
+
+Keep the existing Gmail SMTP host, port, username and Google App Password in Supabase Authentication → SMTP Settings. Do not paste the SMTP password into the website, GitHub or chat.
+
+The login page checks the password in a temporary non-persistent Supabase client, then requests a six-digit email OTP through Supabase Auth. The OTP is verified with Supabase Auth before the shared persistent browser session is established. Signup continues to use Supabase Auth signup OTP.
+
+In Supabase Dashboard → Authentication → Email:
+- Set OTP length to 6.
+- Ensure the signup/login email template displays the numeric token using `{{ .Token }}` (not only a confirmation link).
+- Keep the existing SMTP configuration unchanged.
+
+## 2. Apply the database migration
+
+The migration was reconciled against the live PaySaathi database. It is additive and preserves existing service, branding, support, wallet and notification data.
+
+```bash
+supabase login
+supabase link --project-ref hhqcycwfvxoxjizlbivv
+supabase db push
+```
+
+It creates the private OTP challenge table, prevents direct customer edits to profile roles/status, grants the existing admin-only branding bucket delete permission, and retains the current personal/global notification schema and policies.
+
+## 3. Login and signup OTP
+
+No custom login OTP Edge Function deployment is required. Login and signup codes are sent by Supabase Auth through the existing Gmail SMTP provider. The login page checks the password in a temporary non-persistent client, requests an email OTP with account creation disabled, and creates the shared persistent session only after the OTP is verified.
+
+The previously deployed `password-email-otp` Edge Function is no longer called by the website. It can remain deployed without affecting this flow; do not add Resend secrets for it.
+
+## 4. Signup email OTP length
+
+The repository supabase/config.toml sets Supabase Auth email OTP length to six digits. Set Authentication → Email → OTP length to 6 in the Supabase Dashboard as well. Confirm the signup email template includes the numeric token variable {{ .Token }}; do not use only the confirmation URL if you want a code displayed.
+
+## 5. Admin website controls
+
+After the updated site is deployed, sign in with the existing authorized admin account and open Website Builder. It can publish brand identity, logo/favicon, hero copy/image/button, colours, layout, buttons/navigation, visibility of homepage sections, section copy, benefit cards, journey steps, custom sections and footer settings. Service Manager controls the enabled service catalogue. Platform Settings controls maintenance, announcements, support contacts and notification copy.
+
+The public homepage reads the published branding and public site status, applies saved settings without replacing the original responsive layout, and loads enabled service catalogue entries.
+
+The Settings page can send a personal notification to one account or a global notification to all signed-in users. These are stored in the existing ps_notifications table and shown in the customer dashboard notification modal.
+
+## 6. Final tests before merging
+
+- Create a fresh test account; confirm the email contains a six-digit signup code and signup verification creates a session.
+- Sign in with a valid password; confirm a six-digit login code arrives, wrong/expired/reused codes are rejected, and a correct code routes by role.
+- Refresh, close/reopen Chrome, and switch mobile/desktop mode; confirm the session remains until manual logout.
+- Publish a temporary homepage heading/theme from Website Builder; confirm it appears on index.html after reload and the original responsive layout still works.
+- Add/disable a catalogue service; confirm the public homepage reflects the enabled service list.
+- Send one global and one user-targeted notification; confirm the intended customer sees it in the dashboard notification modal.
+- Test support-agent assignment, ticket visibility and replies using separate customer and agent test accounts.
+- Toggle maintenance mode and confirm the public homepage/dashboard show the maintenance state while the admin panel remains reachable.
+- Confirm no test wallet credit or payment UI creates a real balance or claims a real provider payment succeeded.
+
+## 7. Integrations that are not supplied by this repository
+
+The gateway manager stores gateway metadata only. Real recharge, bill payment, AEPS, money transfer, payout and card/UPI settlement require contracts, API credentials, provider-side onboarding, server-side order creation and signed webhook verification. Do not enable live money movement until those integrations are implemented and tested.

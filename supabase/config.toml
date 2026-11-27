@@ -1,0 +1,3 @@
+[auth.email]
+# Keep Supabase Auth email OTPs six digits; delivery uses the existing SMTP provider.
+otp_length = 6
