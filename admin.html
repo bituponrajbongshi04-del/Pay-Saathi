@@ -95,13 +95,7 @@ body{background:radial-gradient(ellipse at 12% 0%,rgba(69,135,255,.10),transpare
 .table-wrap tr{transition:background .18s ease}
 input,select,textarea{transition:border-color .2s ease,box-shadow .2s ease}
 input:focus,select:focus,textarea:focus{outline:none;border-color:#73a6ff!important;box-shadow:0 0 0 4px rgba(54,127,255,.12)!important}
-#psBootScreen{position:fixed;inset:0;z-index:99999;display:grid;place-items:center;background:radial-gradient(circle at 50% 35%,#183e79 0,#0a1b3b 48%,#061329 100%);color:#fff;transition:opacity .55s ease,visibility .55s ease}
-#psBootScreen.is-hidden{opacity:0;visibility:hidden;pointer-events:none}
-.boot-card{text-align:center;width:min(88vw,360px);padding:36px 28px;border:1px solid rgba(255,255,255,.14);border-radius:28px;background:rgba(255,255,255,.07);backdrop-filter:blur(18px);box-shadow:0 30px 90px rgba(0,0,0,.28);animation:bootFloat 2.8s ease-in-out infinite}
-.boot-logo{width:76px;height:76px;margin:0 auto 18px;border-radius:24px;display:grid;place-items:center;font-size:2.1rem;font-weight:900;background:linear-gradient(135deg,#54dcff,#246bff);box-shadow:0 0 0 9px rgba(74,166,255,.10),0 0 42px rgba(62,169,255,.45);animation:logoPulse 1.8s ease-in-out infinite}
-.boot-title{font-size:1.3rem;font-weight:850;letter-spacing:.02em}.boot-sub{margin-top:7px;color:#b7c9e8;font-size:.86rem}.boot-track{height:5px;margin:25px 0 0;background:#ffffff20;border-radius:9px;overflow:hidden}.boot-track span{display:block;width:42%;height:100%;border-radius:9px;background:linear-gradient(90deg,#5ce4ff,#fff,#4f91ff);animation:bootProgress 1.25s ease-in-out infinite}
-.boot-dots{display:flex;justify-content:center;gap:6px;margin-top:17px}.boot-dots i{width:6px;height:6px;border-radius:50%;background:#8edfff;animation:dotBounce .9s ease-in-out infinite}.boot-dots i:nth-child(2){animation-delay:.15s}.boot-dots i:nth-child(3){animation-delay:.3s}
-@keyframes bootProgress{0%{transform:translateX(-110%)}100%{transform:translateX(260%)}}@keyframes logoPulse{50%{transform:scale(1.06);box-shadow:0 0 0 14px rgba(74,166,255,.05),0 0 58px rgba(62,169,255,.65)}}@keyframes bootFloat{50%{transform:translateY(-7px)}}@keyframes dotBounce{50%{transform:translateY(-5px);opacity:.55}}@keyframes markGlow{50%{box-shadow:0 0 25px rgba(38,130,255,.55)}}@keyframes sectionIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}@keyframes riseIn{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+/* Non-blocking admin startup: no full-screen boot overlay. */
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
 @media(max-width:760px){.sidebar{box-shadow:18px 0 45px rgba(5,20,50,.25)}}
 /* Public-site brand alignment */
@@ -194,6 +188,29 @@ body{font-family:'Plus Jakarta Sans',Inter,ui-sans-serif,system-ui,sans-serif}
     </div>
     <div class="toolbar" style="margin-top:14px"><button class="btn primary" id="sendPersonalNotice">Publish update</button></div>
     <p class="muted" style="font-size:.75rem;margin:10px 0 0">Published updates are saved in Supabase. Customers see global updates on their dashboard and in Notifications after refreshing or reopening the app.</p>
+  </div>
+</section>
+<section class="section" id="section-settings">
+  <div class="page-head"><div><h2>Platform Settings</h2><p>Manage customer-facing announcements, important notices, maintenance status and support contact details.</p></div><button class="btn" id="settingsRefresh">↻ Reload settings</button></div>
+  <div class="notice" id="settingsNotice" role="status" aria-live="polite"></div>
+  <div class="panel" style="margin-bottom:16px">
+    <div class="panel-head"><div><h3>Customer dashboard announcements</h3><p>These settings publish directly to the signed-in customer dashboard.</p></div><span class="pill success">Connected</span></div>
+    <div class="settings-grid">
+      <article class="setting"><h4>Maintenance mode</h4><p>Turn maintenance mode on only when customer services must be temporarily unavailable.</p><select id="maintenanceMode"><option value="false">Off · Website available</option><option value="true">On · Maintenance notice</option></select><div class="setting-actions"><button class="btn primary" data-save="maintenance_mode">Save maintenance status</button></div></article>
+      <article class="setting"><h4>Maintenance message</h4><p>Message shown while maintenance mode is enabled.</p><textarea id="maintenanceMessage" maxlength="500" placeholder="PaySaathi is under maintenance. Please check back shortly."></textarea><div class="setting-actions"><button class="btn primary" data-save="maintenance_message">Save message</button></div></article>
+      <article class="setting" style="grid-column:1/-1"><h4>Latest announcement</h4><p>Show a prominent announcement banner on the customer dashboard home tab.</p><textarea id="siteAnnouncement" maxlength="1200" placeholder="Example: New services and improvements are now available on PaySaathi."></textarea><div class="setting-actions"><button class="btn primary" data-save="site_announcement">Publish announcement</button></div></article>
+      <article class="setting" style="grid-column:1/-1"><h4>Important site notification</h4><p>Publish a highlighted notice below the dashboard announcement banner.</p><select id="notificationEnabled"><option value="false">Disabled</option><option value="true">Enabled</option></select><label for="notificationTitle">Notification title</label><input id="notificationTitle" maxlength="100" placeholder="Important update"><label for="notificationMessage">Notification message</label><textarea id="notificationMessage" maxlength="400" placeholder="Write the important information for customers."></textarea><div class="setting-actions"><button class="btn primary" data-save="notification_message">Save & publish notification</button></div></article>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="panel-head"><div><h3>Customer support contacts</h3><p>These details are shared with the customer website and support desk.</p></div></div>
+    <div class="settings-grid">
+      <article class="setting"><label for="supportEmail">Support email</label><input id="supportEmail" type="email" placeholder="support@example.com"></article>
+      <article class="setting"><label for="supportPhone">Support phone</label><input id="supportPhone" type="tel" placeholder="+91 …"></article>
+      <article class="setting"><label for="supportWhatsApp">WhatsApp number</label><input id="supportWhatsApp" type="tel" placeholder="+91 …"></article>
+      <article class="setting"><label for="supportMessage">Support availability / message</label><textarea id="supportMessage" maxlength="500" placeholder="Tell customers when and how support is available."></textarea></article>
+    </div>
+    <div class="toolbar" style="margin-top:14px"><button class="btn primary" id="saveSupportContacts">Save & publish support contacts</button></div>
   </div>
 </section>
 <section class="section" id="section-services"><div class="page-head"><div><h2>Service Manager</h2><p>Add, edit, enable, disable and reorder dashboard service cards. New services are catalogue-only until a provider API is connected.</p></div><button class="btn" id="serviceReload">↻ Refresh</button></div><div class="notice" id="serviceNotice"></div><div class="panel" style="margin-bottom:16px"><div class="panel-head"><h3>Add / edit service</h3></div><div class="settings-grid"><div class="setting"><label>Unique ID</label><input id="svcSlug" placeholder="mobile-recharge" maxlength="40"><label>Display name</label><input id="svcTitle" maxlength="50"><label>Description</label><input id="svcDescription" maxlength="120"><label>Icon / emoji</label><input id="svcIcon" maxlength="8" value="⚙"></div><div class="setting"><label>Category</label><select id="svcCategory"><option>Recharge</option><option>Bill Payments</option><option>Banking</option><option>Travel</option><option>Other</option></select><label>Action</label><select id="svcAction"><option value="none">Catalogue only</option><option value="mobile_recharge">Existing mobile recharge screen</option><option value="utility_bill">Existing utility bill screen</option></select><label>Sort order</label><input id="svcOrder" type="number" min="0" max="999" value="100"><label class="checkline"><input id="svcEnabled" type="checkbox" checked> Visible to customers</label></div></div><div class="toolbar"><button class="btn primary" id="serviceSave">Save service</button><button class="btn" id="serviceClear">Clear</button></div></div><div class="panel"><h3>Service catalogue</h3><div class="table-wrap"><table><thead><tr><th>Service</th><th>Category</th><th>Action</th><th>Order</th><th>Status</th><th>Manage</th></tr></thead><tbody id="servicesBody"></tbody></table></div></div></section>
