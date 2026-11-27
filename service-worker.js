@@ -1,5 +1,5 @@
 /* PaySaathi PWA service worker. Bump APP_VERSION for every app release. */
-const APP_VERSION = "1.0.3";
+const APP_VERSION = "1.1.0";
 const CACHE_NAME = "paysaathi-shell-" + APP_VERSION;
 const BASE_URL = new URL("./", self.location.href);
 const HOME_URL = new URL("./index.html", BASE_URL).href;
@@ -11,7 +11,11 @@ const CORE_FILES = [
   new URL("./login.html", BASE_URL).href,
   new URL("./manifest.webmanifest", BASE_URL).href,
   new URL("./assets/paysaathi-app.svg", BASE_URL).href,
-  new URL("./release.json", BASE_URL).href
+  new URL("./release.json", BASE_URL).href,
+  new URL("./kyc.html", BASE_URL).href,
+  new URL("./admin-kyc.html", BASE_URL).href,
+  new URL("./kyc.js", BASE_URL).href,
+  new URL("./kyc-gate.js", BASE_URL).href
 ];
 
 self.addEventListener("install", event => {
