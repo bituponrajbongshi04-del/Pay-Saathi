@@ -307,6 +307,10 @@ async function loadHomeDynamicServices(){
 }
 async function loadHomeSiteUpdates(){
  try{const {data,error}=await supabase.rpc('paysaathi_get_public_site_status');if(error)throw error;const status=data||{};
+  const maintenance=status.maintenance_mode===true||status.maintenance_mode==='true';
+  let gate=document.getElementById('paysaathi-maintenance-gate');
+  if(maintenance){if(!gate){gate=document.createElement('div');gate.id='paysaathi-maintenance-gate';gate.style.cssText='position:fixed;inset:0;z-index:99999;display:grid;place-items:center;padding:24px;background:rgba(5,22,40,.94);color:white;text-align:center';const panel=document.createElement('div');panel.style.cssText='max-width:520px;padding:32px;border:1px solid #ffffff30;border-radius:22px;background:#ffffff12';const title=document.createElement('h1');title.textContent='PaySaathi is under maintenance';title.style.cssText='font-size:26px;font-weight:800;margin:0 0 12px';const msg=document.createElement('p');msg.id='paysaathi-maintenance-copy';msg.style.cssText='color:#d8eaff;line-height:1.6';const reload=document.createElement('button');reload.type='button';reload.textContent='Check again';reload.style.cssText='margin-top:20px;padding:12px 20px;border-radius:999px;background:#fff;color:#075b8c;font-weight:800';reload.onclick=()=>location.reload();panel.append(title,msg,reload);gate.appendChild(panel);document.body.appendChild(gate);}const copy=document.getElementById('paysaathi-maintenance-copy');if(copy)copy.textContent=String(status.maintenance_message||'We are updating PaySaathi. Please check back shortly.');document.body.style.overflow='hidden';}
+  else{gate?.remove();document.body.style.overflow='';}
   const show=document.getElementById('homeHero')?.hidden!==true;
   const addBar=(id,message,bg,fg,border)=>{let bar=document.getElementById(id);if(!message){bar?.remove();return;}if(!bar){bar=document.createElement('aside');bar.id=id;bar.className='wrap';bar.style.cssText='margin:14px auto;padding:14px 18px;border-radius:14px;font-weight:650';const hero=document.getElementById('homeHero');(hero||document.querySelector('main'))?.insertAdjacentElement('afterend',bar);}bar.textContent=message;bar.style.background=bg;bar.style.color=fg;bar.style.border='1px solid '+border;};
   if(status.maintenance_mode===true)addBar('paysaathi-home-maintenance',status.maintenance_message||'PaySaathi is under maintenance. Please check back shortly.','#fff0ef','#8b1e18','#f2c9c5');
@@ -320,6 +324,7 @@ async function loadHomeControlSettings(){
  try{const {data,error}=await supabase.rpc('paysaathi_get_public_branding');if(error)throw error;const c=data||{};window.__paysaathiHomeShowAnnouncements=c.show_announcements!==false;applyHomeBranding(c);setSupport(c);}
  catch(e){console.warn('Homepage design settings unavailable; showing the original design:',e.message);}
  await Promise.all([loadHomeSiteUpdates(),loadHomeDynamicServices()]);
+ window.setInterval(()=>{if(document.visibilityState==='visible')loadHomeSiteUpdates();},30000);
 }
 
 // Premium service discovery: searchable cards, accessible detail modal and tap feedback.
