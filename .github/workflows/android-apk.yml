@@ -47,12 +47,15 @@ jobs:
           PAYSAATHI_KEY_ALIAS: ${{ secrets.PAYSAATHI_KEY_ALIAS }}
           PAYSAATHI_KEY_PASSWORD: ${{ secrets.PAYSAATHI_KEY_PASSWORD }}
         run: gradle assembleRelease
+      - name: Read app version
+        id: app_version
+        run: echo "tag=v$(grep -o 'versionName = \"[^\"]*\"' android/app/build.gradle.kts | cut -d '\"' -f2)" >> "$GITHUB_OUTPUT"
       - name: Publish signed APK update
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.PAYSAATHI_KEYSTORE_BASE64 != '' }}
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.0.2
-          name: PaySaathi v1.0.2
+          tag_name: ${{ steps.app_version.outputs.tag }}
+          name: PaySaathi ${{ steps.app_version.outputs.tag }}
           target_commitish: main
           files: android/app/build/outputs/apk/release/app-release.apk
           generate_release_notes: true
