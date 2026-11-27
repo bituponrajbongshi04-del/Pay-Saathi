@@ -208,6 +208,12 @@ header{background:rgba(255,255,255,.76);backdrop-filter:blur(24px) saturate(160%
 @media(max-width:600px){.support-choice-grid,.support-agent-grid,.support-form-grid{grid-template-columns:1fr}.support-form label.full{grid-column:auto}.support-form-foot{align-items:stretch;flex-direction:column}.support-form-foot .btn{width:100%}.customer-reply{flex-direction:column}.customer-reply button{width:100%}.support-section-head{gap:8px}.customer-ticket-top{flex-direction:column}}
 
 </style>
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PaySaathi">
+<link rel="icon" type="image/svg+xml" href="./assets/paysaathi-app.svg">
 </head>
 <body>
 
@@ -416,4 +422,5 @@ $('refreshMyTickets').addEventListener('click',loadTickets);
 init();
 </script>
 
+<script src="./pwa.js" defer></script>
 </body></html>
