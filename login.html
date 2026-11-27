@@ -112,7 +112,7 @@ footer{text-align:center;padding:0 18px 22px;color:#8296a8;font-size:10px}
   <div class="otp-actions"><button class="text-button" id="resendOtp" type="button" disabled>Resend code in 30s</button><button class="text-button" id="changeEmail" type="button">Back to login</button></div>
 </div>
 <div class="sep">NEW TO PAYSAATHI?</div>
-<p class="signup">Don't have an account? <a href="register.html">Create account</a></p>
+<p class="signup">Don't have an account? <a href="signup.html">Create account</a></p>
 <div class="note"><span>🔒</span><span>Two-step verification: password first, then email OTP. Never share your OTP with anyone.</span></div>
 </section></div></main>
 <footer>© <span id="year"></span> PaySaathi. All rights reserved.</footer>
@@ -126,12 +126,9 @@ const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_NdrUA-ubf67oW5hiS-Yw4A_-r2xbJRV
 // createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY) without custom auth options.
 // A different key on the login page makes the user appear logged out after a reload
 // or when Chrome Android switches between mobile and desktop site modes.
+// Shared session key for customer, admin and support. Never store passwords.
 const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true
-  }
+  auth: { storageKey: 'paysaathi.auth.v1', persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
 });
 
 // The verified session is already saved by this shared client. Confirm it is
@@ -186,17 +183,11 @@ function startResendCountdown(seconds=30) {
 async function routeAuthenticatedUser(session) {
   if (!session?.access_token || !session?.refresh_token) throw new Error('Verified session missing. Please sign in again.');
   const { data: isAdmin, error: roleError } = await supabase.rpc('is_paysaathi_admin');
-  if (roleError) {
-    await supabase.auth.signOut({ scope: 'local' });
-    throw new Error('Could not verify account permissions. Please contact the site administrator.');
-  }
+  if (roleError) throw new Error('Account permissions could not be checked because the server is temporarily unavailable. Your login has not been cleared. Please retry.');
   if (!isAdmin) {
     const { data: profile, error: profileError } = await supabase
       .from('ps_profiles').select('role,status').eq('id', session.user.id).maybeSingle();
-    if (profileError) {
-      await supabase.auth.signOut({ scope: 'local' });
-      throw new Error('Could not verify account role. Please contact the site administrator.');
-    }
+    if (profileError) throw new Error('Your account role could not be checked right now. Your saved login has not been cleared. Please retry.');
     if (profile?.role === 'agent' && profile?.status === 'active') {
       await saveRoleSession('support', session);
       showMessage('Agent verified. Opening Support Desk…', 'ok');
@@ -204,14 +195,8 @@ async function routeAuthenticatedUser(session) {
       return;
     }
     const { data: siteStatus, error: statusError } = await supabase.rpc('paysaathi_get_public_site_status');
-    if (statusError) {
-      await supabase.auth.signOut({ scope: 'local' });
-      throw new Error('Website status could not be verified. Please try again later.');
-    }
-    if (siteStatus?.maintenance_mode === true) {
-      await supabase.auth.signOut({ scope: 'local' });
-      throw new Error(siteStatus.maintenance_message || 'PaySaathi is under maintenance. Please try again later.');
-    }
+    if (statusError) throw new Error('Website status could not be checked right now. Your saved login has not been cleared. Please retry.');
+    if (siteStatus?.maintenance_mode === true) throw new Error(siteStatus.maintenance_message || 'PaySaathi is under maintenance. Please try again later. Your login remains saved.');
   }
   await saveRoleSession(isAdmin ? 'admin' : 'customer', session);
   showMessage(isAdmin ? 'Admin verified. Opening Admin Panel…' : 'Login successful! Opening your dashboard…', 'ok');
@@ -327,7 +312,7 @@ resendButton.addEventListener('click', async () => {
 
 changeButton.addEventListener('click', async () => {
   clearInterval(resendTimer);
-  await supabase.auth.signOut({ scope: 'local' });
+  // Changing the email in the OTP form is not a logout action.
   challengeId = '';
   lastPassword = '';
   otpPanel.classList.remove('show');
