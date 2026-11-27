@@ -110,7 +110,7 @@ body{font-family:'Plus Jakarta Sans',Inter,ui-sans-serif,system-ui,sans-serif}
 .mark{background:linear-gradient(135deg,#36c5ed,#087fca)}
 .nav button:hover,.nav button.active{background:#36c5ed22;color:#fff}
 :focus-visible{outline:3px solid #36c5ed88;outline-offset:2px}
-</style>
+ .admin-nav-search{width:100%;min-width:0;padding:11px 12px;border:1px solid #ffffff2b;border-radius:10px;background:#ffffff12;color:#fff;outline:none;font-size:.8rem}.admin-nav-search::placeholder{color:#a9bed6}.nav-group-label{margin:12px 0 -3px!important}.page-file-links{display:grid;gap:8px}.page-file-links a{display:block;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#f8fbff;color:#155d9a;font-size:.8rem;font-weight:750;text-decoration:none}.page-file-links a:hover{border-color:#9cc9e7;background:#eff7ff}.nav button[hidden],.nav-group-label[hidden]{display:none!important}</style>
 </head>
 <body>
 <div id="psBootScreen" role="status" aria-live="polite"><div class="boot-card"><div class="boot-logo">P</div><div class="boot-title">PaySaathi Admin</div><div class="boot-sub">Securing your workspace · Loading dashboard</div><div class="boot-track"><span></span></div><div class="boot-dots"><i></i><i></i><i></i></div></div></div>
@@ -118,18 +118,16 @@ body{font-family:'Plus Jakarta Sans',Inter,ui-sans-serif,system-ui,sans-serif}
 <div class="app">
 <aside class="sidebar" id="sidebar">
   <a class="brand" href="index.html"><span class="mark">P</span><span>PaySaathi<small>ADMIN CONSOLE</small></span></a>
-  <div class="nav-label">WORKSPACE</div>
   <nav class="nav" aria-label="Admin navigation">
+    <input id="adminNavSearch" class="admin-nav-search" type="search" placeholder="Search admin tools…" aria-label="Search admin tools">
+    <div class="nav-label nav-group-label">DASHBOARD</div>
     <button class="active" data-section="overview"><span class="ico">▦</span>Overview</button>
-    <button data-section="users"><span class="ico">♙</span>Users</button>
-    <button data-section="transactions"><span class="ico">⇄</span>Transactions</button>
-    <button data-section="refunds"><span class="ico">↩</span>Refund Requests</button>
-    <button data-section="analytics"><span class="ico">▥</span>Analytics</button>
-    <button data-section="support"><span class="ico">☏</span>Customer Support</button>
-    <button data-section="staff"><span class="ico">♙</span>Staff & Payroll</button>
-    <button data-section="audit"><span class="ico">▤</span>Activity & Security</button>
-    <button data-section="settings"><span class="ico">⚙</span>Settings</button>
-    <button data-section="builder"><span class="ico">🎨</span>Website Builder</button><button data-section="services"><span class="ico">▣</span>Service Manager</button><button data-section="gateways"><span class="ico">₹</span>Payment Gateways</button>
+    <div class="nav-label nav-group-label">CUSTOMERS & OPERATIONS</div>
+    <button data-section="users"><span class="ico">♙</span>Users</button><button data-section="transactions"><span class="ico">⇄</span>Transactions</button><button data-section="refunds"><span class="ico">↩</span>Refund Requests</button><button data-section="analytics"><span class="ico">▥</span>Analytics</button><button data-section="support"><span class="ico">☏</span>Customer Support</button><button data-section="staff"><span class="ico">♙</span>Staff & Payroll</button>
+    <div class="nav-label nav-group-label">WEBSITE CONTROL</div>
+    <button data-section="builder"><span class="ico">🎨</span>Homepage Builder</button><button data-section="services"><span class="ico">▣</span>Service Manager</button>
+    <div class="nav-label nav-group-label">PLATFORM & DEVELOPER</div>
+    <button data-section="settings"><span class="ico">⚙</span>Platform Settings</button><button data-section="gateways"><span class="ico">₹</span>Payment Gateways</button><button data-section="audit"><span class="ico">▤</span>Activity & Security</button><button data-section="developer"><span class="ico">⌘</span>Developer Centre</button>
   </nav>
   <div class="side-bottom">Protected admin area<br><span id="projectState">Connecting to Supabase…</span></div>
 </aside>
@@ -295,7 +293,26 @@ Need help? | Contact our support team"></textarea>
 
 <section class="section" id="section-services"><div class="page-head"><div><h2>Service Manager</h2><p>Add, edit, enable, disable and reorder dashboard service cards. New services are catalogue-only until a provider API is connected.</p></div><button class="btn" id="serviceReload">↻ Refresh</button></div><div class="notice" id="serviceNotice"></div><div class="panel" style="margin-bottom:16px"><div class="panel-head"><h3>Add / edit service</h3></div><div class="settings-grid"><div class="setting"><label>Unique ID</label><input id="svcSlug" placeholder="mobile-recharge" maxlength="40"><label>Display name</label><input id="svcTitle" maxlength="50"><label>Description</label><input id="svcDescription" maxlength="120"><label>Icon / emoji</label><input id="svcIcon" maxlength="8" value="⚙"></div><div class="setting"><label>Category</label><select id="svcCategory"><option>Recharge</option><option>Bill Payments</option><option>Banking</option><option>Travel</option><option>Other</option></select><label>Action</label><select id="svcAction"><option value="none">Catalogue only</option><option value="mobile_recharge">Existing mobile recharge screen</option><option value="utility_bill">Existing utility bill screen</option></select><label>Sort order</label><input id="svcOrder" type="number" min="0" max="999" value="100"><label class="checkline"><input id="svcEnabled" type="checkbox" checked> Visible to customers</label></div></div><div class="toolbar"><button class="btn primary" id="serviceSave">Save service</button><button class="btn" id="serviceClear">Clear</button></div></div><div class="panel"><h3>Service catalogue</h3><div class="table-wrap"><table><thead><tr><th>Service</th><th>Category</th><th>Action</th><th>Order</th><th>Status</th><th>Manage</th></tr></thead><tbody id="servicesBody"></tbody></table></div></div></section>
 <section class="section" id="section-gateways"><div class="page-head"><div><h2>Payment Gateway Manager</h2><p>Manage gateway metadata and status. Real processing requires a matching secure backend integration.</p></div><button class="btn" id="gatewayReload">↻ Refresh</button></div><div class="notice" id="gatewayNotice"></div><div class="panel" style="margin-bottom:16px"><h3>Add / configure gateway</h3><p class="muted">Never enter secret keys here. Store secret keys and webhook secrets only in trusted backend environment variables.</p><div class="settings-grid"><div class="setting"><label>Provider</label><select id="gwProvider"><option value="razorpay">Razorpay</option><option value="cashfree">Cashfree</option><option value="payu">PayU</option><option value="phonepe">PhonePe</option><option value="paytm">Paytm</option><option value="custom">Custom</option></select><label>Display name</label><input id="gwName" maxlength="60"><label>Public key / App ID only</label><input id="gwPublicKey" maxlength="160"></div><div class="setting"><label>Mode</label><select id="gwMode"><option value="test">Test / Sandbox</option><option value="live">Live</option></select><label>Methods</label><input id="gwMethods" value="UPI, Cards, Net Banking" maxlength="120"><label class="checkline"><input id="gwEnabled" type="checkbox"> Enabled metadata</label><label class="checkline"><input id="gwDefault" type="checkbox"> Default gateway</label></div></div><button class="btn primary" id="gatewaySave">Save gateway</button></div><div class="panel"><h3>Configured gateways</h3><div class="table-wrap"><table><thead><tr><th>Provider</th><th>Mode</th><th>Methods</th><th>Default</th><th>Status</th><th>Manage</th></tr></thead><tbody id="gatewaysBody"></tbody></table></div></div></section>
-\n</div></main></div>\n<script type="module">
+<section class="section" id="section-developer">
+<div class="page-head"><div><h2>Developer Centre</h2><p>Website source files, Gmail delivery setup and deployment checks.</p></div></div>
+<div class="notice show" style="display:block;background:#fff8e7;color:#805500;border:1px solid #f3dfaa">Security: never enter Gmail App Passwords, Supabase service-role keys or payment secrets in this page or frontend code. Keep secrets in Supabase project settings only.</div>
+<div class="settings-grid">
+<article class="setting" style="grid-column:1/-1"><h4>Gmail SMTP / OTP delivery</h4><p>Customer-support email and SMTP sender email are different settings. Configure SMTP in Supabase, not in the public website.</p><ol style="font-size:.8rem;line-height:1.8;padding-left:20px"><li>Open Supabase Authentication → SMTP Settings and enable custom SMTP.</li><li>Host: <b>smtp.gmail.com</b>; port <b>465 (SSL)</b> or <b>587 (TLS)</b>.</li><li>Use your Gmail address and a Google App Password, not your normal Gmail password.</li><li>In Authentication → Email, set OTP length to <b>6</b> and make sure the email template includes <code>{{ .Token }}</code>.</li><li>Save, then test a real OTP from Login and Signup. Do not paste the App Password into PaySaathi.</li></ol><div class="toolbar"><a class="btn primary" href="https://supabase.com/dashboard/project/hhqcycwfvxoxjizlbivv/auth/providers" target="_blank" rel="noopener">Open Supabase Email Auth ↗</a><a class="btn" href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener">Google App Passwords ↗</a></div></article>
+<article class="setting"><h4>Page source editor</h4><p>Open a page source in GitHub. You need repository access; changes go live only after commit and successful Pages deployment.</p><div class="page-file-links">
+<a target="_blank" rel="noopener" href="https://github.com/bituponrajbongshi04-del/Pay-Saathi/edit/main/index.html">Edit Homepage · index.html ↗</a>
+<a target="_blank" rel="noopener" href="https://github.com/bituponrajbongshi04-del/Pay-Saathi/edit/main/dashboard.html">Edit Customer Dashboard ↗</a>
+<a target="_blank" rel="noopener" href="https://github.com/bituponrajbongshi04-del/Pay-Saathi/edit/main/login.html">Edit Login Page ↗</a>
+<a target="_blank" rel="noopener" href="https://github.com/bituponrajbongshi04-del/Pay-Saathi/edit/main/signup.html">Edit Signup Page ↗</a>
+<a target="_blank" rel="noopener" href="https://github.com/bituponrajbongshi04-del/Pay-Saathi/edit/main/register.html">Edit Registration Page ↗</a>
+<a target="_blank" rel="noopener" href="https://github.com/bituponrajbongshi04-del/Pay-Saathi/edit/main/support.html">Edit Support Desk ↗</a>
+<a target="_blank" rel="noopener" href="https://github.com/bituponrajbongshi04-del/Pay-Saathi/edit/main/contact-support.html">Edit Contact Support ↗</a>
+<a target="_blank" rel="noopener" href="https://github.com/bituponrajbongshi04-del/Pay-Saathi/edit/main/forgot-password.html">Edit Forgot Password ↗</a>
+<a target="_blank" rel="noopener" href="https://github.com/bituponrajbongshi04-del/Pay-Saathi/edit/main/reset-password.html">Edit Reset Password ↗</a>
+<a target="_blank" rel="noopener" href="https://github.com/bituponrajbongshi04-del/Pay-Saathi/edit/main/admin.html">Edit Admin Panel ↗</a>
+</div></article>
+<article class="setting"><h4>Deployment and testing</h4><p>Check the live website, build status and repository.</p><div class="page-file-links"><a target="_blank" rel="noopener" href="https://bituponrajbongshi04-del.github.io/Pay-Saathi/">Open live website ↗</a><a target="_blank" rel="noopener" href="https://github.com/bituponrajbongshi04-del/Pay-Saathi/actions">GitHub deployment status ↗</a><a target="_blank" rel="noopener" href="https://github.com/bituponrajbongshi04-del/Pay-Saathi">Open repository ↗</a></div><p style="margin-top:12px">After editing, wait for the Pages workflow to succeed, then refresh the live site.</p></article>
+<article class="setting" style="grid-column:1/-1"><h4>Editing capability status</h4><p>Homepage Builder edits supported homepage content and theme. Platform Settings edits support contacts, announcements and notifications. Other pages currently have source-file links; a true visual editor for every page needs a page-content CMS and renderer integration. This panel does not pretend that capability is already installed.</p></article>
+</div></section>\n</div></main></div>\n<script type="module">
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 const SUPABASE_URL='https://hhqcycwfvxoxjizlbivv.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_NdrUA-ubf67oW5hiS-Yw4A_-r2xbJRV';
@@ -309,6 +326,7 @@ const dateTime=v=>v?new Date(v).toLocaleString('en-IN',{day:'2-digit',month:'sho
 function notify(text,type='ok',target='notice'){const el=$(target);el.textContent=text;el.className='notice show '+type;setTimeout(()=>el.classList.remove('show'),5500)}
 function setSection(name){document.querySelectorAll('.section').forEach(x=>x.classList.toggle('active',x.id==='section-'+name));document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.section===name));$('sidebar').classList.remove('open');$('overlay').classList.remove('show');if(name==='users'){renderUsers();loadWalletAdjustmentHistory().catch(e=>notify(e.message,'error','walletAdjustNotice'));}if(name==='transactions')renderTransactions();if(name==='refunds')loadRefundRequests().catch(e=>notify(e.message,'error','refundNotice'));if(name==='support'){loadSupport().catch(e=>notify(e.message,'error','supportNotice'));loadArchivedTickets().catch(e=>notify(e.message,'error','supportNotice'));}if(name==='staff')loadStaff().catch(e=>notify(e.message,'error','staffNotice'));if(name==='audit')loadAudit().catch(e=>notify(e.message,'error','auditNotice'));if(name==='services')loadServices().catch(e=>notify(e.message,'error','serviceNotice'));if(name==='gateways')loadGateways().catch(e=>notify(e.message,'error','gatewayNotice'));}
 document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>setSection(b.dataset.section)));
+$('adminNavSearch')?.addEventListener('input',()=>{const q=$('adminNavSearch').value.trim().toLowerCase();document.querySelectorAll('.nav button').forEach(b=>{b.hidden=!!q&&!b.textContent.toLowerCase().includes(q);});document.querySelectorAll('.nav-group-label').forEach(label=>{let n=label.nextElementSibling,visible=false;while(n&&!n.classList.contains('nav-group-label')){if(n.matches('button')&&!n.hidden)visible=true;n=n.nextElementSibling;}label.hidden=!!q&&!visible;});});
 $('menuBtn').addEventListener('click',()=>{$('sidebar').classList.add('open');$('overlay').classList.add('show')});$('overlay').addEventListener('click',()=>{$('sidebar').classList.remove('open');$('overlay').classList.remove('show')});
 async function requireAdmin(){
   const {data:sessionData,error:sessionError}=await supabase.auth.getSession();
@@ -624,8 +642,8 @@ async function saveSupportBranding(){
   const phone=$('supportPhone').value.trim();
   const whatsapp=$('supportWhatsApp').value.trim();
   const message=$('supportMessage').value.trim();
-  if(email&&!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email))throw new Error('Enter a valid support email address.');
-  const digits=v=>v.replace(/\\D/g,'');
+  if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))throw new Error('Enter a valid support email address.');
+  const digits=v=>v.replace(/\D/g,'');
   if(phone&&digits(phone).length<7)throw new Error('Enter a valid support phone number.');
   if(whatsapp&&digits(whatsapp).length<7)throw new Error('Enter a valid WhatsApp number.');
   const {data,error}=await supabase.rpc('paysaathi_admin_save_support_contacts',{
