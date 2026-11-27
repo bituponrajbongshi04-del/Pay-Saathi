@@ -1,13 +1,17 @@
 {
-  "version": "1.1.0",
-  "title": "PaySaathi white UI redesign and demo transaction receipts",
+  "version": "1.1.1",
+  "title": "PaySaathi admin, customer updates and support improvements",
   "date": "2026-11-27",
   "notes": [
     "Rebuilt the Android customer experience with a clean white theme and refreshed navigation.",
     "Added a welcome/onboarding screen before sign-in and account creation.",
     "Redesigned login, sign-up, OTP, dashboard, service forms, profile and notifications.",
     "Added local demo transaction confirmation with a success animation-style receipt and clearly marked TEST ONLY transaction reference.",
-    "Demo receipts are not real payments or operator confirmations; live provider integration is still required."
+    "Demo receipts are not real payments or operator confirmations; live provider integration is still required.",
+    "Removed the blocking Admin loading overlay and restored missing Platform Settings controls.",
+    "Added an Admin Updates & Promotions publisher for customer-wide or individual notifications.",
+    "Published Admin notifications in the customer dashboard Latest Updates area and notification inbox.",
+    "Restored the customer-facing announcement and support contact management flow."
   ],
   "minimumVersion": "1.1.0"
 }
