@@ -44,8 +44,8 @@ import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 private val Navy=Color(0xFF071D35)
-private val Blue=Color(0xFF087FCA)
-private val Cyan=Color(0xFF36C5ED)
+private val Blue=Color(0xFF1769E8)
+private val Cyan=Color(0xFF55D7E8)
 private val Muted=Color(0xFFB9D4E7)
 
 class MainActivity:ComponentActivity(){
@@ -121,14 +121,14 @@ class Api(context:Context){
      if(page=="signup"){Field("Full name",name,{name=it});Field("Mobile number",phone,{phone=it},KeyboardType.Phone)}
      Field("Email address",email,{email=it},KeyboardType.Email)
      if(page!="otp")Field("Password",password,{password=it},secret=true) else Field("6-digit OTP",code,{code=it},KeyboardType.Number)
-     Button(onClick={runTask{when(page){"login"->{api.password(email,password);api.sendOtp(email);navigate("otp")};"signup"->{api.signup(name,email,password,phone);signup=true;navigate("otp")};else->{api.verify(email,code,if(signup)"signup" else "email");navigate("home")}}}},enabled=!waiting,modifier=Modifier.fillMaxWidth()){Text(if(waiting)"Please wait…" else when(page){"otp"->"Verify & continue";"signup"->"Create account";else->"Continue securely"})}
+     Button(onClick={runTask{when(page){"login"->{api.password(email,password);api.sendOtp(email);navigate("otp")};"signup"->{api.signup(name,email,password,phone);signup=true;navigate("otp")};else->{api.verify(email,code,if(signup)"signup" else "email");pageHistory.clear();page="home"}}}},enabled=!waiting,modifier=Modifier.fillMaxWidth()){Text(if(waiting)"Please wait…" else when(page){"otp"->"Verify & continue";"signup"->"Create account";else->"Continue securely"})}
      TextButton(onClick={val target=if(page=="login")"signup" else "login";signup=target=="signup";navigate(target)}){Text(if(page=="login")"New to PaySaathi? Create account" else "Already registered? Log in",color=Cyan)}
     }else if(page=="home"){
      Text("Good to see you",fontSize=25.sp,fontWeight=FontWeight.Bold,color=Color.White)
      Card(colors=CardDefaults.cardColors(containerColor=Blue),shape=RoundedCornerShape(22.dp)){Column(Modifier.padding(20.dp)){Text("WALLET BALANCE",fontSize=10.sp,color=Color.White.copy(.75f));Text("₹ "+balance,fontSize=30.sp,fontWeight=FontWeight.Black,color=Color.White);Text("Preview mode · Live transactions are not active",fontSize=10.sp,color=Color.White.copy(.8f))}}
      Card(colors=CardDefaults.cardColors(containerColor=Color(0xFF123451)),shape=RoundedCornerShape(18.dp)){Column(Modifier.padding(17.dp)){Text("Identity verification",fontWeight=FontWeight.Bold,color=Color.White);Text("KYC status: "+status,color=Cyan,fontSize=12.sp);TextButton(onClick={navigate("kyc")}){Text("Open KYC centre",color=Cyan)}}}
      Text("Your services",fontWeight=FontWeight.Bold,color=Color.White,fontSize=17.sp)
-     listOf("Mobile Recharge","DTH Recharge","Electricity Bills","Money Transfer","AEPS & Assisted Banking","Payout").forEach{label->Card(Modifier.fillMaxWidth().clickable{val key=when(label){"Money Transfer"->"money_transfer";"AEPS & Assisted Banking"->"aeps";"Payout"->"payout";else->""};if(key.isEmpty())error="This service is in preview mode.";else runTask{if(api.access(key))error="KYC approved. Live provider connection is still pending." else navigate("kyc")}},colors=CardDefaults.cardColors(containerColor=Color(0xFF153B5A)),shape=RoundedCornerShape(18.dp)){Row(Modifier.padding(17.dp),verticalAlignment=Alignment.CenterVertically){Icon(Icons.Default.GridView,null,tint=Cyan);Spacer(Modifier.width(12.dp));Text(label,color=Color.White,fontWeight=FontWeight.SemiBold);Spacer(Modifier.weight(1f));Icon(Icons.Default.ChevronRight,null,tint=Cyan)}}}
+     listOf("Mobile Recharge","DTH Recharge","Electricity Bills","Money Transfer","AEPS & Assisted Banking","Payout").forEach{label->Card(Modifier.fillMaxWidth().clickable{val key=when(label){"Money Transfer"->"money_transfer";"AEPS & Assisted Banking"->"aeps";"Payout"->"payout";else->""};if(key.isEmpty())error="This service is in preview mode.";else runTask{if(api.access(key))error="KYC approved. Live provider connection is still pending." else navigate("kyc")}},colors=CardDefaults.cardColors(containerColor=Color(0xFF123451)),shape=RoundedCornerShape(18.dp)){Row(Modifier.padding(17.dp),verticalAlignment=Alignment.CenterVertically){Icon(Icons.Default.GridView,null,tint=Cyan);Spacer(Modifier.width(12.dp));Text(label,color=Color.White,fontWeight=FontWeight.SemiBold);Spacer(Modifier.weight(1f));Icon(Icons.Default.ChevronRight,null,tint=Cyan)}}}
      Text("Your account remains open while KYC is being reviewed.",fontSize=10.sp,color=Muted)
     }else{
      Text("Complete your KYC",fontSize=26.sp,fontWeight=FontWeight.Bold,color=Color.White);Text("Upload PAN and one accepted identity proof. Documents remain private until an authorised reviewer checks them.",fontSize=12.sp,color=Muted)
@@ -136,7 +136,7 @@ class Api(context:Context){
      Row(horizontalArrangement=Arrangement.spacedBy(8.dp)){FilterChip(selected=docType=="pan",onClick={docType="pan"},label={Text("PAN")});FilterChip(selected=docType=="identity_proof",onClick={docType="identity_proof"},label={Text("Identity proof")})}
      OutlinedButton(onClick={picker.launch(arrayOf("application/pdf","image/jpeg","image/png"))}){Icon(Icons.Default.UploadFile,null);Spacer(Modifier.width(8.dp));Text(if(picked==null)"Choose PDF / JPG / PNG" else "Document selected")}
      Button(onClick={runTask{val file=picked?:throw IOException("Choose a document first");api.upload(file,ctx,docType);picked=null}},enabled=!waiting,modifier=Modifier.fillMaxWidth()){Text("Upload securely")}
-     Button(onClick={runTask{api.submitKyc(legalName);status="submitted";page="home"}},enabled=!waiting,modifier=Modifier.fillMaxWidth()){Text("Submit KYC for review")}
+     Button(onClick={runTask{api.submitKyc(legalName);status="submitted";goBack()}},enabled=!waiting,modifier=Modifier.fillMaxWidth()){Text("Submit KYC for review")}
      TextButton(onClick={goBack()}){Text("Back to dashboard",color=Cyan)}
     }
     if(error.isNotBlank())Text(error,color=Color(0xFFFFB4AB),fontSize=11.sp)
