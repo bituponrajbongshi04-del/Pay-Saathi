@@ -27,17 +27,11 @@ supabase db push
 
 It creates the private OTP challenge table, prevents direct customer edits to profile roles/status, grants the existing admin-only branding bucket delete permission, and retains the current personal/global notification schema and policies.
 
-## 3. Deploy the login OTP Edge Function
+## 3. Login and signup OTP
 
-After adding the two Resend secrets:
+No custom login OTP Edge Function deployment is required. Login and signup codes are sent by Supabase Auth through the existing Gmail SMTP provider. The login page checks the password in a temporary non-persistent client, requests an email OTP with account creation disabled, and creates the shared persistent session only after the OTP is verified.
 
-```bash
-supabase functions deploy password-email-otp --no-verify-jwt
-```
-
-The function verifies the account password, sends a cryptographically generated six-digit code through Resend, stores only a hash, expires it after five minutes, limits attempts, re-checks the password before returning a session, and consumes the code once.
-
-Supabase supplies SUPABASE_URL, SUPABASE_ANON_KEY, and SUPABASE_SERVICE_ROLE_KEY to Edge Functions. The service-role key stays server-side.
+The previously deployed `password-email-otp` Edge Function is no longer called by the website. It can remain deployed without affecting this flow; do not add Resend secrets for it.
 
 ## 4. Signup email OTP length
 
