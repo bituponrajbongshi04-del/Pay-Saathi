@@ -62,7 +62,7 @@ jobs:
       - name: Read app version
         id: app_version
         run: |
-          VERSION_NAME=$(sed -n 's/.*versionName = "\\([^"]*\\)".*/\\1/p' android/app/build.gradle.kts | head -n 1)
+          VERSION_NAME=$(grep 'versionName =' android/app/build.gradle.kts | head -n 1 | cut -d '"' -f2)
           test -n "$VERSION_NAME"
           echo "tag=v$VERSION_NAME" >> "$GITHUB_OUTPUT"
       - name: Publish signed APK update
