@@ -187,26 +187,54 @@ function startResendCountdown(seconds=30) {
 }
 
 async function routeAuthenticatedUser(session) {
-  if (!session?.access_token || !session?.refresh_token) throw new Error('Verified session missing. Please sign in again.');
-  const { data: isAdmin, error: roleError } = await supabase.rpc('is_paysaathi_admin');
-  if (roleError) throw new Error('Account permissions could not be checked because the server is temporarily unavailable. Your login has not been cleared. Please retry.');
-  if (!isAdmin) {
-    const { data: profile, error: profileError } = await supabase
-      .from('ps_profiles').select('role,status').eq('id', session.user.id).maybeSingle();
-    if (profileError) throw new Error('Your account role could not be checked right now. Your saved login has not been cleared. Please retry.');
-    if (profile?.role === 'agent' && profile?.status === 'active') {
-      await saveRoleSession('support', session);
-      showMessage('Agent verified. Opening Support Desk…', 'ok');
-      window.setTimeout(() => window.location.replace('support.html'), 350);
-      return;
-    }
-    const { data: siteStatus, error: statusError } = await supabase.rpc('paysaathi_get_public_site_status');
-    if (statusError) throw new Error('Website status could not be checked right now. Your saved login has not been cleared. Please retry.');
-    if (siteStatus?.maintenance_mode === true) throw new Error(siteStatus.maintenance_message || 'PaySaathi is under maintenance. Please try again later. Your login remains saved.');
+  if (!session?.access_token || !session?.refresh_token || !session.user?.id) {
+    throw new Error('Verified session missing. Please sign in again.');
   }
-  await saveRoleSession(isAdmin ? 'admin' : 'customer', session);
-  showMessage(isAdmin ? 'Admin verified. Opening Admin Panel…' : 'Login successful! Opening your dashboard…', 'ok');
-  window.setTimeout(() => window.location.replace(isAdmin ? 'admin.html' : 'dashboard.html'), 500);
+
+  // Resolve the account's role from server-side records only. Never infer roles
+  // from the email address, form choice, or editable user metadata.
+  const [{ data: isAdmin, error: adminError }, { data: profile, error: profileError }] = await Promise.all([
+    supabase.rpc('is_paysaathi_admin'),
+    supabase.from('ps_profiles').select('role,status').eq('id', session.user.id).maybeSingle()
+  ]);
+  if (adminError) throw new Error('Admin permission check is temporarily unavailable. Your login is still saved; please retry.');
+  if (profileError) throw new Error('Your account role could not be checked right now. Your login is still saved; please retry.');
+  if (!profile) throw new Error('Your PaySaathi profile is not ready yet. Please contact support so we can link your account safely.');
+
+  if (isAdmin) {
+    if (profile.role !== 'admin' || profile.status !== 'active') {
+      throw new Error('Admin access is not active for this account. Please contact the project owner.');
+    }
+    await saveRoleSession('admin', session);
+    showMessage('Admin verified. Opening Admin Panel…', 'ok');
+    window.setTimeout(() => window.location.replace('admin.html'), 400);
+    return;
+  }
+
+  if (profile.status !== 'active') {
+    throw new Error('Your account is currently ' + String(profile.status || 'inactive') + '. Please contact PaySaathi support.');
+  }
+
+  if (profile.role === 'agent') {
+    await saveRoleSession('support', session);
+    showMessage('Agent verified. Opening Support Desk…', 'ok');
+    window.setTimeout(() => window.location.replace('support.html'), 400);
+    return;
+  }
+
+  if (profile.role !== 'customer') {
+    throw new Error('This account does not have an active customer role. Please contact PaySaathi support.');
+  }
+
+  const { data: siteStatus, error: statusError } = await supabase.rpc('paysaathi_get_public_site_status');
+  if (statusError) throw new Error('Website status could not be checked right now. Your login is still saved; please retry.');
+  if (siteStatus?.maintenance_mode === true) {
+    throw new Error(siteStatus.maintenance_message || 'PaySaathi is under maintenance. Please try again later. Your login remains saved.');
+  }
+
+  await saveRoleSession('customer', session);
+  showMessage('Customer verified. Opening your dashboard…', 'ok');
+  window.setTimeout(() => window.location.replace('dashboard.html'), 400);
 }
 
 async function requestPasswordOtp() {
