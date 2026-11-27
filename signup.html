@@ -99,6 +99,12 @@ button,input{font:inherit}
 @media(max-width:370px){.nav,.main{width:calc(100% - 22px)}.intro{padding:24px 19px}.form-panel{padding:25px 18px}.benefits{grid-template-columns:1fr}.home-link{padding:8px 10px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
 </style>
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PaySaathi">
+<link rel="icon" type="image/svg+xml" href="./assets/paysaathi-app.svg">
 </head>
 <body>
 <header class="site-header">
@@ -355,5 +361,6 @@ changeButton.addEventListener('click', () => {
   email.focus();
 });
 </script>
+<script src="./pwa.js" defer></script>
 </body>
 </html>

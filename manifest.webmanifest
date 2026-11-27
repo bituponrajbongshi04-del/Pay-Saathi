@@ -1,0 +1,28 @@
+{
+  "name": "PaySaathi — Your money. Your services. One Saathi.",
+  "short_name": "PaySaathi",
+  "description": "PaySaathi digital services platform",
+  "id": "./",
+  "start_url": "./index.html?source=pwa",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "portrait-primary",
+  "background_color": "#f4f9fd",
+  "theme_color": "#071d35",
+  "categories": [
+    "finance",
+    "utilities"
+  ],
+  "icons": [
+    {
+      "src": "./assets/paysaathi-app.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

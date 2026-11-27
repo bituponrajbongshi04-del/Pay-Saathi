@@ -11,6 +11,12 @@
 @media(max-width:760px){.layout{grid-template-columns:1fr;max-width:480px}.intro{min-height:auto;padding:25px 26px}.intro h1{font-size:1.9rem;margin:15px 0 10px}.intro p{font-size:.92rem;margin-bottom:0}.benefits{grid-template-columns:1fr 1fr;gap:10px;margin-top:19px}.benefit{font-size:.8rem;align-items:flex-start}.check{width:22px;height:22px;flex:none}.intro-foot{display:none}.form-panel{padding:29px 26px}.nav{height:64px}}
 @media(max-width:380px){.benefits{grid-template-columns:1fr}.form-panel{padding:25px 20px}.intro{padding:23px 20px}}
 </style>
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PaySaathi">
+<link rel="icon" type="image/svg+xml" href="./assets/paysaathi-app.svg">
 </head>
 <body>
 <header><div class="nav"><a class="brand" href="index.html" aria-label="PaySaathi home"><span class="mark">P</span><span>Pay<span>Saathi</span></span></a><a href="index.html">← Back to home</a></div></header>
@@ -195,5 +201,6 @@ changeButton.addEventListener('click', () => {
   email.focus();
 });
 </script>
+<script src="./pwa.js" defer></script>
 </body>
 </html>

@@ -137,6 +137,12 @@ header{background:rgba(255,255,255,.76);backdrop-filter:blur(24px) saturate(160%
   .reveal{opacity:1;transform:none;will-change:auto}
 }
 </style>
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PaySaathi">
+<link rel="icon" type="image/svg+xml" href="./assets/paysaathi-app.svg">
 </head>
 <body>
 <header><div class="wrap nav">
@@ -404,4 +410,5 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&serviceModal?.class
 await loadHomeControlSettings();
 
 </script>
+<script src="./pwa.js" defer></script>
 </body></html>

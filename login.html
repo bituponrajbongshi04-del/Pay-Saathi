@@ -80,6 +80,12 @@ footer{text-align:center;padding:0 18px 22px;color:#8296a8;font-size:10px}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
 
 </style>
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PaySaathi">
+<link rel="icon" type="image/svg+xml" href="./assets/paysaathi-app.svg">
 </head>
 <body>
 <header><div class="nav">
@@ -340,5 +346,6 @@ changeButton.addEventListener('click', async () => {
   emailInput.focus();
 });
 </script>
+<script src="./pwa.js" defer></script>
 </body>
 </html>
