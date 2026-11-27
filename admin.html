@@ -103,7 +103,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#73a6ff!import
 .boot-dots{display:flex;justify-content:center;gap:6px;margin-top:17px}.boot-dots i{width:6px;height:6px;border-radius:50%;background:#8edfff;animation:dotBounce .9s ease-in-out infinite}.boot-dots i:nth-child(2){animation-delay:.15s}.boot-dots i:nth-child(3){animation-delay:.3s}
 @keyframes bootProgress{0%{transform:translateX(-110%)}100%{transform:translateX(260%)}}@keyframes logoPulse{50%{transform:scale(1.06);box-shadow:0 0 0 14px rgba(74,166,255,.05),0 0 58px rgba(62,169,255,.65)}}@keyframes bootFloat{50%{transform:translateY(-7px)}}@keyframes dotBounce{50%{transform:translateY(-5px);opacity:.55}}@keyframes markGlow{50%{box-shadow:0 0 25px rgba(38,130,255,.55)}}@keyframes sectionIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}@keyframes riseIn{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
-@media(max-width:760px){.sidebar{box-shadow:18px 0 45px rgba(5,20,50,.25)}.boot-card{padding:30px 22px}}
+@media(max-width:760px){.sidebar{box-shadow:18px 0 45px rgba(5,20,50,.25)}}
 /* Public-site brand alignment */
 body{font-family:'Plus Jakarta Sans',Inter,ui-sans-serif,system-ui,sans-serif}
 .sidebar{background:linear-gradient(180deg,#071d35,#0d3154)}
@@ -113,7 +113,6 @@ body{font-family:'Plus Jakarta Sans',Inter,ui-sans-serif,system-ui,sans-serif}
  .admin-nav-search{width:100%;min-width:0;padding:11px 12px;border:1px solid #ffffff2b;border-radius:10px;background:#ffffff12;color:#fff;outline:none;font-size:.8rem}.admin-nav-search::placeholder{color:#a9bed6}.nav-group-label{margin:12px 0 -3px!important}.page-file-links{display:grid;gap:8px}.page-file-links a{display:block;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#f8fbff;color:#155d9a;font-size:.8rem;font-weight:750;text-decoration:none}.page-file-links a:hover{border-color:#9cc9e7;background:#eff7ff}.nav button[hidden],.nav-group-label[hidden]{display:none!important}</style>
 </head>
 <body>
-<div id="psBootScreen" role="status" aria-live="polite"><div class="boot-card"><div class="boot-logo">P</div><div class="boot-title">PaySaathi Admin</div><div class="boot-sub">Securing your workspace · Loading dashboard</div><div class="boot-track"><span></span></div><div class="boot-dots"><i></i><i></i><i></i></div></div></div>
 <div class="overlay" id="overlay"></div>
 <div class="app">
 <aside class="sidebar" id="sidebar">
@@ -123,7 +122,7 @@ body{font-family:'Plus Jakarta Sans',Inter,ui-sans-serif,system-ui,sans-serif}
     <div class="nav-label nav-group-label">DASHBOARD</div>
     <button class="active" data-section="overview"><span class="ico">▦</span>Overview</button>
     <div class="nav-label nav-group-label">CUSTOMERS & OPERATIONS</div>
-    <button data-section="users"><span class="ico">♙</span>Users</button><button data-section="transactions"><span class="ico">⇄</span>Transactions</button><button data-section="refunds"><span class="ico">↩</span>Refund Requests</button><button data-section="analytics"><span class="ico">▥</span>Analytics</button><button data-section="support"><span class="ico">☏</span>Customer Support</button><button data-section="staff"><span class="ico">♙</span>Staff & Payroll</button>
+    <button data-section="users"><span class="ico">♙</span>Users</button><button data-section="updates"><span class="ico">📣</span>Updates & Promotions</button><button data-section="transactions"><span class="ico">⇄</span>Transactions</button><button data-section="refunds"><span class="ico">↩</span>Refund Requests</button><button data-section="analytics"><span class="ico">▥</span>Analytics</button><button data-section="support"><span class="ico">☏</span>Customer Support</button><button data-section="staff"><span class="ico">♙</span>Staff & Payroll</button>
     <div class="nav-label nav-group-label">CUSTOMERS & OPERATIONS</div>
     <a href="admin-kyc.html" class="nav-kyc-link" style="display:flex;align-items:center;gap:10px;padding:11px 14px;margin:4px 0;border-radius:11px;color:inherit;text-decoration:none;font-size:13px;font-weight:700;background:rgba(8,127,202,.10)">◈ KYC Verification Desk ↗</a>
     <div class="nav-label nav-group-label">SERVICE MANAGEMENT</div>
@@ -183,6 +182,20 @@ body{font-family:'Plus Jakarta Sans',Inter,ui-sans-serif,system-ui,sans-serif}
   </div>
 </section>
 
+<section class="section" id="section-updates">
+  <div class="page-head"><div><h2>Updates & Promotions</h2><p>Publish a notice or promotion directly to customer dashboards. Global posts appear in the app's Latest Updates area and notification inbox.</p></div></div>
+  <div class="notice" id="personalNoticeFeedback" role="status" aria-live="polite"></div>
+  <div class="panel" style="max-width:850px">
+    <div class="panel-head"><div><h3>＋ Create customer update</h3><p>Use this for new features, service announcements, offers and important messages.</p></div><span class="pill success">Live publishing</span></div>
+    <div class="settings-grid">
+      <div class="setting"><label for="personalNoticeTitle">Update title</label><input id="personalNoticeTitle" maxlength="100" placeholder="Example: New update released!"></div>
+      <div class="setting"><label for="personalNoticeRecipient">Audience</label><select id="personalNoticeRecipient"><option value="">All customers</option></select><p>Choose one customer or publish to everyone.</p></div>
+      <div class="setting" style="grid-column:1/-1"><label for="personalNoticeMessage">Message / promotion details</label><textarea id="personalNoticeMessage" maxlength="2000" placeholder="Tell customers what is new, what has changed, or what offer is available."></textarea></div>
+    </div>
+    <div class="toolbar" style="margin-top:14px"><button class="btn primary" id="sendPersonalNotice">Publish update</button></div>
+    <p class="muted" style="font-size:.75rem;margin:10px 0 0">Published updates are saved in Supabase. Customers see global updates on their dashboard and in Notifications after refreshing or reopening the app.</p>
+  </div>
+</section>
 <section class="section" id="section-services"><div class="page-head"><div><h2>Service Manager</h2><p>Add, edit, enable, disable and reorder dashboard service cards. New services are catalogue-only until a provider API is connected.</p></div><button class="btn" id="serviceReload">↻ Refresh</button></div><div class="notice" id="serviceNotice"></div><div class="panel" style="margin-bottom:16px"><div class="panel-head"><h3>Add / edit service</h3></div><div class="settings-grid"><div class="setting"><label>Unique ID</label><input id="svcSlug" placeholder="mobile-recharge" maxlength="40"><label>Display name</label><input id="svcTitle" maxlength="50"><label>Description</label><input id="svcDescription" maxlength="120"><label>Icon / emoji</label><input id="svcIcon" maxlength="8" value="⚙"></div><div class="setting"><label>Category</label><select id="svcCategory"><option>Recharge</option><option>Bill Payments</option><option>Banking</option><option>Travel</option><option>Other</option></select><label>Action</label><select id="svcAction"><option value="none">Catalogue only</option><option value="mobile_recharge">Existing mobile recharge screen</option><option value="utility_bill">Existing utility bill screen</option></select><label>Sort order</label><input id="svcOrder" type="number" min="0" max="999" value="100"><label class="checkline"><input id="svcEnabled" type="checkbox" checked> Visible to customers</label></div></div><div class="toolbar"><button class="btn primary" id="serviceSave">Save service</button><button class="btn" id="serviceClear">Clear</button></div></div><div class="panel"><h3>Service catalogue</h3><div class="table-wrap"><table><thead><tr><th>Service</th><th>Category</th><th>Action</th><th>Order</th><th>Status</th><th>Manage</th></tr></thead><tbody id="servicesBody"></tbody></table></div></div></section>
 <section class="section" id="section-gateways"><div class="page-head"><div><h2>Payment Gateway Manager</h2><p>Manage gateway metadata and status. Real processing requires a matching secure backend integration.</p></div><button class="btn" id="gatewayReload">↻ Refresh</button></div><div class="notice" id="gatewayNotice"></div><div class="panel" style="margin-bottom:16px"><h3>Add / configure gateway</h3><p class="muted">Never enter secret keys here. Store secret keys and webhook secrets only in trusted backend environment variables.</p><div class="settings-grid"><div class="setting"><label>Provider</label><select id="gwProvider"><option value="razorpay">Razorpay</option><option value="cashfree">Cashfree</option><option value="payu">PayU</option><option value="phonepe">PhonePe</option><option value="paytm">Paytm</option><option value="custom">Custom</option></select><label>Display name</label><input id="gwName" maxlength="60"><label>Public key / App ID only</label><input id="gwPublicKey" maxlength="160"></div><div class="setting"><label>Mode</label><select id="gwMode"><option value="test">Test / Sandbox</option><option value="live">Live</option></select><label>Methods</label><input id="gwMethods" value="UPI, Cards, Net Banking" maxlength="120"><label class="checkline"><input id="gwEnabled" type="checkbox"> Enabled metadata</label><label class="checkline"><input id="gwDefault" type="checkbox"> Default gateway</label></div></div><button class="btn primary" id="gatewaySave">Save gateway</button></div><div class="panel"><h3>Configured gateways</h3><div class="table-wrap"><table><thead><tr><th>Provider</th><th>Mode</th><th>Methods</th><th>Default</th><th>Status</th><th>Manage</th></tr></thead><tbody id="gatewaysBody"></tbody></table></div></div></section>
 <section class="section" id="section-developer">
@@ -678,7 +691,7 @@ try{
     let activityRefreshBusy=false;window.setInterval(async()=>{if(document.visibilityState!=='visible'||activityRefreshBusy)return;activityRefreshBusy=true;try{await loadAgentActivity();if($('section-support')?.classList.contains('active'))await loadSupport();}catch(e){console.warn('Support live refresh failed:',e);}finally{activityRefreshBusy=false;}},20000);
   }
 }catch(e){console.error(e);$('projectState').textContent='Connection issue · retry available';notify(e.message,'error');$('adminStatus').textContent='Could not verify access';}
-finally{window.setTimeout(()=>document.getElementById('psBootScreen')?.classList.add('is-hidden'),180);}
+finally{/* No blocking boot overlay: the admin workspace remains visible during auth recovery. */}
 supabase.auth.onAuthStateChange((event)=>{if(event==='SIGNED_OUT'&&currentUser&&!window.__paysaathiLoggingOut){currentUser=null;location.replace('login.html?next=admin.html');}});
 </script>
 <script src="./pwa.js" defer></script>
