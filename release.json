@@ -1,8 +1,10 @@
 {
-  "version": "1.2.0",
-  "title": "PaySaathi 1.2.0 — White-label workspace foundation",
+  "version": "1.2.1",
+  "title": "PaySaathi 1.2.1 — Tenant security and domain verification",
   "date": "2026-11-28",
   "notes": [
+    "Hardened client table grants for private gateway, service catalogue, OTP and wallet-security records; corrected tenant membership row visibility.",
+    "Added server-side DNS TXT ownership verification for Enterprise custom domains and integrated domain registration/verification in White-label Studio.",
     "Added White-label Studio for platform-owner workspace creation and business-owner brand customisation.",
     "Added the first secure white-label tenant foundation: separate business workspaces, membership roles, branding records, subscription metadata and tenant audit logs.",
     "Customer dashboard language now matches a personal customer account instead of a retailer portal.",
