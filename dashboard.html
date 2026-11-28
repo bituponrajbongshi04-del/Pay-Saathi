@@ -694,6 +694,8 @@ body{background:linear-gradient(145deg,#f8fcff 0%,#eef8ff 48%,#fff 100%)!importa
           <button type="button" data-tx-filter="recharge" aria-pressed="false" class="bg-white text-gray-600 border border-gray-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">Recharges</button>
           <button type="button" data-tx-filter="payout" aria-pressed="false" class="bg-white text-gray-600 border border-gray-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">Payouts</button>
           <button type="button" data-tx-filter="aeps" aria-pressed="false" class="bg-white text-gray-600 border border-gray-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">AEPS</button>
+          <button type="button" data-tx-filter="bill" aria-pressed="false" class="bg-white text-gray-600 border border-gray-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">Bills</button>
+          <button type="button" data-tx-filter="wallet" aria-pressed="false" class="bg-white text-gray-600 border border-gray-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">Wallet</button>
           <button type="button" data-tx-filter="failed" aria-pressed="false" class="bg-white text-gray-600 border border-gray-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">Failed</button>
         </div>
         <label for="transaction-search" class="sr-only">Search transactions</label>
@@ -1125,10 +1127,12 @@ body{background:linear-gradient(145deg,#f8fcff 0%,#eef8ff 48%,#fff 100%)!importa
       if (type.includes('aeps') || type.includes('micro_atm')) return 'aeps';
       if (type.includes('payout') || type.includes('cashout')) return 'payout';
       if (type.includes('recharge')) return 'recharge';
+      if (type.includes('bill')) return 'bill';
+      if (['topup','add_fund','credit','debit','commission','cashback','refund'].includes(type)) return 'wallet';
       return 'other';
     }
     function setTransactionFilter(filter) {
-      activeTransactionFilter = ['all','recharge','payout','aeps','failed'].includes(filter) ? filter : 'all';
+      activeTransactionFilter = ['all','recharge','payout','aeps','bill','wallet','failed'].includes(filter) ? filter : 'all';
       document.querySelectorAll('#transaction-filters [data-tx-filter]').forEach(button => {
         const active = button.dataset.txFilter === activeTransactionFilter;
         button.setAttribute('aria-pressed', String(active));
