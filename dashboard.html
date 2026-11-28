@@ -489,14 +489,12 @@ body{background:linear-gradient(145deg,#f8fcff 0%,#eef8ff 48%,#fff 100%)!importa
         </nav>
       </div>
 
-      <!-- Desktop Earning Stats -->
+      <!-- Customer-first sidebar card: avoid showing retailer-only earnings to customers -->
       <div class="bg-blue-800/80 p-4 rounded-2xl border border-blue-500/30 text-sm">
-        <p class="text-blue-200 text-xs">Today's Earnings</p>
-        <p class="text-xl font-bold text-green-300 mt-1">—</p>
-        <p class="text-[11px] text-blue-200 mt-2 flex items-center justify-between">
-          <span>Tier: <strong class="text-white">—</strong></span>
-          <span>Comm: <strong class="text-white">—</strong></span>
-        </p>
+        <p class="text-blue-100 text-xs font-bold tracking-wide">YOUR PAYSAATHI</p>
+        <p class="text-white font-semibold mt-1">Need help with a service?</p>
+        <p class="text-blue-200 text-xs mt-1">Open Support to chat with PaySaathi AI or raise a ticket.</p>
+        <button type="button" onclick="switchTab('support')" class="mt-3 w-full rounded-xl bg-white text-blue-800 font-bold py-2 text-xs">Visit Support</button>
       </div>
     </aside>
 
@@ -510,8 +508,7 @@ body{background:linear-gradient(145deg,#f8fcff 0%,#eef8ff 48%,#fff 100%)!importa
         <div class="flex justify-between items-center mb-6">
           <div>
             <p class="text-blue-100 text-sm flex items-center gap-1.5">
-              <span id="dashboard-greeting">Hi, Retailer</span>
-              <span class="bg-amber-400 text-blue-950 text-[10px] font-extrabold px-1.5 py-0.2 rounded-full uppercase">Gold</span>
+              <span id="dashboard-greeting">Welcome back</span>
             </p>
             <h1 class="text-xl font-extrabold tracking-tight">Your PaySaathi dashboard</h1>
           </div>
@@ -557,17 +554,7 @@ body{background:linear-gradient(145deg,#f8fcff 0%,#eef8ff 48%,#fff 100%)!importa
         </div>
       </div>
 
-      <!-- Mobile earnings summary -->
-      <div id="dashboard-stats" class="md:hidden mx-4 mt-4 bg-white border border-gray-100 rounded-2xl p-3 shadow-sm flex items-center justify-between">
-        <div>
-          <p class="text-[11px] text-gray-500">Today's Earnings</p>
-          <p class="text-base font-extrabold text-green-600">—</p>
-        </div>
-        <div class="text-right text-[11px] text-gray-500">
-          <p>Tier: <strong class="text-gray-800">—</strong></p>
-          <p>Commission: <strong class="text-gray-800">—</strong></p>
-        </div>
-      </div>
+
 
       <!-- TAB 1: HOME VIEW -->
       <div id="tab-home" class="px-5 -mt-3 md:mt-6 space-y-6 flex-1">
@@ -686,36 +673,14 @@ body{background:linear-gradient(145deg,#f8fcff 0%,#eef8ff 48%,#fff 100%)!importa
           </div>
         </div>
 
-        <!-- Coming Soon Section -->
-        <div class="pb-6">
-          <h2 class="text-xs font-bold text-gray-500 mb-3 uppercase tracking-wider">Coming Soon</h2>
-          <div class="bg-white p-3 sm:p-4 rounded-2xl shadow-sm border border-gray-100 grid grid-cols-2 min-[380px]:grid-cols-4 gap-3 sm:gap-4 text-center opacity-70">
-            <div class="flex flex-col items-center space-y-2">
-              <div class="w-12 h-12 bg-gray-50 text-gray-400 rounded-xl flex items-center justify-center">
-                <i class="fa-solid fa-plane text-lg"></i>
-              </div>
-              <span class="text-xs text-gray-500 font-medium">Flight</span>
-            </div>
-            <div class="flex flex-col items-center space-y-2">
-              <div class="w-12 h-12 bg-gray-50 text-gray-400 rounded-xl flex items-center justify-center">
-                <i class="fa-solid fa-bus text-lg"></i>
-              </div>
-              <span class="text-xs text-gray-500 font-medium">Bus</span>
-            </div>
-            <div class="flex flex-col items-center space-y-2">
-              <div class="w-12 h-12 bg-gray-50 text-gray-400 rounded-xl flex items-center justify-center">
-                <i class="fa-solid fa-hotel text-lg"></i>
-              </div>
-              <span class="text-xs text-gray-500 font-medium">Hotel</span>
-            </div>
-            <div class="flex flex-col items-center space-y-2">
-              <div class="w-12 h-12 bg-gray-50 text-gray-400 rounded-xl flex items-center justify-center">
-                <i class="fa-solid fa-credit-card text-lg"></i>
-              </div>
-              <span class="text-xs text-gray-500 font-medium">Card</span>
-            </div>
+        <!-- Honest service availability notice: do not advertise inactive services as usable -->
+        <section class="rounded-2xl border border-dashed border-blue-200 bg-blue-50/70 p-4">
+          <div class="flex items-start gap-3">
+            <span class="w-10 h-10 shrink-0 rounded-xl bg-white text-blue-600 flex items-center justify-center"><i class="fa-solid fa-layer-group"></i></span>
+            <div><h2 class="text-sm font-extrabold text-slate-800">More services are on the way</h2>
+            <p class="text-xs leading-5 text-slate-600 mt-1">We’ll show new services here only after they are enabled and verified. Your available services remain in the sections above.</p></div>
           </div>
-        </div>
+        </section>
 
         <section id="paysaathi-dynamic-services" class="space-y-3" aria-label="Additional services"></section>
       </div>
