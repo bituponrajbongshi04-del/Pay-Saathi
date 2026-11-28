@@ -1,6 +1,6 @@
 {
-  "version": "1.1.7",
-  "title": "PaySaathi 1.1.7 — Transaction clarity",
+  "version": "1.1.8",
+  "title": "PaySaathi 1.1.8 — Privacy and security update",
   "date": "2026-11-28",
   "notes": [
     "Customer dashboard language now matches a personal customer account instead of a retailer portal.",
@@ -12,7 +12,8 @@
     "Payment and regulated services remain disabled until verified providers and required compliance integrations are configured.",
     "Expanded transaction history filters with dedicated bill-payment and wallet-activity views.",
     "Clarified that the automated support guide provides guided answers and does not verify live transaction status; customers can raise a human support ticket.",
-    "Transaction history now distinguishes successful, processing, pending, failed, rejected and cancelled states accurately."
+    "Transaction history now distinguishes successful, processing, pending, failed, rejected and cancelled states accurately.",
+    "Public support directory now returns only the agent display name and required identifier; private staff notes, availability and online/offline presence are not exposed."
   ],
   "minimumVersion": "1.1.0"
 }
