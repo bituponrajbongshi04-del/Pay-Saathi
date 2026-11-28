@@ -1,6 +1,6 @@
 {
-  "version": "1.1.5",
-  "title": "PaySaathi 1.1.5 — Customer dashboard improvements",
+  "version": "1.1.6",
+  "title": "PaySaathi 1.1.6 — Clearer support experience",
   "date": "2026-11-28",
   "notes": [
     "Customer dashboard language now matches a personal customer account instead of a retailer portal.",
@@ -10,7 +10,8 @@
     "Restricted public execution of internal security-definer helper and trigger functions; signed-in application role checks remain in place.",
     "Improved customer-facing update notes and refreshed app shell cache version.",
     "Payment and regulated services remain disabled until verified providers and required compliance integrations are configured.",
-    "Expanded transaction history filters with dedicated bill-payment and wallet-activity views."
+    "Expanded transaction history filters with dedicated bill-payment and wallet-activity views.",
+    "Clarified that the automated support guide provides guided answers and does not verify live transaction status; customers can raise a human support ticket."
   ],
   "minimumVersion": "1.1.0"
 }
