@@ -12,6 +12,7 @@ const CORE_FILES = [
   new URL("./manifest.webmanifest", BASE_URL).href,
   new URL("./assets/paysaathi-app.svg", BASE_URL).href,
   new URL("./release.json", BASE_URL).href,
+  new URL("./tenant-branding.js", BASE_URL).href,
   new URL("./kyc.html", BASE_URL).href,
   new URL("./admin-kyc.html", BASE_URL).href,
   new URL("./white-label.html", BASE_URL).href,
