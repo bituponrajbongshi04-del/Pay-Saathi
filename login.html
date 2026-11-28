@@ -238,6 +238,15 @@ async function routeAuthenticatedUser(session) {
     return;
   }
 
+  const tenantStaffMembership = Array.isArray(tenantMemberships) &&
+    tenantMemberships.some(item => item.role === 'staff');
+  if (tenantStaffMembership && profile.role === 'customer') {
+    await saveRoleSession('tenant-staff', session);
+    showMessage('Business team membership verified. Opening Support Desk…', 'ok');
+    window.setTimeout(() => window.location.replace('business-staff.html'), 400);
+    return;
+  }
+
   if (profile.role !== 'customer') {
     throw new Error('This account does not have an active customer role. Please contact PaySaathi support.');
   }
