@@ -24,6 +24,7 @@ const CORE_FILES = [
   new URL("./admin-kyc.html", BASE_URL).href,
   new URL("./white-label.html", BASE_URL).href,
   new URL("./business-admin.html", BASE_URL).href,
+  new URL("./business-staff.html", BASE_URL).href,
   new URL("./kyc.js", BASE_URL).href,
   new URL("./kyc-gate.js", BASE_URL).href
 ];
