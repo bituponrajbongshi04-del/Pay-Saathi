@@ -6,6 +6,8 @@ PaySaathi is evolving from a single-business recharge and bill-payment app into 
 - A platform owner can create separate business workspaces for customers.
 - Each workspace has its own membership roles, brand name, logo URL, colours, support contacts and subscription record.
 - A business owner can switch between workspaces they are explicitly a member of.
+- Business owners and administrators have a separate tenant-scoped Business Admin page for team membership and subscription status; they never receive the platform-wide admin console.
+- Owners can add existing active PaySaathi accounts as tenant admins, staff or customers. Tenant admins can add staff or customers. New email invitations are not yet enabled.
 - The signed-in workspace branding is applied on the shared PaySaathi web host; verified custom hostnames can resolve their public brand.
 - Custom domain ownership can be verified through a server-side DNS TXT challenge. Automatic hostname routing and SSL provisioning are not yet enabled.
 - The original public homepage (index.html) remains a separately maintained public marketing page and is intentionally preserved.
@@ -21,7 +23,7 @@ PaySaathi is evolving from a single-business recharge and bill-payment app into 
 - Legacy rows in the migrated tables were backfilled and checked; the phase-one and phase-three FK validations passed.
 - Database triggers assign the signed-in user's active tenant on supported inserts and reject explicit cross-tenant writes or tenant reassignment.
 - These controls are a foundation, not a declaration of full commercial readiness. Existing permissive policies and every app workflow still need end-to-end review, especially admin/staff flows and archived data.
-- Workspace plans currently create trial/subscription metadata. There is no live payment-provider checkout, recurring billing, dunning or automated paid-plan activation yet.
+- Workspace plans currently create trial/subscription metadata. Owners retain access to workspace management after trial expiry, while operational tenant access and adding new members remain blocked. There is no live payment-provider checkout, recurring billing, dunning or automated paid-plan activation yet.
 - Custom-domain TXT verification proves domain ownership only. Hosting routing, certificate provisioning and tenant-aware production DNS are not yet automated.
 
 ## Release boundary
