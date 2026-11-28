@@ -31,7 +31,7 @@ jobs:
                       target = pathlib.Path(tmp) / f"{pathlib.Path(filename).stem}-{number}.mjs"
                       target.write_text(script, encoding="utf-8")
                       targets.append(target)
-              for filename in ["pwa.js", "service-worker.js"]:
+              for filename in ["pwa.js", "service-worker.js", "tenant-branding.js"]:
                   target = pathlib.Path(tmp) / filename
                   target.write_text(pathlib.Path(filename).read_text(encoding="utf-8"), encoding="utf-8")
                   targets.append(target)
