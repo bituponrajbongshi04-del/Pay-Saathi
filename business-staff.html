@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#087fca">
+<title>Team Support Desk | PaySaathi</title>
+<style>
+:root{--navy:#071d35;--blue:#087fca;--ink:#10243a;--muted:#62768b;--line:#e4edf5;--bg:#f3f8fc}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5}
+header{background:#fff;border-bottom:1px solid var(--line);padding:13px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px;position:sticky;top:0;z-index:2}
+.brand{font-weight:900;color:var(--navy);display:flex;gap:10px;align-items:center}.mark{width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,#27b9e8,#0874bd);color:#fff;display:grid;place-items:center}
+nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap}a{color:#176c9e;text-decoration:none;font-size:12px;font-weight:850}.btn{border:0;border-radius:10px;padding:10px 13px;background:linear-gradient(110deg,#139de0,#0872ba);color:white;font-weight:850;cursor:pointer}.btn.secondary{background:#eaf3fa;color:#234660}.btn:disabled{opacity:.55;cursor:wait}
+main{width:min(980px,calc(100% - 28px));margin:24px auto 50px}.hero{background:linear-gradient(125deg,#0b2d4b,#075f9b);color:#fff;border-radius:18px;padding:23px;margin-bottom:16px}.hero h1{margin:0 0 4px;font-size:27px}.hero p{margin:0;color:#d7eafa;font-size:13px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:17px;margin-bottom:13px}.muted{font-size:12px;color:var(--muted)}select,textarea{width:100%;border:1px solid #d5e2ed;border-radius:10px;padding:10px;font:inherit;background:white}.field{display:grid;gap:6px;margin:10px 0}.field label{font-size:12px;font-weight:850;color:#38546c}
+.notice{display:none;border-radius:10px;padding:10px 12px;margin:10px 0;font-size:12px}.notice.show{display:block}.notice.error{background:#fff0ef;color:#a1261c}.notice.ok{background:#eaf8f0;color:#12623c}
+.ticket{background:white;border:1px solid var(--line);border-radius:16px;padding:17px;margin:13px 0;box-shadow:0 7px 22px #0b2e5008}.top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.top h2{font-size:16px;margin:0 0 3px}.meta{font-size:11px;color:var(--muted)}.pill{display:inline-block;background:#edf5fb;color:#285573;border-radius:999px;padding:4px 9px;font-size:10px;font-weight:900;text-transform:capitalize;white-space:nowrap}
+.original{background:#f5f9fc;border-radius:10px;padding:12px;margin:12px 0;font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere}.thread{display:grid;gap:8px;margin:12px 0}.msg{border:1px solid var(--line);border-radius:11px;padding:10px 12px;font-size:12px}.msg.mine{background:#eef7ff;border-color:#d4e9fb}.msg strong{display:block;font-size:11px;margin-bottom:3px}.msg p{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}.msg time{font-size:10px;color:var(--muted)}
+.reply{display:grid;gap:9px;margin-top:12px}.reply textarea{min-height:76px;resize:vertical}.reply-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.status-row{display:flex;gap:8px;align-items:center;margin-top:12px}.status-row select{max-width:190px}
+@media(max-width:600px){header{padding:11px}.hero{padding:19px}.top{display:block}.pill{margin-top:7px}.status-row{align-items:stretch;flex-direction:column}.status-row select{max-width:none}}
+</style>
+</head>
+<body>
+<header><div class="brand"><span class="mark">PS</span><span data-brand-name>Team Support Desk</span></div><nav><a href="./business-admin.html">Business Admin</a><a href="./dashboard.html">Customer app</a><button class="btn secondary" id="logout">Log out</button></nav></header>
+<main>
+<section class="hero"><h1>Support Desk</h1><p>Handle customer requests assigned to your business workspace. Ticket access is limited to your active workspace.</p></section>
+<section class="card"><div class="field"><label for="workspace">Business workspace</label><select id="workspace"><option>Loading…</option></select></div><div id="notice" class="notice"></div><div class="reply-actions"><button class="btn secondary" id="refresh">Refresh tickets</button><span class="muted" id="count"></span></div></section>
+<div id="tickets"><section class="card muted">Loading assigned tickets…</section></div>
+</main>
+<script type="module">
+import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+const supabase=createClient('https://hhqcycwfvxoxjizlbivv.supabase.co','sb_publishable_NdrUA-ubf67oW5hiS-Yw4A_-r2xbJRV',{auth:{storageKey:'paysaathi.auth.v1',persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
+const $=id=>document.getElementById(id);let workspaces=[],active=null,tickets=[];
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function notice(message,type='ok'){$('notice').textContent=message;$('notice').className='notice show '+type;}
+function date(v){const d=new Date(v);return Number.isNaN(d.getTime())?'':d.toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'});}
+function renderTickets(){
+ $('count').textContent=tickets.length+' ticket'+(tickets.length===1?'':'s');
+ if(!tickets.length){$('tickets').innerHTML='<section class="card"><strong>No assigned tickets</strong><p class="muted">New tickets assigned to your account will appear here.</p></section>';return;}
+ $('tickets').innerHTML=tickets.map(t=>{
+  const messages=Array.isArray(t.messages)?t.messages:[];
+  const thread=messages.map(m=>'<div class="msg '+(m.sender_id===window.__paysaathiUser?'mine':'')+'"><strong>'+esc(m.sender_name||'Support')+'</strong><p>'+esc(m.message)+'</p><time>'+esc(date(m.created_at))+'</time></div>').join('');
+  const options=['open','in_progress','closed'].map(s=>'<option value="'+s+'" '+(String(t.status).toLowerCase()===s?'selected':'')+'>'+s.replace('_',' ')+'</option>').join('');
+  return '<article class="ticket"><div class="top"><div><h2>'+esc(t.subject||'Support request')+'</h2><div class="meta">Ticket '+esc(t.id)+' · '+esc(t.customer_name||'Customer')+' · '+esc(date(t.created_at))+'</div></div><span class="pill">'+esc(t.status)+'</span></div><div class="original">'+esc(t.message||'No original message')+'</div><div class="thread">'+(thread||'<div class="muted">No replies yet.</div>')+'</div><form class="reply" data-ticket="'+esc(t.id)+'"><textarea name="message" maxlength="2000" required placeholder="Write a helpful reply to the customer…"></textarea><div class="reply-actions"><button class="btn" type="submit">Send reply</button><span class="muted">Maximum 2,000 characters</span></div></form><div class="status-row"><label class="muted" for="status-'+esc(t.id)+'">Ticket status</label><select id="status-'+esc(t.id)+'" data-status="'+esc(t.id)+'">'+options+'</select><button class="btn secondary" type="button" data-save-status="'+esc(t.id)+'">Update status</button></div></article>';
+ }).join('');
+ $('tickets').querySelectorAll('[data-ticket]').forEach(form=>form.addEventListener('submit',async e=>{
+  e.preventDefault();const button=form.querySelector('button'),input=form.querySelector('textarea'),message=input.value.trim();if(!message)return;button.disabled=true;button.textContent='Sending…';
+  try{const {error}=await supabase.rpc('ps_tenant_staff_reply_ticket',{p_ticket_id:form.dataset.ticket,p_message:message});if(error)throw error;input.value='';await loadTickets();notice('Reply sent to the customer.');}
+  catch(err){notice(err.message,'error');button.disabled=false;button.textContent='Send reply';}
+ }));
+ $('tickets').querySelectorAll('[data-save-status]').forEach(button=>button.addEventListener('click',async()=>{
+  const id=button.dataset.saveStatus,status=$('status-'+id).value;button.disabled=true;
+  try{const {error}=await supabase.rpc('ps_tenant_staff_update_ticket_status',{p_ticket_id:id,p_status:status});if(error)throw error;await loadTickets();notice('Ticket status updated.');}
+  catch(err){notice(err.message,'error');button.disabled=false;}
+ }));
+}
+async function loadTickets(){ $('tickets').innerHTML='<section class="card muted">Loading assigned tickets…</section>';const {data,error}=await supabase.rpc('ps_tenant_staff_list_tickets');if(error)throw error;tickets=Array.isArray(data)?data:[];renderTickets();}
+async function loadWorkspaces(){
+ const {data,error}=await supabase.rpc('ps_tenant_list_available');if(error)throw error;
+ workspaces=(Array.isArray(data)?data:[]).filter(w=>['staff','owner','admin'].includes(w.role));
+ if(!workspaces.length)throw new Error('No active business support membership is linked to this account.');
+ $('workspace').innerHTML=workspaces.map(w=>'<option value="'+esc(w.id)+'">'+esc(w.name)+' · '+esc(w.role)+'</option>').join('');
+ active=workspaces.find(w=>w.is_default&&w.role==='staff')||workspaces.find(w=>w.role==='staff')||workspaces[0];
+ $('workspace').value=active.id;
+ if(!active.is_default){const {error:switchError}=await supabase.rpc('ps_tenant_set_active',{p_tenant_id:active.id});if(switchError)throw switchError;}
+ await loadTickets();
+}
+$('workspace').addEventListener('change',async()=>{const w=workspaces.find(x=>x.id===$('workspace').value);if(!w)return;try{const {error}=await supabase.rpc('ps_tenant_set_active',{p_tenant_id:w.id});if(error)throw error;active=w;await loadTickets();notice('Workspace switched.');}catch(e){notice(e.message,'error');}});
+$('refresh').addEventListener('click',async()=>{const b=$('refresh');b.disabled=true;try{await loadTickets();notice('Tickets refreshed.');}catch(e){notice(e.message,'error');}finally{b.disabled=false;}});
+$('logout').addEventListener('click',async()=>{await supabase.auth.signOut({scope:'local'});location.replace('./login.html');});
+async function boot(){const {data,error}=await supabase.auth.getSession();if(error)throw error;if(!data.session){location.replace('./login.html?next=business-staff.html');return;}window.__paysaathiUser=data.session.user.id;await loadWorkspaces();}
+boot().catch(e=>notice(e.message,'error'));
+</script>
+<script src="./tenant-branding.js" defer></script><script src="./pwa.js" defer></script>
+</body></html>
