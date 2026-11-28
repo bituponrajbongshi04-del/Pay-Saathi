@@ -234,7 +234,7 @@ async function routeAuthenticatedUser(session) {
   if (tenantOwnerMembership && profile.role === 'customer') {
     await saveRoleSession('tenant-admin', session);
     showMessage('Business owner verified. Opening your White-label Studio…', 'ok');
-    window.setTimeout(() => window.location.replace('white-label.html'), 400);
+    window.setTimeout(() => window.location.replace('business-admin.html'), 400);
     return;
   }
 
