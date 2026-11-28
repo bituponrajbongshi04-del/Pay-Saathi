@@ -6,7 +6,8 @@ PaySaathi is evolving from a single-business recharge and bill-payment app into 
 - A platform owner can create separate business workspaces for customers.
 - Each workspace has its own membership roles, brand name, logo URL, colours, support contacts and subscription record.
 - A business owner can switch between workspaces they are explicitly a member of.
-- Business owners and administrators have a separate tenant-scoped Business Admin page for team membership and subscription status; they never receive the platform-wide admin console.
+- Business owners and administrators have a separate tenant-scoped Business Admin page for team membership, support-ticket assignment and subscription status; they never receive the platform-wide admin console.
+- Tenant staff have a separate Support Desk. They can see only tickets assigned to them, reply to customers and update ticket status inside their active workspace.
 - Owners can add existing active PaySaathi accounts as tenant admins, staff or customers. Tenant admins can add staff or customers. New email invitations are not yet enabled.
 - The signed-in workspace branding is applied on the shared PaySaathi web host; verified custom hostnames can resolve their public brand.
 - Custom domain ownership can be verified through a server-side DNS TXT challenge. Automatic hostname routing and SSL provisioning are not yet enabled.
