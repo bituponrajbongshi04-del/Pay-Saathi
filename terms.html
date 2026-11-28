@@ -212,5 +212,6 @@ const menuBtn=document.getElementById('menuBtn'),mobileNav=document.getElementBy
 menuBtn?.addEventListener('click',()=>{const open=mobileNav.classList.toggle('open');menuBtn.setAttribute('aria-expanded',String(open));menuBtn.textContent=open?'✕':'☰';});
 mobileNav?.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{mobileNav.classList.remove('open');menuBtn.setAttribute('aria-expanded','false');menuBtn.textContent='☰';}));
 </script>
+<script src="./tenant-branding.js" defer></script>
 <script src="./pwa.js" defer></script>
 </body></html>
