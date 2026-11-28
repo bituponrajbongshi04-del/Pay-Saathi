@@ -225,18 +225,13 @@ async function routeAuthenticatedUser(session) {
   // A customer account that owns a white-label business workspace is routed
   // to its business studio. Tenant ownership is read from protected membership
   // records, never from editable user metadata.
-  const { data: tenantMembership, error: tenantMembershipError } = await supabase
-    .from('ps_tenant_memberships')
-    .select('role,status')
-    .eq('user_id', session.user.id)
-    .eq('status', 'active')
-    .in('role', ['owner','admin'])
-    .limit(1)
-    .maybeSingle();
+  const { data: tenantMemberships, error: tenantMembershipError } = await supabase.rpc('ps_tenant_list_available');
   if (tenantMembershipError) {
     throw new Error('Business workspace permissions could not be checked right now. Your login is still saved; please retry.');
   }
-  if (tenantMembership && profile.role === 'customer') {
+  const tenantOwnerMembership = Array.isArray(tenantMemberships) &&
+    tenantMemberships.some(item => ['owner','admin'].includes(item.role));
+  if (tenantOwnerMembership && profile.role === 'customer') {
     await saveRoleSession('tenant-admin', session);
     showMessage('Business owner verified. Opening your White-label Studio…', 'ok');
     window.setTimeout(() => window.location.replace('white-label.html'), 400);
