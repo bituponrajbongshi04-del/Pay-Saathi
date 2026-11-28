@@ -17,7 +17,7 @@ For every release:
 4. Wait for GitHub Pages deployment to finish successfully.
 5. When an installed app next opens online and detects the new service worker, PaySaathi displays the release title and notes. The user can select **Update now** or **Later**. Selecting Update now activates the waiting worker and reloads the app.
 
-Do not use `skipWaiting()` automatically during install: the update prompt is intentionally user-approved. An update cannot be downloaded while the app is closed or offline; the browser checks when the app is opened online.
+The service worker keeps an update in the waiting state until the user selects **Update now** in the in-app prompt. Only that action sends the skip-waiting message and reloads the app. An update cannot be downloaded while the app is closed or offline; the browser checks when the app is opened online.
 
 ## Files
 - `manifest.webmanifest`: app name, icon, display mode, start URL and scope.
