@@ -6,7 +6,7 @@ PaySaathi is evolving from a single-business recharge and bill-payment app into 
 - A platform owner can create separate business workspaces for customers.
 - Each workspace has its own membership roles, brand name, logo URL, colours, support contacts and subscription record.
 - A business owner can switch between workspaces they are explicitly a member of.
-- Custom domain records are reserved for verified hostnames; live DNS verification and automatic domain routing are not yet enabled.
+- Custom domain ownership can be verified through a server-side DNS TXT challenge. Automatic hostname routing and SSL provisioning are not yet enabled.
 - The original public homepage (index.html) remains a separately maintained public marketing page.
 
 ## Current architecture
