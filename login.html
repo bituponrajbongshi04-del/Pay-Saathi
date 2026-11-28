@@ -233,7 +233,7 @@ async function routeAuthenticatedUser(session) {
     tenantMemberships.some(item => ['owner','admin'].includes(item.role));
   if (tenantOwnerMembership && profile.role === 'customer') {
     await saveRoleSession('tenant-admin', session);
-    showMessage('Business owner verified. Opening your White-label Studio…', 'ok');
+    showMessage('Business workspace verified. Opening Business Admin…', 'ok');
     window.setTimeout(() => window.location.replace('business-admin.html'), 400);
     return;
   }
