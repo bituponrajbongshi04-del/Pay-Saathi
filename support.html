@@ -82,5 +82,6 @@ $('loginForm').addEventListener('submit',async e=>{e.preventDefault();$('loginEr
 $('refresh').onclick=()=>Promise.all([load(),loadRefundQueue()]).catch(e=>alert(e.message));$('logout').onclick=async()=>{if(staffSessionId)await db.rpc('ps_staff_session_end',{p_session_id:staffSessionId}).catch(()=>{});await updatePresence('offline');await recordAgentAction('agent_logout');if(heartbeatTimer)clearInterval(heartbeatTimer);const {error}=await db.auth.signOut({scope:'local'});if(error){$('loginError').textContent=error.message;return;}location.replace('login.html');};
 db.auth.onAuthStateChange((event)=>{if(event==='SIGNED_OUT'){$('app').style.display='none';$('login').style.display='block';$('loginError').textContent='Your support session has ended. Please sign in again.';}});
 const {data:{session}}=await db.auth.getSession();if(session){await boot();}else{location.replace('login.html?next=support');}
-</script><script src="./pwa.js" defer></script>
+</script><script src="./tenant-branding.js" defer></script>
+<script src="./pwa.js" defer></script>
 </body></html>
