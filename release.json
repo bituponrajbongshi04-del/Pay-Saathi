@@ -1,17 +1,18 @@
 {
-  "version": "1.2.2",
-  "title": "PaySaathi 1.2.2 — Business workspaces and team controls",
+  "version": "1.2.3",
+  "title": "PaySaathi 1.2.3 — Business team support desk",
   "date": "2026-11-28",
   "notes": [
-    "Added a separate tenant-scoped Business Admin workspace for business owners and administrators; it is separate from the platform-wide admin console.",
-    "Added tenant team management for existing active PaySaathi accounts, with owner-only administrator assignment, plan member limits and duplicate-membership protection. Email invitations are not yet enabled.",
-    "Signed-in workspace branding now applies on the shared PaySaathi host as well as verified custom hostnames.",
-    "Business owners retain read-only workspace and team visibility after a trial expires, while operational tenant access and adding new members remain blocked.",
-    "Tenant isolation now covers 29 operational tables with 29 restrictive tenant policies and 34 validated tenant foreign keys; audit found zero legacy rows missing tenant ownership.",
-    "Verified that cross-tenant writes are rejected, tenant member listing is restricted to workspace administrators, and non-owner administrators cannot create other administrators.",
-    "Custom-domain TXT verification confirms ownership only; automatic DNS routing and SSL provisioning are not yet enabled.",
-    "Live subscription checkout, recurring billing, automatic paid-plan activation, email invitations and production tenant routing are not yet integrated.",
-    "Payment and regulated services remain disabled until verified providers and required compliance integrations are configured."
+    "Added a tenant-scoped Business Admin workspace with workspace switching, plan status and member management.",
+    "Added a tenant Support Desk for staff. Staff see only tickets assigned to them, can reply to customers and update ticket status.",
+    "Business owners and administrators can review their workspace tickets and assign them to active staff members.",
+    "Added server-side permission checks for tenant ticket listing, assignment, replies and status changes. Cross-workspace ticket access is denied.",
+    "Public support directory now lists only active platform support agents, not tenant-specific staff.",
+    "Workspace branding now applies on the shared PaySaathi host and verified custom hostnames.",
+    "Added core login, support and business pages to the PWA offline cache; updates wait for user approval.",
+    "Tenant isolation covers 29 operational tables with 29 restrictive tenant policies and 34 validated tenant foreign keys.",
+    "Trial expiry blocks business operations and new member additions while preserving owner access to view and manage workspace renewal.",
+    "Email invitations, subscription checkout and automatic billing, real recharge/payment provider connections, and automatic custom-domain hosting/SSL remain pending."
   ],
   "minimumVersion": "1.1.0"
 }
