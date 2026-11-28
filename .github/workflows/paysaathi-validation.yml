@@ -19,7 +19,7 @@ jobs:
         run: |
           python3 - <<'PY'
           import json, pathlib, re, subprocess, tempfile
-          files = ["index.html", "login.html", "signup.html", "register.html", "forgot-password.html", "reset-password.html", "dashboard.html", "admin.html", "support.html", "contact-support.html", "privacy-policy.html", "refund-policy.html", "terms.html"]
+          files = ["index.html", "login.html", "signup.html", "register.html", "forgot-password.html", "reset-password.html", "dashboard.html", "admin.html", "white-label.html", "support.html", "contact-support.html", "privacy-policy.html", "refund-policy.html", "terms.html"]
           with tempfile.TemporaryDirectory() as tmp:
               targets = []
               for filename in files:
