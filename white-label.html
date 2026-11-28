@@ -63,5 +63,6 @@ $('createTenant').addEventListener('click',async()=>{const btn=$('createTenant')
 async function boot(){const {data:sd,error:se}=await supabase.auth.getSession();if(se)throw se;if(!sd.session){location.replace('./login.html?next=white-label.html');return;}const {data:ud,error:ue}=await supabase.auth.getUser();if(ue||!ud.user)throw ue||new Error('Please sign in again.');currentUser=ud.user;const {data:admin,error:ae}=await supabase.rpc('is_paysaathi_admin');if(ae)throw ae;isPlatformOwner=admin===true;if(isPlatformOwner){$('createSection').hidden=false;await loadOwnerAccounts();}await loadWorkspace();if(!isPlatformOwner){const ownerWorkspace=workspaces.find(x=>['owner','admin'].includes(x.role));if(!ownerWorkspace)throw new Error('No business-owner membership is linked to this account.');if(!activeWorkspace||!['owner','admin'].includes(activeWorkspace.role)){const {error:switchError}=await supabase.rpc('ps_tenant_set_active',{p_tenant_id:ownerWorkspace.id});if(switchError)throw switchError;await loadWorkspace();}}}
 boot().catch(e=>notice('globalNotice',e.message,'error'));
 </script>
+<script src="./tenant-branding.js" defer></script>
 <script src="./pwa.js" defer></script>
 </body></html>
