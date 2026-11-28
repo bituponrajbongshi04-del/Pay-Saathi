@@ -1,5 +1,5 @@
 /* PaySaathi PWA service worker. Bump APP_VERSION for every app release. */
-const APP_VERSION = "1.2.1";
+const APP_VERSION = "1.2.2";
 const CACHE_NAME = "paysaathi-shell-" + APP_VERSION;
 const BASE_URL = new URL("./", self.location.href);
 const HOME_URL = new URL("./index.html", BASE_URL).href;
@@ -16,6 +16,7 @@ const CORE_FILES = [
   new URL("./kyc.html", BASE_URL).href,
   new URL("./admin-kyc.html", BASE_URL).href,
   new URL("./white-label.html", BASE_URL).href,
+  new URL("./business-admin.html", BASE_URL).href,
   new URL("./kyc.js", BASE_URL).href,
   new URL("./kyc-gate.js", BASE_URL).href
 ];
@@ -30,8 +31,7 @@ self.addEventListener("install", event => {
       } catch (_) {}
     }));
   })());
-  // Activate the new app shell immediately so installed phones receive updates automatically.
-  self.skipWaiting();
+  // Keep updates waiting until the user approves them in the in-app update prompt.
 });
 
 self.addEventListener("activate", event => {
