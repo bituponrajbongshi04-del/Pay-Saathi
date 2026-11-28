@@ -726,5 +726,6 @@ try{
 finally{/* No blocking boot overlay: the admin workspace remains visible during auth recovery. */}
 supabase.auth.onAuthStateChange((event)=>{if(event==='SIGNED_OUT'&&currentUser&&!window.__paysaathiLoggingOut){currentUser=null;location.replace('login.html?next=admin.html');}});
 </script>
+<script src="./tenant-branding.js" defer></script>
 <script src="./pwa.js" defer></script>
 </body></html>
