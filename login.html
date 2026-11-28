@@ -201,18 +201,18 @@ async function routeAuthenticatedUser(session) {
   if (profileError) throw new Error('Your account role could not be checked right now. Your login is still saved; please retry.');
   if (!profile) throw new Error('Your PaySaathi profile is not ready yet. Please contact support so we can link your account safely.');
 
-  if (isAdmin) {
-    if (profile.role !== 'admin' || profile.status !== 'active') {
-      throw new Error('Admin access is not active for this account. Please contact the project owner.');
-    }
+  // Resolve the route from this exact user's protected profile. A stale admin
+  // permission result must never redirect a customer into the Admin Panel.
+  if (profile.status !== 'active') {
+    throw new Error('Your account is currently ' + String(profile.status || 'inactive') + '. Please contact PaySaathi support.');
+  }
+
+  if (profile.role === 'admin') {
+    if (isAdmin !== true) throw new Error('Admin permission could not be verified for this account. Please retry.');
     await saveRoleSession('admin', session);
     showMessage('Admin verified. Opening Admin Panel…', 'ok');
     window.setTimeout(() => window.location.replace('admin.html'), 400);
     return;
-  }
-
-  if (profile.status !== 'active') {
-    throw new Error('Your account is currently ' + String(profile.status || 'inactive') + '. Please contact PaySaathi support.');
   }
 
   if (profile.role === 'agent') {
@@ -339,6 +339,9 @@ verifyButton.addEventListener('click', async () => {
     });
     if (error) throw error;
     if (!data.session) throw new Error('OTP verified, but no login session was returned.');
+    if (String(data.session.user?.email || '').trim().toLowerCase() !== pendingEmail) {
+      throw new Error('The verified login does not match the email address you entered. Please request a fresh OTP.');
+    }
     lastPassword = '';
     await routeAuthenticatedUser(data.session);
   } catch (error) {
