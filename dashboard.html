@@ -870,17 +870,18 @@ body{background:linear-gradient(145deg,#f8fcff 0%,#eef8ff 48%,#fff 100%)!importa
   <div id="modal-backdrop" class="fixed inset-0 bg-black/60 z-50 hidden items-center justify-center p-3 sm:p-4 overflow-y-auto">
     
 
-    <!-- DMT MODAL (demo UI; provider integration required) -->
+    <!-- DMT MODAL — safe service preview; no customer data collected -->
     <div id="modal-dmt" class="bg-white w-full max-w-sm rounded-2xl p-6 hidden space-y-4">
       <div class="flex justify-between items-center border-b pb-3">
         <h3 class="font-bold text-gray-800">Domestic Money Transfer</h3>
         <button onclick="closeModals()" aria-label="Close" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <p class="text-xs text-gray-500">Demo interface only. A verified money-transfer provider is required before transactions can be processed.</p>
-      <input type="tel" inputmode="numeric" maxlength="10" placeholder="Customer mobile number" class="w-full border rounded-xl p-2.5 text-sm">
-      <input type="text" placeholder="Beneficiary name" class="w-full border rounded-xl p-2.5 text-sm">
-      <input type="number" min="1" placeholder="Amount (₹)" class="w-full border rounded-xl p-2.5 text-sm">
-      <button onclick="executeService('Domestic Money Transfer')" class="w-full bg-blue-600 text-white font-bold py-2.5 rounded-xl">Continue</button>
+      <div class="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900" role="status">
+        <strong class="block mb-1">Not available yet</strong>
+        Money transfer is in preview mode. A verified provider and compliance checks are required before this service can process transfers.
+      </div>
+      <p class="text-xs text-slate-500">For your privacy, this preview does not ask for mobile numbers, beneficiary details or transfer amounts. No money can be sent from this screen.</p>
+      <button onclick="closeModals()" class="w-full bg-blue-600 text-white font-bold py-2.5 rounded-xl">Got it</button>
     </div>
 
     <!-- UTI MODAL (demo UI; provider integration required) -->
@@ -935,31 +936,32 @@ body{background:linear-gradient(145deg,#f8fcff 0%,#eef8ff 48%,#fff 100%)!importa
       <button onclick="executeService('Mobile Recharge')" class="w-full bg-blue-600 text-white font-bold py-2.5 rounded-xl">Proceed to Pay</button>
     </div>
 
-    <!-- AEPS MODAL -->
+    <!-- AEPS MODAL — no Aadhaar or biometric collection until provider onboarding -->
     <div id="modal-aeps" class="bg-white w-full max-w-sm rounded-2xl p-6 hidden space-y-4">
       <div class="flex justify-between items-center border-b pb-3">
         <h3 class="font-bold text-gray-800">AEPS Banking</h3>
-        <button onclick="closeModals()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark"></i></button>
+        <button onclick="closeModals()" aria-label="Close" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <select class="w-full border rounded-xl p-2.5 text-sm">
-        <option>Cash Withdrawal</option>
-        <option>Balance Enquiry</option>
-        <option>Mini Statement</option>
-      </select>
-      <input type="text" placeholder="Aadhaar Number" maxlength="12" class="w-full border rounded-xl p-2.5 text-sm">
-      <input type="number" placeholder="Amount (₹)" class="w-full border rounded-xl p-2.5 text-sm">
-      <button onclick="executeService('AEPS Cash Withdrawal')" class="w-full bg-blue-600 text-white font-bold py-2.5 rounded-xl">Capture Finger & Submit</button>
+      <div class="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900" role="status">
+        <strong class="block mb-1">AEPS is not active</strong>
+        A certified AEPS provider, device integration and required compliance approvals are not connected yet.
+      </div>
+      <p class="text-xs text-slate-500">This preview does not collect Aadhaar numbers, fingerprints, biometric data or banking details. Please do not share these details until the official service is enabled.</p>
+      <button onclick="closeModals()" class="w-full bg-blue-600 text-white font-bold py-2.5 rounded-xl">Close</button>
     </div>
 
-    <!-- PAYOUT MODAL -->
+    <!-- PAYOUT MODAL — no mock bank details or transfer input -->
     <div id="modal-payout" class="bg-white w-full max-w-sm rounded-2xl p-6 hidden space-y-4">
       <div class="flex justify-between items-center border-b pb-3">
-        <h3 class="font-bold text-gray-800">Xpress Bank Payout</h3>
-        <button onclick="closeModals()" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark"></i></button>
+        <h3 class="font-bold text-gray-800">Bank Payout</h3>
+        <button onclick="closeModals()" aria-label="Close" class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <p class="text-xs text-gray-500">Settlement Bank: State Bank of India (Ending 4821)</p>
-      <input type="number" placeholder="Amount to Transfer (₹)" class="w-full border rounded-xl p-2.5 text-sm">
-      <button onclick="executeService('Xpress Payout')" class="w-full bg-blue-600 text-white font-bold py-2.5 rounded-xl">Instant Settlement (IMPS)</button>
+      <div class="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900" role="status">
+        <strong class="block mb-1">Payout is not connected</strong>
+        A verified payout provider, beneficiary verification and secure server-side transaction processing are required first.
+      </div>
+      <p class="text-xs text-slate-500">No bank account details or transfer amount are requested in this preview. No settlement or payment will be initiated.</p>
+      <button onclick="closeModals()" class="w-full bg-blue-600 text-white font-bold py-2.5 rounded-xl">Close</button>
     </div>
 
     <!-- GENERIC BILL MODAL -->
