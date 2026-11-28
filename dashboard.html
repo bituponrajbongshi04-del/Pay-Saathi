@@ -689,12 +689,19 @@ body{background:linear-gradient(145deg,#f8fcff 0%,#eef8ff 48%,#fff 100%)!importa
       <div id="tab-reports" class="px-5 py-6 space-y-4 hidden flex-1">
         <h2 class="text-lg font-bold text-gray-800">Transaction History</h2>
         
-        <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-          <button class="bg-blue-600 text-white px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">All Txns</button>
-          <button class="bg-white text-gray-600 border border-gray-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">Recharges</button>
-          <button class="bg-white text-gray-600 border border-gray-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">Payouts</button>
-          <button class="bg-white text-gray-600 border border-gray-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">AEPS</button>
+        <div id="transaction-filters" class="flex gap-2 overflow-x-auto no-scrollbar pb-1" role="group" aria-label="Filter transactions">
+          <button type="button" data-tx-filter="all" aria-pressed="true" class="bg-blue-600 text-white px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">All</button>
+          <button type="button" data-tx-filter="recharge" aria-pressed="false" class="bg-white text-gray-600 border border-gray-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">Recharges</button>
+          <button type="button" data-tx-filter="payout" aria-pressed="false" class="bg-white text-gray-600 border border-gray-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">Payouts</button>
+          <button type="button" data-tx-filter="aeps" aria-pressed="false" class="bg-white text-gray-600 border border-gray-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">AEPS</button>
+          <button type="button" data-tx-filter="failed" aria-pressed="false" class="bg-white text-gray-600 border border-gray-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap">Failed</button>
         </div>
+        <label for="transaction-search" class="sr-only">Search transactions</label>
+        <div class="relative">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm" aria-hidden="true"></i>
+          <input id="transaction-search" type="search" autocomplete="off" maxlength="100" placeholder="Search by service, reference or status…" class="w-full pl-10 pr-4 py-3 text-sm border border-slate-200 rounded-xl bg-white" />
+        </div>
+        <p id="transaction-results-count" class="text-[11px] text-slate-500" aria-live="polite">Loading your transactions…</p>
 
         <section class="rounded-2xl border border-sky-100 bg-white/90 p-4 shadow-sm space-y-3" aria-labelledby="refund-request-title">
           <div><h3 id="refund-request-title" class="font-extrabold text-slate-800">Request a Refund</h3><p class="text-xs text-slate-500 mt-1">Choose a successful transaction and tell us why you need a refund. Support will review it; only Admin can approve it.</p></div>
@@ -1110,6 +1117,68 @@ body{background:linear-gradient(145deg,#f8fcff 0%,#eef8ff 48%,#fff 100%)!importa
     function safeRpc(...args) { return Promise.resolve().then(() => supabase.rpc(...args)); }
     const formatINR = value => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(Number(value) || 0);
     const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    let activeTransactionFilter = 'all';
+    function transactionCategory(tx) {
+      const type = String(tx?.type || '').toLowerCase().replace(/[ -]+/g, '_');
+      if (type.includes('aeps') || type.includes('micro_atm')) return 'aeps';
+      if (type.includes('payout') || type.includes('cashout')) return 'payout';
+      if (type.includes('recharge')) return 'recharge';
+      return 'other';
+    }
+    function setTransactionFilter(filter) {
+      activeTransactionFilter = ['all','recharge','payout','aeps','failed'].includes(filter) ? filter : 'all';
+      document.querySelectorAll('#transaction-filters [data-tx-filter]').forEach(button => {
+        const active = button.dataset.txFilter === activeTransactionFilter;
+        button.setAttribute('aria-pressed', String(active));
+        button.className = active
+          ? 'bg-blue-600 text-white px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap'
+          : 'bg-white text-gray-600 border border-gray-200 px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap';
+      });
+      renderCustomerTransactions();
+    }
+    function renderCustomerTransactions() {
+      const list = document.getElementById('transaction-list');
+      if (!list) return;
+      const rows = Array.isArray(window.__paysaathiTransactions) ? window.__paysaathiTransactions : [];
+      const query = String(document.getElementById('transaction-search')?.value || '').trim().toLowerCase();
+      const filtered = rows.filter(tx => {
+        const status = String(tx.status || 'pending').toLowerCase();
+        const category = transactionCategory(tx);
+        const matchesFilter = activeTransactionFilter === 'all' ||
+          (activeTransactionFilter === 'failed' ? ['failed','rejected'].includes(status) : activeTransactionFilter === category);
+        const haystack = [tx.type,tx.reference,tx.id,tx.status,tx.amount,tx.created_at].join(' ').toLowerCase();
+        return matchesFilter && (!query || haystack.includes(query));
+      });
+      const count = document.getElementById('transaction-results-count');
+      if (count) count.textContent = `Showing ${filtered.length} of ${rows.length} recent transactions`;
+      if (!rows.length) {
+        list.innerHTML = '<div class="wallet-history-empty"><i class="fa-regular fa-folder-open"></i><strong>No transactions yet</strong><span>Your wallet activity will appear here.</span></div>';
+        return;
+      }
+      if (!filtered.length) {
+        list.innerHTML = '<div class="wallet-history-empty"><i class="fa-solid fa-filter-circle-xmark"></i><strong>No matching transactions</strong><span>Try another filter or search term.</span></div>';
+        return;
+      }
+      list.innerHTML = filtered.map(tx => {
+        const rawType = String(tx.type || '').toLowerCase();
+        const isAdminTestCredit = String(tx.reference || '').startsWith('PS-TEST-');
+        const incoming = ['topup','credit','commission','cashback','refund','add_fund'].includes(rawType);
+        const labels = {topup:'Wallet Top-up',add_fund:'Wallet Top-up',credit:'Wallet Credit',commission:'Wallet Credit',cashback:'Cashback',refund:'Refund',debit:'Wallet Debit',payout:'Payout',recharge:'Recharge',bill_payment:'Bill Payment',transfer:'Money Transfer'};
+        const title = isAdminTestCredit ? 'Admin-verified Wallet Credit' : (labels[rawType] || String(tx.type || 'Wallet Transaction').replace(/[_-]+/g,' ').replace(/\b\w/g,c=>c.toUpperCase()));
+        const amount = (incoming ? '+' : '−') + formatINR(tx.amount);
+        const rawStatus = String(tx.status || 'pending').toLowerCase();
+        const statusLabel = rawStatus === 'success' ? 'Successful' : rawStatus === 'failed' ? (isAdminTestCredit ? 'Rejected' : 'Failed') : 'Pending';
+        const statusClass = rawStatus === 'success' ? 'is-success' : rawStatus === 'failed' ? 'is-failed' : 'is-pending';
+        const icon = incoming ? 'fa-arrow-down-left' : 'fa-arrow-up-right';
+        const date = tx.created_at ? new Date(tx.created_at).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'}) : 'Date unavailable';
+        return `<article class="wallet-transaction"><span class="wallet-transaction-icon ${incoming?'is-incoming':'is-outgoing'}"><i class="fa-solid ${icon}"></i></span><div class="wallet-transaction-main"><p class="wallet-transaction-title">${escapeHTML(title)}</p><p class="wallet-transaction-meta">Ref: ${escapeHTML(tx.reference || tx.id)} <span>·</span> ${escapeHTML(date)}</p></div><div class="wallet-transaction-side"><span class="wallet-status ${statusClass}">${statusLabel}</span><strong class="wallet-transaction-amount ${incoming?'is-incoming':'is-outgoing'}">${amount}</strong></div></article>`;
+      }).join('');
+    }
+    document.getElementById('transaction-filters')?.addEventListener('click', event => {
+      const button = event.target.closest('[data-tx-filter]');
+      if (button) setTransactionFilter(button.dataset.txFilter);
+    });
+    document.getElementById('transaction-search')?.addEventListener('input', renderCustomerTransactions);
     async function loadPaySaathiWallet() {
       const { data: auth, error: authError } = await supabase.auth.getUser();
       if (authError || !auth?.user) throw new Error('Please sign in again to view your wallet.');
@@ -1131,26 +1200,8 @@ body{background:linear-gradient(145deg,#f8fcff 0%,#eef8ff 48%,#fff 100%)!importa
         if (!eligible.length) refundSelect.innerHTML = '<option value="">No eligible successful transactions found</option>';
       }
       await loadCustomerRefundRequests();
-      const list = document.getElementById('transaction-list');
-      if (list) list.innerHTML = rows?.length ? rows.map(tx => {
-        const rawType = String(tx.type || '').toLowerCase();
-        const isAdminTestCredit = String(tx.reference || '').startsWith('PS-TEST-');
-        const incoming = ['topup','credit','commission','cashback','refund','add_fund'].includes(rawType);
-        const labels = {
-          topup: 'Wallet Top-up', add_fund: 'Wallet Top-up', credit: 'Wallet Credit',
-          commission: 'Commission Earned', cashback: 'Cashback', refund: 'Refund',
-          debit: 'Wallet Debit', payout: 'Payout', recharge: 'Recharge',
-          bill_payment: 'Bill Payment', transfer: 'Money Transfer'
-        };
-        const title = isAdminTestCredit ? 'Admin-verified Wallet Credit' : (labels[rawType] || String(tx.type || 'Wallet Transaction').replace(/[_-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase()));
-        const amount = (incoming ? '+' : '−') + formatINR(tx.amount);
-        const rawStatus = String(tx.status || 'pending').toLowerCase();
-        const statusLabel = rawStatus === 'success' ? 'Successful' : rawStatus === 'failed' ? (isAdminTestCredit ? 'Rejected' : 'Failed') : 'Pending';
-        const statusClass = rawStatus === 'success' ? 'is-success' : rawStatus === 'failed' ? 'is-failed' : 'is-pending';
-        const icon = incoming ? 'fa-arrow-down-left' : 'fa-arrow-up-right';
-        const date = tx.created_at ? new Date(tx.created_at).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : 'Date unavailable';
-        return `<article class="wallet-transaction"><span class="wallet-transaction-icon ${incoming ? 'is-incoming' : 'is-outgoing'}"><i class="fa-solid ${icon}"></i></span><div class="wallet-transaction-main"><p class="wallet-transaction-title">${escapeHTML(title)}</p><p class="wallet-transaction-meta">Ref: ${escapeHTML(tx.reference || tx.id)} <span>·</span> ${escapeHTML(date)}</p></div><div class="wallet-transaction-side"><span class="wallet-status ${statusClass}">${statusLabel}</span><strong class="wallet-transaction-amount ${incoming ? 'is-incoming' : 'is-outgoing'}">${amount}</strong></div></article>`;
-      }).join('') : '<div class="wallet-history-empty"><i class="fa-regular fa-folder-open"></i><strong>No transactions yet</strong><span>Your wallet activity will appear here.</span></div>';
+      window.__paysaathiTransactions = rows || [];
+      renderCustomerTransactions();
     }
     async function loadCustomerRefundRequests() {
       const box = document.getElementById('customer-refund-list'); if (!box) return;
