@@ -1,8 +1,10 @@
 {
-  "version": "1.1.8",
-  "title": "PaySaathi 1.1.8 — Privacy and security update",
+  "version": "1.2.0",
+  "title": "PaySaathi 1.2.0 — White-label workspace foundation",
   "date": "2026-11-28",
   "notes": [
+    "Added White-label Studio for platform-owner workspace creation and business-owner brand customisation.",
+    "Added the first secure white-label tenant foundation: separate business workspaces, membership roles, branding records, subscription metadata and tenant audit logs.",
     "Customer dashboard language now matches a personal customer account instead of a retailer portal.",
     "Transaction history now supports live client-side search and filters for recharges, payouts, AEPS and failed transactions.",
     "Unavailable DMT, AEPS and payout previews no longer collect Aadhaar, beneficiary, bank or transfer details.",
@@ -13,7 +15,8 @@
     "Expanded transaction history filters with dedicated bill-payment and wallet-activity views.",
     "Clarified that the automated support guide provides guided answers and does not verify live transaction status; customers can raise a human support ticket.",
     "Transaction history now distinguishes successful, processing, pending, failed, rejected and cancelled states accurately.",
-    "Public support directory now returns only the agent display name and required identifier; private staff notes, availability and online/offline presence are not exposed."
+    "Public support directory now returns only the agent display name and required identifier; private staff notes, availability and online/offline presence are not exposed.",
+    "This is a foundation release only: existing wallet, transaction, KYC, support and operations tables are not yet tenant-isolated; commercial tenant onboarding remains disabled."
   ],
   "minimumVersion": "1.1.0"
 }
