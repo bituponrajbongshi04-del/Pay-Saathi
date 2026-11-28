@@ -1484,15 +1484,17 @@ body{background:linear-gradient(145deg,#f8fcff 0%,#eef8ff 48%,#fff 100%)!importa
         if (accountProfileError) throw new Error('Your account role could not be verified. Your saved login remains active; please refresh and retry.');
         if (!accountProfile) throw new Error('Your PaySaathi profile is missing. Please contact support to link your account.');
 
-        if (isAdmin) {
-          if (accountProfile.role !== 'admin' || accountProfile.status !== 'active') {
-            throw new Error('Admin permissions and account profile do not match. Access has been blocked for safety.');
+        if (accountProfile.status !== 'active') {
+          throw new Error('Your account is currently ' + String(accountProfile.status || 'inactive') + '. Please contact PaySaathi support.');
+        }
+        // Only an account whose protected profile says admin can be routed
+        // to admin.html; the RPC is a second independent permission check.
+        if (accountProfile.role === 'admin') {
+          if (isAdmin !== true) {
+            throw new Error('Admin permission could not be verified. Your session is safe; refresh and retry.');
           }
           window.location.replace('admin.html');
           throw new Error('Opening Admin Panel.');
-        }
-        if (accountProfile.status !== 'active') {
-          throw new Error('Your account is currently ' + String(accountProfile.status || 'inactive') + '. Please contact PaySaathi support.');
         }
         if (accountProfile.role === 'agent') {
           window.location.replace('support.html');
