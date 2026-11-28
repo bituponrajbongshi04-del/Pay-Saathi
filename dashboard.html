@@ -1151,7 +1151,7 @@ body{background:linear-gradient(145deg,#f8fcff 0%,#eef8ff 48%,#fff 100%)!importa
         const status = String(tx.status || 'pending').toLowerCase();
         const category = transactionCategory(tx);
         const matchesFilter = activeTransactionFilter === 'all' ||
-          (activeTransactionFilter === 'failed' ? ['failed','rejected'].includes(status) : activeTransactionFilter === category);
+          (activeTransactionFilter === 'failed' ? ['failed','rejected','cancelled','canceled'].includes(status) : activeTransactionFilter === category);
         const haystack = [tx.type,tx.reference,tx.id,tx.status,tx.amount,tx.created_at].join(' ').toLowerCase();
         return matchesFilter && (!query || haystack.includes(query));
       });
@@ -1173,8 +1173,10 @@ body{background:linear-gradient(145deg,#f8fcff 0%,#eef8ff 48%,#fff 100%)!importa
         const title = isAdminTestCredit ? 'Admin-verified Wallet Credit' : (labels[rawType] || String(tx.type || 'Wallet Transaction').replace(/[_-]+/g,' ').replace(/\b\w/g,c=>c.toUpperCase()));
         const amount = (incoming ? '+' : '−') + formatINR(tx.amount);
         const rawStatus = String(tx.status || 'pending').toLowerCase();
-        const statusLabel = rawStatus === 'success' ? 'Successful' : rawStatus === 'failed' ? (isAdminTestCredit ? 'Rejected' : 'Failed') : 'Pending';
-        const statusClass = rawStatus === 'success' ? 'is-success' : rawStatus === 'failed' ? 'is-failed' : 'is-pending';
+        const isSuccess = ['success','successful','completed'].includes(rawStatus);
+        const isFailure = ['failed','rejected','cancelled','canceled'].includes(rawStatus);
+        const statusLabel = isSuccess ? 'Successful' : rawStatus === 'rejected' || (rawStatus === 'failed' && isAdminTestCredit) ? 'Rejected' : rawStatus === 'cancelled' || rawStatus === 'canceled' ? 'Cancelled' : isFailure ? 'Failed' : ['processing','in_progress'].includes(rawStatus) ? 'Processing' : rawStatus === 'under_review' ? 'Under review' : 'Pending';
+        const statusClass = isSuccess ? 'is-success' : isFailure ? 'is-failed' : 'is-pending';
         const icon = incoming ? 'fa-arrow-down-left' : 'fa-arrow-up-right';
         const date = tx.created_at ? new Date(tx.created_at).toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'}) : 'Date unavailable';
         return `<article class="wallet-transaction"><span class="wallet-transaction-icon ${incoming?'is-incoming':'is-outgoing'}"><i class="fa-solid ${icon}"></i></span><div class="wallet-transaction-main"><p class="wallet-transaction-title">${escapeHTML(title)}</p><p class="wallet-transaction-meta">Ref: ${escapeHTML(tx.reference || tx.id)} <span>·</span> ${escapeHTML(date)}</p></div><div class="wallet-transaction-side"><span class="wallet-status ${statusClass}">${statusLabel}</span><strong class="wallet-transaction-amount ${incoming?'is-incoming':'is-outgoing'}">${amount}</strong></div></article>`;
